@@ -1355,11 +1355,17 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
     /* ================= Server (anti-cheat) ================= */
     // ---------- Sign-in ----------
     const authOn = !!(GG_API && SUPABASE_URL && SUPABASE_ANON_KEY && window.supabase);
-    const sbClient = authOn ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+    // No cross-tab lock: a stuck browser lock must never freeze the game.
+    const noLock = async (name, timeout, fn) => fn();
+    const sbClient = authOn ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { auth: { lock: noLock } }) : null;
     let account = null; // { signedIn, tag, total, today, dailyCap }
     async function loginToken() {
       if (!sbClient) return null;
-      try { const { data } = await sbClient.auth.getSession(); return data.session ? data.session.access_token : null; }
+      try {
+        // Give up after 4 seconds so a slow or stuck sign-in never blocks Take Off.
+        const res = await Promise.race([sbClient.auth.getSession(), new Promise(r => setTimeout(() => r(null), 4000))]);
+        return res && res.data && res.data.session ? res.data.session.access_token : null;
+      }
       catch (e) { return null; }
     }
     async function api(path, body, timeoutMs = 8000) {

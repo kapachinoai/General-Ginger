@@ -58,6 +58,8 @@
     }
     #go-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #14532d; }
     #go-btn:disabled { opacity: 0.7; }
+    #share-btn { pointer-events: auto; margin-top: 12px; padding: 10px 22px; border-radius: 999px; border: 2px solid #fde047; background: #000; color: #fff; font: inherit; font-weight: 800; font-size: 1rem; cursor: pointer; }
+    #share-btn:active { transform: translateY(2px); }
     #hint { margin-top: 12px; font-size: 0.78rem; color: #cbd5e1; line-height: 1.7; }
     #hint span { background: rgba(30,41,59,0.85); padding: 2px 7px; border-radius: 4px; color: #fff; }
     #rotate { font-size: 0.78rem; color: #fde047; margin-top: 6px; display: none; }
@@ -143,6 +145,7 @@
     <div id="result"></div>
     <div id="account" hidden></div>
     <button id="go-btn" data-t="takeOff">Oya, Take Off!</button>
+    <button id="share-btn" type="button" hidden data-t="shareX">𝕏 Challenge friends</button>
     <div id="hint" data-th="hint">
       <span>↑ ↓</span> / <span>W S</span> fly up and down • <span>Space</span> spice boost<br>
       Phone: drag up and down to fly • tap to boost
@@ -582,7 +585,7 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
       en: {
         loading: 'Loading General Ginger…', loadFail: 'Could not load the 3D engine. Check your connection and refresh.',
         intro: "The Ginger King's pest army is firing from the ground. Dodge rot bombs, shears and sticky nets, grab power-ups, and shoot down the King's airship to reach the next level!",
-        takeOff: 'Oya, Take Off!', flyAgain: 'Fly Again', loadingAcct: 'Loading your account…', connecting: 'Connecting…',
+        takeOff: 'Oya, Take Off!', flyAgain: 'Fly Again', shareX: '𝕏 Challenge friends', shareText: 'I scored {score} and reached level {level} in General Ginger 🛩️\n\nCan you beat me? Overthrow the Ginger King 👑', loadingAcct: 'Loading your account…', connecting: 'Connecting…',
         hint: '<span>↑ ↓</span> / <span>W S</span> fly up and down • <span>Space</span> spice boost<br>Phone: drag up and down to fly • tap to boost',
         rotate: 'Tip: turn your phone sideways for a wider view', boss: 'THE GINGER KING', cancel: 'Cancel',
         paused: '⏸ Paused', resume: '▶ Resume', quit: 'Quit flight (points not saved)', pauseTip: 'Tip: press P or Esc to pause on a keyboard.', pause: 'Pause',
@@ -613,7 +616,7 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
       fr: {
         loading: 'Chargement de General Ginger…', loadFail: 'Impossible de charger le moteur 3D. Vérifie ta connexion et recharge la page.',
         intro: "L'armée de nuisibles du Roi Gingembre tire depuis le sol. Esquive les bombes pourries, les cisailles et les filets collants, attrape les bonus et abats le dirigeable du Roi pour passer au niveau suivant !",
-        takeOff: 'Oya, décollage !', flyAgain: 'Rejouer', loadingAcct: 'Chargement de ton compte…', connecting: 'Connexion…',
+        takeOff: 'Oya, décollage !', flyAgain: 'Rejouer', shareX: '𝕏 Défie tes amis', shareText: 'J\'ai fait {score} points et atteint le niveau {level} dans General Ginger 🛩️\n\nTu peux me battre ? Renverse le Roi Gingembre 👑', loadingAcct: 'Chargement de ton compte…', connecting: 'Connexion…',
         hint: '<span>↑ ↓</span> / <span>W S</span> monter et descendre • <span>Espace</span> turbo épicé<br>Téléphone : glisse vers le haut ou le bas pour voler • touche pour le turbo',
         rotate: 'Astuce : tourne ton téléphone pour une vue plus large', boss: 'LE ROI GINGEMBRE', cancel: 'Annuler',
         paused: '⏸ Pause', resume: '▶ Reprendre', quit: 'Quitter le vol (points non enregistrés)', pauseTip: 'Astuce : appuie sur P ou Échap pour mettre en pause au clavier.', pause: 'Pause',
@@ -644,7 +647,7 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
       es: {
         loading: 'Cargando General Ginger…', loadFail: 'No se pudo cargar el motor 3D. Revisa tu conexión y recarga.',
         intro: '¡El ejército de plagas del Rey Jengibre dispara desde el suelo! Esquiva bombas podridas, tijeras y redes pegajosas, recoge mejoras y derriba el dirigible del Rey para pasar de nivel.',
-        takeOff: '¡Oya, a despegar!', flyAgain: 'Volar otra vez', loadingAcct: 'Cargando tu cuenta…', connecting: 'Conectando…',
+        takeOff: '¡Oya, a despegar!', flyAgain: 'Volar otra vez', shareX: '𝕏 Reta a tus amigos', shareText: 'Hice {score} puntos y llegué al nivel {level} en General Ginger 🛩️\n\n¿Me superas? Derroca al Rey Jengibre 👑', loadingAcct: 'Cargando tu cuenta…', connecting: 'Conectando…',
         hint: '<span>↑ ↓</span> / <span>W S</span> subir y bajar • <span>Espacio</span> turbo picante<br>Móvil: arrastra arriba y abajo para volar • toca para el turbo',
         rotate: 'Consejo: gira el móvil para ver más', boss: 'EL REY JENGIBRE', cancel: 'Cancelar',
         paused: '⏸ En pausa', resume: '▶ Continuar', quit: 'Abandonar el vuelo (no se guardan los puntos)', pauseTip: 'Consejo: pulsa P o Esc para pausar con teclado.', pause: 'Pausa',
@@ -675,7 +678,7 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
       pt: {
         loading: 'Carregando General Ginger…', loadFail: 'Não foi possível carregar o motor 3D. Verifique sua conexão e recarregue.',
         intro: 'O exército de pragas do Rei Gengibre está atirando do chão! Desvie de bombas podres, tesouras e redes grudentas, pegue power-ups e derrube o dirigível do Rei para passar de nível.',
-        takeOff: 'Oya, decolar!', flyAgain: 'Voar de novo', loadingAcct: 'Carregando sua conta…', connecting: 'Conectando…',
+        takeOff: 'Oya, decolar!', flyAgain: 'Voar de novo', shareX: '𝕏 Desafie amigos', shareText: 'Fiz {score} pontos e cheguei ao nível {level} no General Ginger 🛩️\n\nConsegue me vencer? Derrube o Rei Gengibre 👑', loadingAcct: 'Carregando sua conta…', connecting: 'Conectando…',
         hint: '<span>↑ ↓</span> / <span>W S</span> subir e descer • <span>Espaço</span> turbo apimentado<br>Celular: arraste para cima e para baixo para voar • toque para o turbo',
         rotate: 'Dica: vire o celular para ver mais', boss: 'O REI GENGIBRE', cancel: 'Cancelar',
         paused: '⏸ Pausado', resume: '▶ Continuar', quit: 'Sair do voo (pontos não são salvos)', pauseTip: 'Dica: aperte P ou Esc para pausar no teclado.', pause: 'Pausar',
@@ -706,7 +709,7 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
       ar: {
         loading: 'جارٍ تحميل General Ginger…', loadFail: 'تعذّر تحميل محرك الرسوم ثلاثية الأبعاد. تحقّق من اتصالك وأعد تحميل الصفحة.',
         intro: 'جيش آفات ملك الزنجبيل يطلق النار من الأرض! تفادَ القنابل الفاسدة والمقصّات والشِّباك اللزجة، واجمع المكافآت، وأسقط منطاد الملك لتنتقل إلى المستوى التالي!',
-        takeOff: 'هيّا، أقلِع!', flyAgain: 'طِر مجددًا', loadingAcct: 'جارٍ تحميل حسابك…', connecting: 'جارٍ الاتصال…',
+        takeOff: 'هيّا، أقلِع!', flyAgain: 'طِر مجددًا', shareX: '𝕏 تحدَّ أصدقاءك', shareText: 'سجّلت {score} نقطة ووصلت إلى المستوى {level} في General Ginger 🛩️\n\nهل تستطيع التفوق عليّ؟ أطِح بملك الزنجبيل 👑', loadingAcct: 'جارٍ تحميل حسابك…', connecting: 'جارٍ الاتصال…',
         hint: '<span>↑ ↓</span> / <span>W S</span> للصعود والنزول • <span>Space</span> دفعة التوابل<br>على الهاتف: اسحب للأعلى والأسفل للطيران • انقر للدفعة',
         rotate: 'نصيحة: أدِر هاتفك أفقيًا لرؤية أوسع', boss: 'ملك الزنجبيل', cancel: 'إلغاء',
         paused: '⏸ متوقف مؤقتًا', resume: '▶ استئناف', quit: 'إنهاء الرحلة (لن تُحفظ النقاط)', pauseTip: 'نصيحة: اضغط P أو Esc للإيقاف المؤقت من لوحة المفاتيح.', pause: 'إيقاف مؤقت',
@@ -1543,11 +1546,19 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
       P.root.visible = true; P.root.rotation.set(0, 0, 0);
       pointerActive = false; boostQueued = false;
       goBtn.disabled = false; goBtn.textContent = t('takeOff');
-      overlay.classList.add('hidden'); hud.classList.add('on');
+      overlay.classList.add('hidden'); hud.classList.add('on'); $('share-btn').hidden = true;
       $('status').textContent = session ? '' : (authOn && !canSave() ? t('stNoSign') : GG_API ? t('stOffline') : t('stPractice'));
       state = 'playing';
       burst(sim.x, sim.y, [0xf59e0b, 0xfde047, 0x1f8f3d], 20, 6);
     }
+
+    let lastRun = null;
+    $('share-btn').addEventListener('click', () => {
+      if (!lastRun) return;
+      const text = t('shareText', { score: fmt(lastRun.score), level: lastRun.level });
+      const url = 'https://x.com/intent/post?text=' + encodeURIComponent(text) + '&url=' + encodeURIComponent('https://general-ginger.pages.dev/play/') + '&via=GINGERKINGX';
+      window.open(url, '_blank', 'noopener');
+    });
 
     async function endGame() {
       state = 'over';
@@ -1560,6 +1571,7 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
       $('ov-text').textContent = t('summary', { level: sim.level, m: fmt(Math.round(sim.x)), score: fmt(sim.score), kings, best: fmt(best) });
       $('result').textContent = session ? t('checking', { pts }) : authOn && !canSave() ? t('signToSave', { pts }) : t('practiceRes', { pts });
       goBtn.textContent = t('flyAgain');
+      lastRun = { score: sim.score, level: sim.level }; $('share-btn').hidden = false;
       overlay.classList.remove('hidden'); hud.classList.remove('on');
       if (needsTag()) openSignin('tag');
       else if (account && account.tag) { let w = false; try { w = localStorage.getItem(WANT_PW) === '1'; } catch (e) {} if (w) openSignin('setpw'); }

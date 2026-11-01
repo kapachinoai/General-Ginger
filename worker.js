@@ -241,7 +241,7 @@ async function login(request, env, json) {
 
   const tr = await fetch(env.SUPABASE_URL.replace(/\/+$/, '') + '/auth/v1/token?grant_type=password', {
     method: 'POST',
-    headers: { apikey: env.SUPABASE_ANON_KEY, 'Content-Type': 'application/json' },
+    headers: { apikey: String(env.SUPABASE_ANON_KEY || '').trim(), 'Content-Type': 'application/json' },
     body: JSON.stringify({ email, password })
   });
   if (!tr.ok) return fail();
@@ -255,15 +255,17 @@ const supabaseOn = env => !!(env.SUPABASE_URL && env.SUPABASE_ANON_KEY && env.SU
 const dailyCap = env => parseInt(env.DAILY_POINTS_CAP || '1500', 10);
 const httpError = (status, message) => Object.assign(new Error(message), { status });
 
+// New Supabase secret keys (sb_secret_...) go in the apikey header only; old JWT keys also need Authorization.
+function serviceHeaders(env, extra) {
+  const k = String(env.SUPABASE_SERVICE_KEY || '').trim();
+  const h = { apikey: k, 'Content-Type': 'application/json', ...extra };
+  if (k.startsWith('eyJ')) h.Authorization = 'Bearer ' + k;
+  return h;
+}
 async function sb(env, method, path, body, extraHeaders = {}) {
   return fetch(env.SUPABASE_URL.replace(/\/+$/, '') + path, {
     method,
-    headers: {
-      apikey: env.SUPABASE_SERVICE_KEY,
-      Authorization: 'Bearer ' + env.SUPABASE_SERVICE_KEY,
-      'Content-Type': 'application/json',
-      ...extraHeaders
-    },
+    headers: serviceHeaders(env, extraHeaders),
     body: body === undefined ? undefined : JSON.stringify(body)
   });
 }
@@ -276,7 +278,7 @@ async function requireUser(request, env) {
   const token = auth.startsWith('Bearer ') ? auth.slice(7) : '';
   if (!token) throw httpError(401, 'Sign in to save points.');
   const r = await fetch(env.SUPABASE_URL.replace(/\/+$/, '') + '/auth/v1/user', {
-    headers: { apikey: env.SUPABASE_ANON_KEY, Authorization: 'Bearer ' + token }
+    headers: { apikey: String(env.SUPABASE_ANON_KEY || '').trim(), Authorization: 'Bearer ' + token }
   });
   if (!r.ok) throw httpError(401, 'Your sign-in has expired. Sign in again.');
   const u = await r.json();

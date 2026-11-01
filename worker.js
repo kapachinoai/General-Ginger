@@ -257,7 +257,7 @@ const httpError = (status, message) => Object.assign(new Error(message), { statu
 
 // New Supabase secret keys (sb_secret_...) go in the apikey header only; old JWT keys also need Authorization.
 function serviceHeaders(env, extra) {
-  const k = String(env.SUPABASE_SERVICE_KEY || '').trim();
+  const k = String(env.SUPABASE_SERVICE_KEY || '').replace(/[^A-Za-z0-9_.-]/g, '');
   const h = { apikey: k, 'Content-Type': 'application/json', ...extra };
   if (k.startsWith('eyJ')) h.Authorization = 'Bearer ' + k;
   return h;

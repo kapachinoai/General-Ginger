@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>General Ginger $GNG</title>
+<meta name="description" content="Free 3D arcade games you can play anywhere in the world, on any phone. Overthrow the Ginger King, earn points, and join the $GNG airdrop waitlist.">
+<meta name="theme-color" content="#061510">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;800&family=Instrument+Sans:wght@400;500;600;700&display=swap">
+<style>
+/* Spicelantis mission control: a smoky night sky lit by turmeric gold, with agbada green for anything live
+   and chili red kept for the King alone. One memorable moment: the target lock on the King as the page loads. */
+:root {
+  --night: #061510; --deep: #0b2119; --glass: rgba(18, 48, 36, 0.55); --line: rgba(247, 181, 56, 0.18); --line-soft: rgba(230, 240, 234, 0.08);
+  --gold: #f7b538; --gold-soft: #ffd987; --leaf: #39e29b; --chili: #ff6b4a; --mist: #e6f0ea; --dim: #93ab9e;
+  --display: 'Unbounded', 'Instrument Sans', system-ui, sans-serif; --body: 'Instrument Sans', system-ui, sans-serif;
+  --r-lg: 28px; --r-md: 18px; --r-sm: 12px;
+}
+:lang(ar) { --display: 'IBM Plex Sans Arabic', 'Unbounded', system-ui, sans-serif; --body: 'IBM Plex Sans Arabic', 'Instrument Sans', system-ui, sans-serif; }
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0; color: var(--mist); font: 400 17px/1.6 var(--body); background: var(--night);
+  -webkit-font-smoothing: antialiased; overflow-x: hidden;
+}
+/* spice smoke: two slow light pools behind everything */
+body::before {
+  content: ''; position: fixed; inset: -20vmax; z-index: -2; pointer-events: none;
+  background:
+    radial-gradient(38vmax 30vmax at 78% 12%, rgba(247, 181, 56, 0.20), transparent 70%),
+    radial-gradient(42vmax 34vmax at 12% 48%, rgba(57, 226, 155, 0.11), transparent 70%),
+    radial-gradient(30vmax 26vmax at 60% 92%, rgba(255, 107, 74, 0.08), transparent 70%);
+}
+body::after { /* fine grid, like a radar screen */
+  content: ''; position: fixed; inset: 0; z-index: -1; pointer-events: none; opacity: 0.5;
+  background-image: linear-gradient(var(--line-soft) 1px, transparent 1px), linear-gradient(90deg, var(--line-soft) 1px, transparent 1px);
+  background-size: 56px 56px; mask-image: radial-gradient(ellipse at 50% 20%, #000 20%, transparent 75%);
+}
+a { color: inherit; }
+img { max-width: 100%; display: block; }
+:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; border-radius: 8px; }
+.wrap { width: min(1180px, 100% - 32px); margin-inline: auto; }
+h1, h2, h3 { font-family: var(--display); line-height: 1.08; margin: 0; letter-spacing: -0.01em; }
+h2 { font-size: clamp(1.9rem, 4.2vw, 3rem); font-weight: 700; max-width: 18ch; }
+h3 { font-size: 1.15rem; font-weight: 700; }
+p { margin: 0; }
+section { padding: clamp(64px, 9vw, 120px) 0; }
+.lead { color: var(--dim); font-size: 1.08rem; max-width: 60ch; margin-top: 14px; }
+
+/* buttons */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 52px; padding: 0 26px;
+  border-radius: 999px; font: 600 1rem var(--body); text-decoration: none; cursor: pointer; border: 0; white-space: nowrap;
+  color: #1d1300; background: linear-gradient(180deg, var(--gold-soft), var(--gold));
+  box-shadow: 0 0 0 1px rgba(255, 217, 135, 0.6) inset, 0 10px 40px -10px rgba(247, 181, 56, 0.7);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.btn:hover { transform: translateY(-1px); box-shadow: 0 0 0 1px rgba(255, 217, 135, 0.8) inset, 0 14px 50px -10px rgba(247, 181, 56, 0.9); }
+.btn.ghost { color: var(--mist); background: rgba(230, 240, 234, 0.06); box-shadow: 0 0 0 1px var(--line-soft) inset; }
+.btn.ghost:hover { background: rgba(230, 240, 234, 0.1); }
+.btn:disabled { opacity: 0.6; cursor: wait; }
+
+/* nav */
+nav.top { position: sticky; top: 0; z-index: 20; backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); background: rgba(6, 21, 16, 0.62); border-bottom: 1px solid var(--line-soft); }
+nav.top .wrap { display: flex; align-items: center; gap: 18px; height: 68px; }
+.logo { display: flex; align-items: center; gap: 10px; font: 800 1rem var(--display); text-decoration: none; white-space: nowrap; }
+.logo i { width: 26px; height: 26px; border-radius: 8px; background: conic-gradient(from 200deg, var(--gold), var(--leaf), var(--gold)); box-shadow: 0 0 24px rgba(247, 181, 56, 0.6); }
+.logo b { color: var(--gold); font-weight: 800; }
+.navlinks { display: flex; gap: 22px; margin-inline-start: auto; }
+.navlinks a { color: var(--dim); text-decoration: none; font-weight: 500; font-size: 0.95rem; }
+.navlinks a:hover { color: var(--mist); }
+.navend { display: flex; align-items: center; gap: 10px; }
+nav .btn { min-height: 42px; padding: 0 18px; font-size: 0.92rem; }
+select.lang {
+  appearance: none; -webkit-appearance: none; background: rgba(230, 240, 234, 0.06) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2393ab9e' stroke-width='1.6' fill='none'/%3E%3C/svg%3E") no-repeat right 12px center;
+  color: var(--mist); border: 1px solid var(--line-soft); border-radius: 999px; padding: 10px 32px 10px 14px; font: 500 0.9rem var(--body); cursor: pointer;
+}
+:dir(rtl) select.lang { background-position: left 12px center; padding: 10px 14px 10px 32px; }
+select.lang option { color: #000; }
+
+/* hero */
+.hero { padding: clamp(40px, 7vw, 90px) 0 clamp(56px, 8vw, 100px); }
+.hero .wrap { display: grid; grid-template-columns: 1.15fr 0.85fr; gap: clamp(28px, 5vw, 64px); align-items: center; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 22px; }
+.chip { display: inline-flex; align-items: center; gap: 8px; padding: 7px 14px; border-radius: 999px; font-size: 0.86rem; font-weight: 600; border: 1px solid var(--line-soft); background: rgba(230, 240, 234, 0.04); color: var(--dim); }
+.chip i { width: 8px; height: 8px; border-radius: 50%; background: var(--dim); }
+.chip.live { color: var(--leaf); border-color: rgba(57, 226, 155, 0.3); }
+.chip.live i { background: var(--leaf); box-shadow: 0 0 0 0 rgba(57, 226, 155, 0.7); animation: ping 2.2s infinite; }
+@keyframes ping { 0% { box-shadow: 0 0 0 0 rgba(57, 226, 155, 0.6); } 80%, 100% { box-shadow: 0 0 0 10px rgba(57, 226, 155, 0); } }
+.hero h1 { font-size: clamp(2.6rem, 7.4vw, 5.6rem); font-weight: 800; line-height: 0.98; letter-spacing: -0.03em; max-width: 11ch; }
+:lang(ar) .hero h1 { letter-spacing: 0; line-height: 1.2; }
+.hero h1 .scan { background: linear-gradient(100deg, var(--mist) 0 40%, var(--gold-soft) 50%, var(--mist) 60% 100%); background-size: 260% 100%; background-position: 100% 0; -webkit-background-clip: text; background-clip: text; color: transparent; animation: sweep 1.6s 0.5s cubic-bezier(.2,.7,.2,1) forwards; }
+@keyframes sweep { to { background-position: 0 0; } }
+.hero .lead { font-size: clamp(1.05rem, 1.6vw, 1.22rem); margin-top: 22px; }
+.ctas { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; }
+.telemetry { display: flex; flex-wrap: wrap; gap: 0; margin-top: 40px; border: 1px solid var(--line-soft); border-radius: var(--r-md); background: rgba(230, 240, 234, 0.03); width: fit-content; max-width: 100%; }
+.telemetry div { padding: 14px 22px; }
+.telemetry div + div { border-inline-start: 1px solid var(--line-soft); }
+.telemetry b { display: block; font: 700 1.5rem var(--display); color: var(--mist); font-variant-numeric: tabular-nums; }
+.telemetry span { font-size: 0.85rem; color: var(--dim); }
+.telemetry .pending b { color: var(--dim); }
+
+/* the memorable thing: a target lock on the King */
+.lock { position: relative; aspect-ratio: 1; width: min(100%, 470px); margin-inline: auto; display: grid; place-items: center; }
+.lock .ring { position: absolute; inset: 0; border-radius: 50%; border: 1px solid var(--line); }
+.lock .ring.r2 { inset: 9%; border: 1px dashed rgba(247, 181, 56, 0.35); animation: spin 60s linear infinite; }
+.lock .ring.r3 { inset: 18%; border: 2px solid transparent; border-top-color: var(--chili); border-right-color: rgba(255, 107, 74, 0.35); animation: spin 9s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.lock .portrait { position: relative; width: 64%; aspect-ratio: 1; border-radius: 50%; overflow: hidden; background: radial-gradient(circle at 50% 40%, rgba(247, 181, 56, 0.35), rgba(11, 33, 25, 0.9) 70%); box-shadow: 0 0 80px -10px rgba(247, 181, 56, 0.55), 0 0 0 1px rgba(255, 217, 135, 0.4) inset; }
+.lock .portrait img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 18%; }
+.lock .portrait::after { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(0deg, rgba(6, 21, 16, 0.18) 0 2px, transparent 2px 4px); mix-blend-mode: multiply; }
+.lock .bracket { position: absolute; width: 22%; aspect-ratio: 1; border: 3px solid var(--chili); filter: drop-shadow(0 0 8px rgba(255, 107, 74, 0.7)); }
+.lock .b1 { top: 13%; left: 13%; border-right: 0; border-bottom: 0; border-top-left-radius: 14px; }
+.lock .b2 { top: 13%; right: 13%; border-left: 0; border-bottom: 0; border-top-right-radius: 14px; }
+.lock .b3 { bottom: 13%; left: 13%; border-right: 0; border-top: 0; border-bottom-left-radius: 14px; }
+.lock .b4 { bottom: 13%; right: 13%; border-left: 0; border-top: 0; border-bottom-right-radius: 14px; }
+.lock .crosshair { position: absolute; inset: 0; pointer-events: none; }
+.lock .crosshair::before, .lock .crosshair::after { content: ''; position: absolute; background: rgba(255, 107, 74, 0.5); }
+.lock .crosshair::before { left: 50%; top: 2%; bottom: 2%; width: 1px; }
+.lock .crosshair::after { top: 50%; left: 2%; right: 2%; height: 1px; }
+.lock .readout { position: absolute; inset-inline-start: 0; bottom: 4%; padding: 10px 14px; border-radius: var(--r-sm); background: rgba(6, 21, 16, 0.78); border: 1px solid rgba(255, 107, 74, 0.45); backdrop-filter: blur(8px); max-width: 74%; }
+.lock .readout b { display: block; color: var(--chili); font-size: 0.95rem; }
+.lock .readout span { color: var(--dim); font-size: 0.85rem; }
+/* page-load: the lock closes in on the King, once */
+@media (prefers-reduced-motion: no-preference) {
+  .lock .bracket { animation: lockon 1.1s cubic-bezier(.2,.8,.2,1) both; }
+  .lock .b1 { --dx: -40px; --dy: -40px; } .lock .b2 { --dx: 40px; --dy: -40px; } .lock .b3 { --dx: -40px; --dy: 40px; } .lock .b4 { --dx: 40px; --dy: 40px; }
+  .lock .readout { animation: fadein 0.5s 1s both; }
+}
+@keyframes lockon { 0% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(1.3); } 70% { opacity: 1; } 85% { transform: translate(calc(var(--dx) * -0.06), calc(var(--dy) * -0.06)); } 100% { transform: none; } }
+@keyframes fadein { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .lock .ring, .chip.live i { animation: none !important; } .hero h1 .scan { animation: none; color: var(--mist); background: none; } }
+
+/* arcade bento: sizes follow what matters most */
+.bento { display: grid; grid-template-columns: repeat(6, 1fr); gap: 14px; margin-top: 40px; }
+.tile { position: relative; padding: 26px; border-radius: var(--r-lg); background: var(--glass); border: 1px solid var(--line-soft); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); overflow: hidden; display: flex; flex-direction: column; gap: 10px; }
+.tile p { color: var(--dim); }
+.tile.flight { grid-column: span 4; grid-row: span 2; min-height: 380px; justify-content: flex-end; background: radial-gradient(120% 80% at 80% 0%, rgba(247, 181, 56, 0.22), transparent 60%), var(--glass); border-color: var(--line); }
+.tile.flight h3 { font-size: clamp(1.6rem, 3.2vw, 2.4rem); font-weight: 800; }
+.tile.flight .btn { align-self: flex-start; margin-top: 8px; }
+.flightpath { position: absolute; inset: 0 0 38% 0; width: 100%; height: 62%; }
+.flightpath .trail { fill: none; stroke: url(#trail); stroke-width: 2.5; stroke-dasharray: 2 10; stroke-linecap: round; }
+.tile.board { grid-column: span 2; grid-row: span 2; }
+.tile.check, .tile.langs { grid-column: span 3; }
+.tile.next { grid-column: span 6; flex-direction: row; flex-wrap: wrap; gap: 14px 40px; align-items: flex-start; }
+.tile.next > div { flex: 1 1 260px; }
+.tag { align-self: flex-start; display: inline-flex; align-items: center; gap: 8px; font-size: 0.82rem; font-weight: 600; padding: 5px 12px; border-radius: 999px; background: rgba(57, 226, 155, 0.12); color: var(--leaf); }
+.tag i { width: 7px; height: 7px; border-radius: 50%; background: var(--leaf); }
+.tag.soon { background: rgba(230, 240, 234, 0.07); color: var(--dim); }
+ol.lb { list-style: none; margin: 6px 0 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+ol.lb li { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: var(--r-sm); background: rgba(230, 240, 234, 0.035); font-variant-numeric: tabular-nums; }
+ol.lb li:first-child { background: rgba(247, 181, 56, 0.12); box-shadow: 0 0 0 1px rgba(247, 181, 56, 0.3) inset; }
+ol.lb .pos { width: 1.6em; color: var(--dim); font-weight: 700; }
+ol.lb li:first-child .pos { color: var(--gold); }
+ol.lb .who { flex: 1; font-weight: 600; overflow: hidden; text-overflow: ellipsis; direction: ltr; text-align: start; }
+ol.lb .pts { color: var(--gold-soft); font-weight: 600; white-space: nowrap; }
+.lb-empty { color: var(--dim); font-size: 0.95rem; }
+.replay { display: flex; align-items: flex-end; gap: 3px; height: 46px; margin-top: auto; }
+.replay i { flex: 1; border-radius: 2px; background: linear-gradient(var(--leaf), rgba(57, 226, 155, 0.15)); }
+.langlist { display: flex; flex-wrap: wrap; gap: 8px; margin-top: auto; }
+.langlist button { font: 600 0.95rem var(--body); padding: 8px 14px; border-radius: 999px; border: 1px solid var(--line-soft); background: rgba(230, 240, 234, 0.05); color: var(--mist); cursor: pointer; }
+.langlist button[aria-pressed="true"] { border-color: var(--gold); color: var(--gold-soft); background: rgba(247, 181, 56, 0.1); }
+
+/* cast: hero against villains */
+.cast { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 40px; }
+.cast article { padding: 26px; border-radius: var(--r-md); border: 1px solid var(--line-soft); background: rgba(230, 240, 234, 0.03); display: flex; flex-direction: column; gap: 8px; }
+.cast .role { font-size: 0.85rem; font-weight: 600; color: var(--leaf); }
+.cast .villain .role { color: var(--chili); }
+.cast .villain { border-color: rgba(255, 107, 74, 0.2); }
+.cast p { color: var(--dim); }
+
+/* how: a real sequence, so it is numbered */
+.steps { list-style: none; margin: 40px 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; counter-reset: s; }
+.steps li { counter-increment: s; padding: 26px; border-radius: var(--r-md); border: 1px solid var(--line-soft); background: rgba(230, 240, 234, 0.03); }
+.steps li::before { content: counter(s); display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; margin-bottom: 18px; font: 700 1rem var(--display); color: #1d1300; background: var(--gold); box-shadow: 0 0 24px rgba(247, 181, 56, 0.5); }
+.steps p { color: var(--dim); margin-top: 8px; }
+
+/* tokenomics */
+.toko { display: grid; grid-template-columns: 300px 1fr; gap: 40px; align-items: center; margin-top: 40px; padding: clamp(20px, 4vw, 36px); border-radius: var(--r-lg); background: var(--glass); border: 1px solid var(--line-soft); }
+.donut { position: relative; width: 100%; max-width: 300px; margin-inline: auto; }
+.donut svg { display: block; width: 100%; filter: drop-shadow(0 0 30px rgba(247, 181, 56, 0.25)); }
+.donut .mid { position: absolute; inset: 0; display: grid; place-content: center; text-align: center; }
+.donut .mid b { font: 800 2.4rem var(--display); }
+.donut .mid span { color: var(--dim); font-size: 0.9rem; }
+.tablewrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+th { text-align: start; color: var(--dim); font-weight: 600; padding: 0 12px 12px; border-bottom: 1px solid var(--line-soft); }
+td { padding: 13px 12px; border-bottom: 1px solid var(--line-soft); vertical-align: top; }
+td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.sw { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-inline-end: 10px; }
+.note { color: var(--dim); font-size: 0.9rem; margin-top: 14px; }
+
+/* roadmap */
+.road { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 40px; }
+.road > div { padding: 26px; border-radius: var(--r-md); border: 1px solid var(--line-soft); background: rgba(230, 240, 234, 0.03); }
+.road .now { border-color: rgba(57, 226, 155, 0.35); background: rgba(57, 226, 155, 0.06); }
+.road h3 { display: flex; align-items: center; gap: 10px; }
+.road .now h3::before { content: ''; width: 9px; height: 9px; border-radius: 50%; background: var(--leaf); box-shadow: 0 0 12px var(--leaf); }
+.road ul { margin: 14px 0 0; padding-inline-start: 18px; color: var(--dim); display: flex; flex-direction: column; gap: 6px; }
+
+/* waitlist */
+.join .panel { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(24px, 5vw, 60px); align-items: start; padding: clamp(24px, 5vw, 56px); border-radius: 36px; border: 1px solid var(--line); background: radial-gradient(90% 120% at 0% 0%, rgba(247, 181, 56, 0.16), transparent 60%), var(--glass); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
+.join .safe { margin-top: 18px; color: var(--leaf); font-weight: 600; font-size: 0.95rem; }
+form.wl { display: flex; flex-direction: column; gap: 14px; }
+form.wl label { display: flex; flex-direction: column; gap: 6px; font-size: 0.9rem; font-weight: 600; color: var(--dim); }
+form.wl input[type=text], form.wl select { width: 100%; font: 500 1rem var(--body); color: var(--mist); background: rgba(6, 21, 16, 0.6); border: 1px solid var(--line-soft); border-radius: var(--r-sm); padding: 14px; }
+form.wl select { appearance: none; -webkit-appearance: none; }
+form.wl select option { color: #000; }
+form.wl input:focus, form.wl select:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px rgba(247, 181, 56, 0.2); }
+form.wl .two { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+form.wl .check { flex-direction: row; align-items: flex-start; gap: 10px; font-weight: 500; color: var(--mist); }
+form.wl .check input { width: 20px; height: 20px; margin: 2px 0 0; accent-color: var(--gold); flex: none; }
+form.wl .btn { margin-top: 4px; }
+.fmsg { padding: 12px 14px; border-radius: var(--r-sm); font-weight: 600; font-size: 0.95rem; }
+.fmsg.ok { background: rgba(57, 226, 155, 0.12); color: var(--leaf); }
+.fmsg.err { background: rgba(255, 107, 74, 0.12); color: #ff9a82; }
+
+/* faq */
+.faq { margin-top: 32px; display: flex; flex-direction: column; gap: 10px; max-width: 820px; }
+.faq details { border: 1px solid var(--line-soft); border-radius: var(--r-md); background: rgba(230, 240, 234, 0.03); }
+.faq summary { cursor: pointer; padding: 18px 22px; font-weight: 600; font-size: 1.05rem; list-style: none; display: flex; justify-content: space-between; gap: 16px; }
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::after { content: '+'; color: var(--gold); font: 500 1.4rem/1 var(--display); }
+.faq details[open] summary::after { content: '–'; }
+.faq details p { padding: 0 22px 20px; color: var(--dim); max-width: 70ch; }
+
+footer { padding: 48px 0 64px; border-top: 1px solid var(--line-soft); color: var(--dim); font-size: 0.9rem; }
+footer .wrap { display: flex; flex-direction: column; gap: 12px; }
+footer .warn { color: var(--gold-soft); font-weight: 600; }
+footer p { max-width: 90ch; }
+
+@media (max-width: 960px) {
+  .navlinks { display: none; }
+  .hero .wrap { grid-template-columns: 1fr; }
+  .lock { width: min(82%, 400px); grid-row: 1; }
+  .bento { grid-template-columns: 1fr 1fr; }
+  .tile.flight, .tile.next { grid-column: span 2; }
+  .tile.board { grid-column: span 2; grid-row: auto; }
+  .tile.check, .tile.langs { grid-column: span 1; }
+  .cast, .steps, .road { grid-template-columns: 1fr; }
+  .toko, .join .panel { grid-template-columns: 1fr; }
+}
+@media (max-width: 600px) {
+  body { font-size: 16px; }
+  nav .play { display: none; }
+  .bento { grid-template-columns: 1fr; }
+  .tile.flight, .tile.next, .tile.board, .tile.check, .tile.langs { grid-column: span 1; }
+  .tile.flight { min-height: 340px; }
+  form.wl .two { grid-template-columns: 1fr; }
+  .telemetry div { padding: 12px 16px; }
+  .telemetry b { font-size: 1.25rem; }
+  .logo span.full { display: none; }
+  .lock { margin-bottom: 52px; }
+  .lock .readout { bottom: -30px; inset-inline-start: 50%; transform: translateX(-50%); max-width: none; width: max-content; padding: 8px 12px; text-align: center; }
+  :dir(rtl) .lock .readout { transform: translateX(50%); }
+  .lock .readout b { font-size: 0.88rem; }
+  .lock .readout span { display: none; }
+}
+</style>
+</head>
+<body>
+<nav class="top" aria-label="Main">
+  <div class="wrap">
+    <a class="logo" href="#top" dir="ltr"><i aria-hidden="true"></i><span><span class="full">General Ginger </span><b>$GNG</b></span></a>
+    <div class="navlinks">
+      <a href="#arcade" data-t="navArcade">The arcade</a>
+      <a href="#how" data-t="navHow">How it works</a>
+      <a href="#tokenomics" data-t="navToken">Tokenomics</a>
+      <a href="#faq" data-t="navFaq">FAQ</a>
+    </div>
+    <div class="navend">
+      <select class="lang" id="lang" aria-label="Language"></select>
+      <a class="btn ghost play" href="play/" data-t="navPlay">Play</a>
+      <a class="btn" href="#join" data-t="navJoin">Join waitlist</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="wrap">
+    <div>
+      <div class="chips">
+        <span class="chip live"><i></i><span data-t="chipWl">Waitlist open</span></span>
+        <span class="chip"><i></i><span data-t="chipToken">Token not launched</span></span>
+      </div>
+      <h1><span class="scan" data-t="h1">Overthrow the Ginger King.</span></h1>
+      <p class="lead" data-t="lede">Free 3D arcade games for players everywhere. They run on any phone, even on slow data. Fly with General Ginger from the streets of Lagos, beat the King's pest army, and earn points that count toward the planned $GNG airdrop.</p>
+      <div class="ctas">
+        <a class="btn" href="#join" data-t="ctaJoin">Join the airdrop waitlist</a>
+        <a class="btn ghost" href="play/" data-t="ctaPlay">Play in your browser</a>
+      </div>
+      <div class="telemetry" id="telemetry" aria-live="polite">
+        <div class="pending"><b id="st-wl">—</b><span data-t="statWl">on the waitlist</span></div>
+        <div class="pending"><b id="st-pl">—</b><span data-t="statPlayers">pilots with accounts</span></div>
+        <div><b>5</b><span data-t="statLangs">languages</span></div>
+      </div>
+    </div>
+    <figure class="lock" aria-labelledby="lock-cap" style="margin:0">
+      <span class="ring"></span><span class="ring r2"></span><span class="ring r3"></span>
+      <span class="crosshair" aria-hidden="true"></span>
+      <div class="portrait"><img src="king.webp" width="576" height="864" alt="The Ginger King, a smiling ginger root in a gold crown and green agbada, holding up a glowing spice jar." data-ta="kingAlt"></div>
+      <span class="bracket b1" aria-hidden="true"></span><span class="bracket b2" aria-hidden="true"></span><span class="bracket b3" aria-hidden="true"></span><span class="bracket b4" aria-hidden="true"></span>
+      <figcaption class="readout" id="lock-cap"><b data-t="lockLabel">Target locked: the Ginger King</b><span data-t="lockCap">Wanted for crimes against spice.</span></figcaption>
+    </figure>
+  </div>
+</header>
+
+<section id="arcade" aria-labelledby="arc-h">
+  <div class="wrap">
+    <h2 id="arc-h" data-t="arcH">Inside the arcade</h2>
+    <p class="lead" data-t="arcP">One game is live today. Two more are on the way, all against the same army.</p>
+    <div class="bento">
+      <article class="tile flight">
+        <svg class="flightpath" viewBox="0 0 600 240" preserveAspectRatio="none" aria-hidden="true">
+          <defs><linearGradient id="trail" x1="0" x2="1"><stop offset="0" stop-color="#f7b538" stop-opacity="0"/><stop offset="1" stop-color="#f7b538"/></linearGradient></defs>
+          <path class="trail" d="M-10 170 C 120 170, 160 70, 280 95 S 470 30, 560 50"/>
+          <circle cx="560" cy="50" r="7" fill="#ffd987"><animate attributeName="r" values="6;9;6" dur="2.4s" repeatCount="indefinite"/></circle>
+          <circle cx="430" cy="110" r="4" fill="#ff6b4a"/><circle cx="170" cy="120" r="4" fill="#ff6b4a"/><circle cx="330" cy="70" r="5" fill="#39e29b"/>
+        </svg>
+        <span class="tag"><i></i><span data-t="flightTag">Playable now</span></span>
+        <h3 data-t="flightH">General Ginger Flight</h3>
+        <p data-t="flightP">A 3D flying game in your browser. Dodge rot bombs, shears and sticky nets, grab power-ups, and shoot down the King's airship to reach the next level.</p>
+        <a class="btn" href="play/" data-t="flightCta">Play now</a>
+      </article>
+      <article class="tile board" aria-labelledby="board-h">
+        <span class="tag"><i></i><span data-t="liveTag">Live</span></span>
+        <h3 id="board-h" data-t="boardH">Top pilots right now</h3>
+        <ol class="lb" id="lb"></ol>
+        <p class="lb-empty" id="lb-empty" data-t="boardEmpty">Loading the leaderboard…</p>
+      </article>
+      <article class="tile check">
+        <h3 data-t="checkH">Every score is replayed</h3>
+        <p data-t="checkP">Our server replays each flight move by move before the points count, so cheaters can't farm the airdrop.</p>
+        <div class="replay" aria-hidden="true" id="replay"></div>
+      </article>
+      <article class="tile langs">
+        <h3 data-t="langH">Play in your language</h3>
+        <p data-t="langP">The game and this page speak English, French, Spanish, Portuguese and Arabic.</p>
+        <div class="langlist" id="langlist"></div>
+      </article>
+      <article class="tile next">
+        <div><span class="tag soon"><span data-t="nextTag">Coming next</span></span><h3 style="margin-top:10px" data-t="castle">Ginger Castle Run</h3><p data-t="castleP">A retro platformer through the King's castle. Collect spice, dodge traps and reach the throne room.</p></div>
+        <div><span class="tag soon"><span data-t="laterTag">Coming later</span></span><h3 style="margin-top:10px" data-t="revenge">Ginger King's Revenge</h3><p data-t="revengeP">A beat-'em-up against pest bosses, with the King himself as the final fight.</p></div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section aria-labelledby="story-h" style="padding-top:0">
+  <div class="wrap">
+    <h2 id="story-h" data-t="storyH">A coup in Spicelantis</h2>
+    <div class="cast">
+      <article><span class="role" data-t="roleHero">Hero</span><h3 data-t="gg">General Ginger</h3><p data-t="ggP">A rogue Air Force general in a patched-up vintage biplane, flying to free the throne of Spicelantis.</p></article>
+      <article class="villain"><span class="role" data-t="roleVillain">Villain</span><h3 data-t="king">The Ginger King</h3><p data-t="kingP">The tyrant on the throne. He rides a royal airship and rains spice bombs on anyone who challenges him.</p></article>
+      <article class="villain"><span class="role" data-t="roleArmy">His army</span><h3 data-t="army">The Pest Battalion</h3><p data-t="armyP">Shoot-borer caterpillars on trebuchets, white grubs throwing shears, and root-knot nematodes spitting sticky nets.</p></article>
+    </div>
+  </div>
+</section>
+
+<section id="how" aria-labelledby="how-h" style="padding-top:0">
+  <div class="wrap">
+    <h2 id="how-h" data-t="howH">Play free. Earn points.</h2>
+    <ol class="steps">
+      <li><h3 data-t="s1H">Sign up with your email</h3><p data-t="s1P">Then sign in any time with your gamer tag and password. No crypto wallet, seed phrase or gas fees.</p></li>
+      <li><h3 data-t="s2H">Play and earn points</h3><p data-t="s2P">Fly further for more points, up to 300 a game and 1,500 a day. Each hit costs you 15%.</p></li>
+      <li><h3 data-t="s3H">Points count toward the airdrop</h3><p data-t="s3P">If and when $GNG launches, verified points decide your share of the airdrop pool.</p></li>
+    </ol>
+  </div>
+</section>
+
+<section id="tokenomics" aria-labelledby="tok-h" style="padding-top:0">
+  <div class="wrap">
+    <h2 id="tok-h" data-t="tokH">Most of it goes to players</h2>
+    <div class="toko">
+      <div class="donut">
+        <svg viewBox="0 0 200 200" role="img" data-ta="tokAria" aria-label="Planned $GNG supply split: 40% play-to-airdrop, 25% liquidity, 15% ecosystem and merch, 10% marketing, 10% team">
+          <g transform="rotate(-90 100 100)" fill="none" stroke-width="22">
+            <circle cx="100" cy="100" r="74" stroke="#f7b538" stroke-dasharray="185.98 464.96" stroke-dashoffset="0"/>
+            <circle cx="100" cy="100" r="74" stroke="#39e29b" stroke-dasharray="116.24 464.96" stroke-dashoffset="-185.98"/>
+            <circle cx="100" cy="100" r="74" stroke="#ff6b4a" stroke-dasharray="69.74 464.96" stroke-dashoffset="-302.22"/>
+            <circle cx="100" cy="100" r="74" stroke="#e6f0ea" stroke-dasharray="46.5 464.96" stroke-dashoffset="-371.96"/>
+            <circle cx="100" cy="100" r="74" stroke="#5c7a6b" stroke-dasharray="46.5 464.96" stroke-dashoffset="-418.46"/>
+          </g>
+        </svg>
+        <div class="mid"><b>1B</b><span data-t="supply">fixed supply</span></div>
+      </div>
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th data-t="thPool">Pool</th><th data-t="thShare">Share</th><th>$GNG</th><th data-t="thRelease">Release</th></tr></thead>
+          <tbody>
+            <tr><td><span class="sw" style="background:#f7b538"></span><span data-t="p1">Play-to-airdrop</span></td><td class="num">40%</td><td class="num">400,000,000</td><td data-t="p1r">Earned by players through verified points</td></tr>
+            <tr><td><span class="sw" style="background:#39e29b"></span><span data-t="p2">Liquidity</span></td><td class="num">25%</td><td class="num">250,000,000</td><td data-t="p2r">Locked in a contract for 24 months</td></tr>
+            <tr><td><span class="sw" style="background:#ff6b4a"></span><span data-t="p3">Ecosystem &amp; merch</span></td><td class="num">15%</td><td class="num">150,000,000</td><td data-t="p3r">Released as merch and partner programmes grow</td></tr>
+            <tr><td><span class="sw" style="background:#e6f0ea"></span><span data-t="p4">Marketing</span></td><td class="num">10%</td><td class="num">100,000,000</td><td data-t="p4r">10% at launch, the rest over 12 months</td></tr>
+            <tr><td><span class="sw" style="background:#5c7a6b"></span><span data-t="p5">Team</span></td><td class="num">10%</td><td class="num">100,000,000</td><td data-t="p5r">6-month cliff, then 18 months of gradual release</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <p class="note" data-t="tokNote">This is the planned split and may change before launch. $GNG has not been created yet.</p>
+  </div>
+</section>
+
+<section aria-labelledby="road-h" style="padding-top:0">
+  <div class="wrap">
+    <h2 id="road-h" data-t="roadH">Where we are</h2>
+    <div class="road">
+      <div class="now"><h3 data-t="now">Now</h3><ul><li data-t="r1">General Ginger Flight playable worldwide</li><li data-t="r2">Player accounts with saved points</li><li data-t="r3">Anti-cheat score checking</li><li data-t="r4">The game in five languages</li><li data-t="r5">Airdrop waitlist open to every country</li></ul></div>
+      <div><h3 data-t="next">Next</h3><ul><li data-t="r6">Global leaderboard page</li><li data-t="r7">Sound &amp; Sip live events, starting in Abuja</li><li data-t="r8">Legal review in Nigeria and our other big player countries</li></ul></div>
+      <div><h3 data-t="later">Later</h3><ul><li data-t="r9">Two more games</li><li data-t="r10">Merch store</li><li data-t="r11">$GNG launch and airdrop, only after regulatory approval</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<section class="join" id="join" aria-labelledby="join-h" style="padding-top:0">
+  <div class="wrap">
+    <div class="panel">
+      <div>
+        <h2 id="join-h" data-t="joinH">Get in early</h2>
+        <p class="lead" data-t="joinP">Join the list and we'll tell you about new games, events and the $GNG launch. It's free.</p>
+        <p class="safe" data-t="joinSafe">We will never ask you to pay or send crypto to join.</p>
+      </div>
+      <form class="wl" id="wl-form" novalidate>
+        <label for="wl-contact"><span data-t="fContact">Email or phone number</span>
+          <input type="text" id="wl-contact" autocomplete="email" placeholder="you@email.com or +1 555 123 4567" data-tp="fContactPh">
+        </label>
+        <div class="two">
+          <label for="wl-tag"><span data-t="fTag">Gamer tag</span>
+            <input type="text" id="wl-tag" maxlength="15" autocomplete="nickname" placeholder="Sky_Ace">
+          </label>
+          <label for="wl-country"><span data-t="fCountry">Country</span>
+            <select id="wl-country" data-codes="AF AX AL DZ AS AD AO AI AQ AG AR AM AW AU AT AZ BS BH BD BB BY BE BZ BJ BM BT BO BQ BA BW BV BR IO BN BG BF BI CV KH CM CA KY CF TD CL CN CX CC CO KM CG CD CK CR CI HR CU CW CY CZ DK DJ DM DO EC EG SV GQ ER EE SZ ET FK FO FJ FI FR GF PF TF GA GM GE DE GH GI GR GL GD GP GU GT GG GN GW GY HT HM VA HN HK HU IS IN ID IR IQ IE IM IL IT JM JP JE JO KZ KE KI KP KR XK KW KG LA LV LB LS LR LY LI LT LU MO MG MW MY MV ML MT MH MQ MR MU YT MX FM MD MC MN ME MS MA MZ MM NA NR NP NL NC NZ NI NE NG NU NF MK MP NO OM PK PW PS PA PG PY PE PH PN PL PT PR QA RE RO RU RW BL SH KN LC MF PM VC WS SM ST SA SN RS SC SL SG SX SK SI SB SO ZA GS SS ES LK SD SR SJ SE CH SY TW TJ TZ TH TL TG TK TO TT TN TR TM TC TV UG UA AE GB US UM UY UZ VU VE VN VG VI WF EH YE ZM ZW">
+              <option value="" data-t="fChoose">Choose your country</option>
+            </select>
+          </label>
+        </div>
+        <label class="check" for="wl-adult"><input type="checkbox" id="wl-adult"><span data-t="fAdult">I'm 18 or older.</span></label>
+        <label class="check" for="wl-consent"><input type="checkbox" id="wl-consent"><span data-t="fConsent">Contact me about General Ginger and the $GNG launch. I can ask to be removed at any time.</span></label>
+        <div class="fmsg" id="wl-msg" role="status" hidden></div>
+        <button class="btn" type="submit" id="wl-btn" data-t="fBtn">Join the waitlist</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<section id="faq" aria-labelledby="faq-h" style="padding-top:0">
+  <div class="wrap">
+    <h2 id="faq-h" data-t="faqH">Questions</h2>
+    <div class="faq">
+      <details><summary data-t="q1">Can I buy $GNG now?</summary><p data-t="a1">No. $GNG has not been created, so anyone selling it now is a scammer. We will never message you asking for money or crypto.</p></details>
+      <details><summary data-t="q2">Do the games cost anything?</summary><p data-t="a2">No. The games are free to play, and you never pay to earn points.</p></details>
+      <details><summary data-t="q3">Are points worth money?</summary><p data-t="a3">No. Points have no cash value. If $GNG launches, verified points decide your share of the airdrop pool, but the token's value is not promised and could be zero.</p></details>
+      <details><summary data-t="q4">When is the airdrop?</summary><p data-t="a4">There is no date yet. Rules for digital assets are different in every country (in Nigeria, for example, they are regulated as securities), so we will only launch after a legal review, and only where the law allows. Joining the waitlist is the best way to hear first.</p></details>
+      <details><summary data-t="q5">Who can join?</summary><p data-t="a5">Anyone 18 or older, anywhere in the world, can play and join the waitlist. Whether you can receive $GNG depends on the law where you live, so some countries may be left out of the airdrop. We can't accept sign-ups from countries under full international sanctions.</p></details>
+      <details><summary data-t="q6">Can I play from my country?</summary><p data-t="a6">Yes. The game is free and works in any country with a web browser. Phone numbers need your country code, like +44 or +1. Daily point limits reset at midnight UTC.</p></details>
+      <details><summary data-t="q7">What do you do with my details?</summary><p data-t="a7">We only use your email or phone number to contact you about General Ginger and the launch. We don't sell it, and you can ask us for a copy or to delete it at any time, wherever you live.</p></details>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <a class="logo" href="#top" dir="ltr"><i aria-hidden="true"></i><span>General Ginger <b>$GNG</b></span></a>
+    <p class="warn" data-t="warn">We will never DM you to buy $GNG or ask for your wallet's secret phrase.</p>
+    <p data-t="legal">$GNG has not been issued. Nothing on this page is an offer to sell, or a request to buy, securities or digital assets, and nothing here is financial advice. Any airdrop, including who qualifies, how much and when, depends on regulatory approval and may change or not happen.</p>
+  </div>
+</footer>
+
+<script>
+(() => {
+  // const WAITLIST_API = 'https://gng-flight-verify.yourname.workers.dev';
+  const WAITLIST_API = '';
+  const L = {
+    en: {
+      meta: 'Free 3D arcade games you can play anywhere in the world, on any phone. Overthrow the Ginger King, earn points, and join the $GNG airdrop waitlist.', language: 'Language',
+      navArcade: 'The arcade', navHow: 'How it works', navToken: 'Tokenomics', navFaq: 'FAQ', navPlay: 'Play', navJoin: 'Join waitlist',
+      chipWl: 'Waitlist open', chipToken: 'Token not launched', h1: 'Overthrow the Ginger King.',
+      lede: "Free 3D arcade games for players everywhere. They run on any phone, even on slow data. Fly with General Ginger from the streets of Lagos, beat the King's pest army, and earn points that count toward the planned $GNG airdrop.",
+      ctaJoin: 'Join the airdrop waitlist', ctaPlay: 'Play in your browser', statWl: 'on the waitlist', statPlayers: 'pilots with accounts', statLangs: 'languages',
+      kingAlt: 'The Ginger King, a smiling ginger root in a gold crown and green agbada, holding up a glowing spice jar.', lockLabel: 'Target locked: the Ginger King', lockCap: 'Wanted for crimes against spice.',
+      arcH: 'Inside the arcade', arcP: 'One game is live today. Two more are on the way, all against the same army.',
+      flightTag: 'Playable now', flightH: 'General Ginger Flight', flightP: "A 3D flying game in your browser. Dodge rot bombs, shears and sticky nets, grab power-ups, and shoot down the King's airship to reach the next level.", flightCta: 'Play now',
+      liveTag: 'Live', boardH: 'Top pilots right now', boardEmpty: 'Loading the leaderboard…', boardNone: 'No pilots on the board yet. Play a flight to be first.', ptsN: '{n} pts',
+      checkH: 'Every score is replayed', checkP: "Our server replays each flight move by move before the points count, so cheaters can't farm the airdrop.",
+      langH: 'Play in your language', langP: 'The game and this page speak English, French, Spanish, Portuguese and Arabic.',
+      nextTag: 'Coming next', castle: 'Ginger Castle Run', castleP: "A retro platformer through the King's castle. Collect spice, dodge traps and reach the throne room.",
+      laterTag: 'Coming later', revenge: "Ginger King's Revenge", revengeP: "A beat-'em-up against pest bosses, with the King himself as the final fight.",
+      storyH: 'A coup in Spicelantis', roleHero: 'Hero', gg: 'General Ginger', ggP: 'A rogue Air Force general in a patched-up vintage biplane, flying to free the throne of Spicelantis.',
+      roleVillain: 'Villain', king: 'The Ginger King', kingP: 'The tyrant on the throne. He rides a royal airship and rains spice bombs on anyone who challenges him.',
+      roleArmy: 'His army', army: 'The Pest Battalion', armyP: 'Shoot-borer caterpillars on trebuchets, white grubs throwing shears, and root-knot nematodes spitting sticky nets.',
+      howH: 'Play free. Earn points.', s1H: 'Sign up with your email', s1P: 'Then sign in any time with your gamer tag and password. No crypto wallet, seed phrase or gas fees.',
+      s2H: 'Play and earn points', s2P: 'Fly further for more points, up to 300 a game and 1,500 a day. Each hit costs you 15%.',
+      s3H: 'Points count toward the airdrop', s3P: 'If and when $GNG launches, verified points decide your share of the airdrop pool.',
+      tokH: 'Most of it goes to players', tokAria: 'Planned $GNG supply split: 40% play-to-airdrop, 25% liquidity, 15% ecosystem and merch, 10% marketing, 10% team', supply: 'fixed supply',
+      thPool: 'Pool', thShare: 'Share', thRelease: 'Release',
+      p1: 'Play-to-airdrop', p1r: 'Earned by players through verified points', p2: 'Liquidity', p2r: 'Locked in a contract for 24 months', p3: 'Ecosystem & merch', p3r: 'Released as merch and partner programmes grow',
+      p4: 'Marketing', p4r: '10% at launch, the rest over 12 months', p5: 'Team', p5r: '6-month cliff, then 18 months of gradual release',
+      tokNote: 'This is the planned split and may change before launch. $GNG has not been created yet.',
+      roadH: 'Where we are', now: 'Now', next: 'Next', later: 'Later',
+      r1: 'General Ginger Flight playable worldwide', r2: 'Player accounts with saved points', r3: 'Anti-cheat score checking', r4: 'The game in five languages', r5: 'Airdrop waitlist open to every country',
+      r6: 'Global leaderboard page', r7: 'Sound & Sip live events, starting in Abuja', r8: 'Legal review in Nigeria and our other big player countries',
+      r9: 'Two more games', r10: 'Merch store', r11: '$GNG launch and airdrop, only after regulatory approval',
+      joinH: 'Get in early', joinP: "Join the list and we'll tell you about new games, events and the $GNG launch. It's free.", joinSafe: 'We will never ask you to pay or send crypto to join.',
+      fContact: 'Email or phone number', fContactPh: 'you@email.com or +1 555 123 4567', fTag: 'Gamer tag', fCountry: 'Country', fChoose: 'Choose your country',
+      fAdult: "I'm 18 or older.", fConsent: 'Contact me about General Ginger and the $GNG launch. I can ask to be removed at any time.', fBtn: 'Join the waitlist', fJoining: 'Joining…',
+      eContact: 'Enter your email address or phone number.', eCountry: 'Choose your country.', eTag: 'Gamer tag must be 3 to 15 letters, numbers or underscores.', eAdult: 'You must be 18 or older to join.',
+      eConsent: 'Tick the box so we can contact you about the launch.', eGeneric: 'Something went wrong. Try again.', eNet: 'Could not reach the server. Check your connection and try again.',
+      sPhone: 'Enter a valid email, or a phone number with your country code (like +44 7700 900123).', sBlocked: "Sorry, we can't accept sign-ups from this country.", sRate: 'Too many sign-ups from this network. Try again in a few minutes.',
+      okNew: "You're in! You are #{n} on the waitlist.", okAlready: "You're already on the list at #{n}.",
+      faqH: 'Questions',
+      q1: 'Can I buy $GNG now?', a1: 'No. $GNG has not been created, so anyone selling it now is a scammer. We will never message you asking for money or crypto.',
+      q2: 'Do the games cost anything?', a2: 'No. The games are free to play, and you never pay to earn points.',
+      q3: 'Are points worth money?', a3: "No. Points have no cash value. If $GNG launches, verified points decide your share of the airdrop pool, but the token's value is not promised and could be zero.",
+      q4: 'When is the airdrop?', a4: 'There is no date yet. Rules for digital assets are different in every country (in Nigeria, for example, they are regulated as securities), so we will only launch after a legal review, and only where the law allows. Joining the waitlist is the best way to hear first.',
+      q5: 'Who can join?', a5: "Anyone 18 or older, anywhere in the world, can play and join the waitlist. Whether you can receive $GNG depends on the law where you live, so some countries may be left out of the airdrop. We can't accept sign-ups from countries under full international sanctions.",
+      q6: 'Can I play from my country?', a6: 'Yes. The game is free and works in any country with a web browser. Phone numbers need your country code, like +44 or +1. Daily point limits reset at midnight UTC.',
+      q7: 'What do you do with my details?', a7: "We only use your email or phone number to contact you about General Ginger and the launch. We don't sell it, and you can ask us for a copy or to delete it at any time, wherever you live.",
+      warn: "We will never DM you to buy $GNG or ask for your wallet's secret phrase.",
+      legal: '$GNG has not been issued. Nothing on this page is an offer to sell, or a request to buy, securities or digital assets, and nothing here is financial advice. Any airdrop, including who qualifies, how much and when, depends on regulatory approval and may change or not happen.'
+    },
+    fr: {
+      meta: "Jeux d'arcade 3D gratuits, jouables partout dans le monde sur n'importe quel téléphone. Renverse le Roi Gingembre, gagne des points et rejoins la liste d'attente de l'airdrop $GNG.", language: 'Langue',
+      navArcade: "L'arcade", navHow: 'Comment ça marche', navToken: 'Tokenomics', navFaq: 'FAQ', navPlay: 'Jouer', navJoin: "Liste d'attente",
+      chipWl: "Liste d'attente ouverte", chipToken: 'Jeton pas encore lancé', h1: 'Renverse le Roi Gingembre.',
+      lede: "Des jeux d'arcade 3D gratuits pour les joueurs du monde entier. Ils tournent sur n'importe quel téléphone, même avec une connexion lente. Vole avec General Ginger depuis les rues de Lagos, bats l'armée de nuisibles du Roi et gagne des points qui comptent pour l'airdrop $GNG prévu.",
+      ctaJoin: "Rejoindre la liste de l'airdrop", ctaPlay: 'Jouer dans le navigateur', statWl: "sur la liste d'attente", statPlayers: 'pilotes inscrits', statLangs: 'langues',
+      kingAlt: "Le Roi Gingembre, une racine de gingembre souriante avec une couronne d'or et un agbada vert, brandissant un pot d'épices lumineux.", lockLabel: 'Cible verrouillée : le Roi Gingembre', lockCap: 'Recherché pour crimes contre les épices.',
+      arcH: "Dans l'arcade", arcP: "Un jeu est déjà en ligne. Deux autres arrivent, tous contre la même armée.",
+      flightTag: 'Jouable maintenant', flightH: 'General Ginger Flight', flightP: "Un jeu de vol en 3D dans ton navigateur. Esquive les bombes pourries, les cisailles et les filets collants, attrape les bonus et abats le dirigeable du Roi pour passer au niveau suivant.", flightCta: 'Jouer',
+      liveTag: 'En direct', boardH: 'Meilleurs pilotes du moment', boardEmpty: 'Chargement du classement…', boardNone: 'Pas encore de pilote au classement. Joue un vol pour être le premier.', ptsN: '{n} pts',
+      checkH: 'Chaque score est rejoué', checkP: "Notre serveur rejoue chaque vol coup par coup avant de compter les points : les tricheurs ne peuvent pas piller l'airdrop.",
+      langH: 'Joue dans ta langue', langP: "Le jeu et cette page parlent anglais, français, espagnol, portugais et arabe.",
+      nextTag: 'Bientôt', castle: 'Ginger Castle Run', castleP: "Un jeu de plateforme rétro dans le château du Roi. Ramasse des épices, évite les pièges et atteins la salle du trône.",
+      laterTag: 'Plus tard', revenge: "Ginger King's Revenge", revengeP: 'Un beat-them-all contre les boss nuisibles, avec le Roi en personne pour le combat final.',
+      storyH: 'Un coup d’État à Spicelantis', roleHero: 'Héros', gg: 'General Ginger', ggP: "Un général rebelle de l'armée de l'air, aux commandes d'un vieux biplan rafistolé, qui vole libérer le trône de Spicelantis.",
+      roleVillain: 'Méchant', king: 'Le Roi Gingembre', kingP: "Le tyran sur le trône. Il voyage en dirigeable royal et fait pleuvoir des bombes d'épices sur quiconque le défie.",
+      roleArmy: 'Son armée', army: 'Le Bataillon des nuisibles', armyP: 'Des chenilles foreuses sur des trébuchets, des vers blancs qui lancent des cisailles et des nématodes qui crachent des filets collants.',
+      howH: 'Joue gratuitement. Gagne des points.', s1H: 'Inscris-toi avec ton e-mail', s1P: 'Ensuite, connecte-toi quand tu veux avec ton pseudo et ton mot de passe. Pas de portefeuille crypto, de phrase secrète ni de frais.',
+      s2H: 'Joue et gagne des points', s2P: "Plus tu voles loin, plus tu gagnes : jusqu'à 300 points par partie et 1 500 par jour. Chaque coup encaissé te coûte 15 %.",
+      s3H: "Tes points comptent pour l'airdrop", s3P: "Si $GNG est lancé, tes points vérifiés détermineront ta part de l'airdrop.",
+      tokH: "L'essentiel va aux joueurs", tokAria: "Répartition prévue de $GNG : 40 % airdrop joueurs, 25 % liquidité, 15 % écosystème et merch, 10 % marketing, 10 % équipe", supply: 'offre fixe',
+      thPool: 'Réserve', thShare: 'Part', thRelease: 'Déblocage',
+      p1: 'Airdrop des joueurs', p1r: 'Gagné par les joueurs grâce aux points vérifiés', p2: 'Liquidité', p2r: 'Bloquée dans un contrat pendant 24 mois', p3: 'Écosystème et merch', p3r: 'Débloqué au fil du développement du merch et des partenariats',
+      p4: 'Marketing', p4r: '10 % au lancement, le reste sur 12 mois', p5: 'Équipe', p5r: 'Blocage de 6 mois, puis déblocage progressif sur 18 mois',
+      tokNote: "Il s'agit de la répartition prévue, qui peut changer avant le lancement. $GNG n'a pas encore été créé.",
+      roadH: 'Où nous en sommes', now: 'Maintenant', next: 'Ensuite', later: 'Plus tard',
+      r1: 'General Ginger Flight jouable dans le monde entier', r2: 'Comptes joueurs avec points enregistrés', r3: 'Vérification anti-triche des scores', r4: 'Le jeu en cinq langues', r5: "Liste d'attente de l'airdrop ouverte à tous les pays",
+      r6: 'Page de classement mondial', r7: 'Événements Sound & Sip, en commençant par Abuja', r8: 'Examen juridique au Nigeria et dans nos autres grands pays de joueurs',
+      r9: 'Deux nouveaux jeux', r10: 'Boutique de merch', r11: "Lancement de $GNG et airdrop, seulement après approbation des autorités",
+      joinH: 'Arrive en avance', joinP: "Rejoins la liste et nous te préviendrons des nouveaux jeux, des événements et du lancement de $GNG. C'est gratuit.", joinSafe: "Nous ne te demanderons jamais de payer ni d'envoyer de crypto pour t'inscrire.",
+      fContact: 'E-mail ou numéro de téléphone', fContactPh: 'toi@email.com ou +33 6 12 34 56 78', fTag: 'Pseudo', fCountry: 'Pays', fChoose: 'Choisis ton pays',
+      fAdult: "J'ai 18 ans ou plus.", fConsent: "Contactez-moi au sujet de General Ginger et du lancement de $GNG. Je peux demander à être retiré à tout moment.", fBtn: "Rejoindre la liste", fJoining: 'Inscription…',
+      eContact: 'Entre ton e-mail ou ton numéro de téléphone.', eCountry: 'Choisis ton pays.', eTag: 'Le pseudo doit faire 3 à 15 lettres, chiffres ou tirets bas.', eAdult: 'Tu dois avoir 18 ans ou plus pour t’inscrire.',
+      eConsent: 'Coche la case pour que nous puissions te contacter au sujet du lancement.', eGeneric: "Une erreur s'est produite. Réessaie.", eNet: 'Impossible de joindre le serveur. Vérifie ta connexion et réessaie.',
+      sPhone: 'Entre un e-mail valide, ou un numéro avec ton indicatif pays (comme +33 6 12 34 56 78).', sBlocked: 'Désolé, nous ne pouvons pas accepter les inscriptions depuis ce pays.', sRate: "Trop d'inscriptions depuis ce réseau. Réessaie dans quelques minutes.",
+      okNew: "C'est fait ! Tu es n° {n} sur la liste d'attente.", okAlready: 'Tu es déjà sur la liste, en position {n}.',
+      faqH: 'Questions',
+      q1: 'Puis-je acheter du $GNG maintenant ?', a1: "Non. $GNG n'a pas été créé, donc toute personne qui en vend est un escroc. Nous ne te contacterons jamais pour te demander de l'argent ou des cryptos.",
+      q2: 'Les jeux sont-ils payants ?', a2: 'Non. Les jeux sont gratuits et tu ne paies jamais pour gagner des points.',
+      q3: "Les points valent-ils de l'argent ?", a3: "Non. Les points n'ont aucune valeur monétaire. Si $GNG est lancé, les points vérifiés détermineront ta part de l'airdrop, mais la valeur du jeton n'est pas garantie et pourrait être nulle.",
+      q4: "Quand aura lieu l'airdrop ?", a4: "Il n'y a pas encore de date. Les règles sur les actifs numériques diffèrent selon les pays (au Nigeria, par exemple, ils sont réglementés comme des valeurs mobilières), donc nous ne lancerons qu'après un examen juridique, et seulement là où la loi le permet. La liste d'attente est le meilleur moyen d'être informé en premier.",
+      q5: 'Qui peut participer ?', a5: "Toute personne de 18 ans ou plus, partout dans le monde, peut jouer et rejoindre la liste d'attente. Recevoir du $GNG dépendra de la loi de ton pays : certains pays pourraient être exclus de l'airdrop. Nous ne pouvons pas accepter les inscriptions depuis les pays soumis à des sanctions internationales totales.",
+      q6: 'Puis-je jouer depuis mon pays ?', a6: "Oui. Le jeu est gratuit et fonctionne dans tous les pays avec un navigateur web. Les numéros de téléphone doivent inclure l'indicatif pays, comme +33 ou +1. Les limites de points quotidiennes sont remises à zéro à minuit UTC.",
+      q7: 'Que faites-vous de mes données ?', a7: "Nous utilisons ton e-mail ou ton numéro uniquement pour te contacter au sujet de General Ginger et du lancement. Nous ne les vendons pas, et tu peux en demander une copie ou leur suppression à tout moment, où que tu vives.",
+      warn: 'Nous ne t’enverrons jamais de message pour te vendre du $GNG ni pour te demander la phrase secrète de ton portefeuille.',
+      legal: "$GNG n'a pas été émis. Rien sur cette page ne constitue une offre de vente ou une sollicitation d'achat de valeurs mobilières ou d'actifs numériques, ni un conseil financier. Tout airdrop, y compris qui y a droit, combien et quand, dépend de l'approbation des autorités et peut changer ou ne pas avoir lieu."
+    },
+    es: {
+      meta: 'Juegos arcade 3D gratis para jugar en cualquier parte del mundo y en cualquier móvil. Derroca al Rey Jengibre, gana puntos y únete a la lista de espera del airdrop de $GNG.', language: 'Idioma',
+      navArcade: 'El arcade', navHow: 'Cómo funciona', navToken: 'Tokenomics', navFaq: 'Preguntas', navPlay: 'Jugar', navJoin: 'Lista de espera',
+      chipWl: 'Lista de espera abierta', chipToken: 'Token aún no lanzado', h1: 'Derroca al Rey Jengibre.',
+      lede: 'Juegos arcade 3D gratis para jugadores de todo el mundo. Funcionan en cualquier móvil, incluso con datos lentos. Vuela con General Ginger desde las calles de Lagos, vence al ejército de plagas del Rey y gana puntos que cuentan para el airdrop previsto de $GNG.',
+      ctaJoin: 'Únete a la lista del airdrop', ctaPlay: 'Jugar en el navegador', statWl: 'en la lista de espera', statPlayers: 'pilotos con cuenta', statLangs: 'idiomas',
+      kingAlt: 'El Rey Jengibre, una raíz de jengibre sonriente con corona de oro y agbada verde, sosteniendo un tarro de especias brillante.', lockLabel: 'Objetivo fijado: el Rey Jengibre', lockCap: 'Se busca por crímenes contra las especias.',
+      arcH: 'Dentro del arcade', arcP: 'Un juego ya está disponible. Vienen dos más, todos contra el mismo ejército.',
+      flightTag: 'Disponible ya', flightH: 'General Ginger Flight', flightP: 'Un juego de vuelo en 3D en tu navegador. Esquiva bombas podridas, tijeras y redes pegajosas, recoge mejoras y derriba el dirigible del Rey para pasar de nivel.', flightCta: 'Jugar ahora',
+      liveTag: 'En vivo', boardH: 'Mejores pilotos ahora', boardEmpty: 'Cargando la clasificación…', boardNone: 'Aún no hay pilotos en la clasificación. Juega un vuelo y sé el primero.', ptsN: '{n} pts',
+      checkH: 'Cada puntuación se repite', checkP: 'Nuestro servidor repite cada vuelo movimiento a movimiento antes de contar los puntos, así nadie puede hacer trampa con el airdrop.',
+      langH: 'Juega en tu idioma', langP: 'El juego y esta página hablan inglés, francés, español, portugués y árabe.',
+      nextTag: 'Próximamente', castle: 'Ginger Castle Run', castleP: 'Un plataformas retro por el castillo del Rey. Recoge especias, esquiva trampas y llega al salón del trono.',
+      laterTag: 'Más adelante', revenge: "Ginger King's Revenge", revengeP: 'Un beat-em-up contra jefes plaga, con el propio Rey como combate final.',
+      storyH: 'Un golpe de estado en Spicelantis', roleHero: 'Héroe', gg: 'General Ginger', ggP: 'Un general rebelde de la Fuerza Aérea en un viejo biplano remendado, que vuela para liberar el trono de Spicelantis.',
+      roleVillain: 'Villano', king: 'El Rey Jengibre', kingP: 'El tirano del trono. Viaja en un dirigible real y lanza bombas de especias a quien lo desafíe.',
+      roleArmy: 'Su ejército', army: 'El Batallón de Plagas', armyP: 'Orugas barrenadoras en catapultas, gusanos blancos que lanzan tijeras y nematodos que escupen redes pegajosas.',
+      howH: 'Juega gratis. Gana puntos.', s1H: 'Regístrate con tu correo', s1P: 'Después entra cuando quieras con tu nombre de jugador y contraseña. Sin billetera cripto, sin frase semilla y sin comisiones.',
+      s2H: 'Juega y gana puntos', s2P: 'Cuanto más lejos vueles, más puntos: hasta 300 por partida y 1.500 al día. Cada golpe te cuesta un 15 %.',
+      s3H: 'Los puntos cuentan para el airdrop', s3P: 'Si $GNG se lanza, tus puntos verificados decidirán tu parte del airdrop.',
+      tokH: 'La mayor parte es para los jugadores', tokAria: 'Reparto previsto de $GNG: 40 % airdrop para jugadores, 25 % liquidez, 15 % ecosistema y merch, 10 % marketing, 10 % equipo', supply: 'suministro fijo',
+      thPool: 'Fondo', thShare: 'Parte', thRelease: 'Liberación',
+      p1: 'Airdrop para jugadores', p1r: 'Lo ganan los jugadores con puntos verificados', p2: 'Liquidez', p2r: 'Bloqueada en un contrato durante 24 meses', p3: 'Ecosistema y merch', p3r: 'Se libera a medida que crecen el merch y las alianzas',
+      p4: 'Marketing', p4r: '10 % en el lanzamiento, el resto en 12 meses', p5: 'Equipo', p5r: 'Bloqueo de 6 meses y luego 18 meses de liberación gradual',
+      tokNote: 'Este es el reparto previsto y puede cambiar antes del lanzamiento. $GNG todavía no se ha creado.',
+      roadH: 'Dónde estamos', now: 'Ahora', next: 'Después', later: 'Más adelante',
+      r1: 'General Ginger Flight disponible en todo el mundo', r2: 'Cuentas de jugador con puntos guardados', r3: 'Verificación antitrampas de puntuaciones', r4: 'El juego en cinco idiomas', r5: 'Lista de espera del airdrop abierta a todos los países',
+      r6: 'Página de clasificación mundial', r7: 'Eventos en vivo Sound & Sip, empezando en Abuja', r8: 'Revisión legal en Nigeria y en nuestros otros grandes países de jugadores',
+      r9: 'Dos juegos más', r10: 'Tienda de merch', r11: 'Lanzamiento de $GNG y airdrop, solo tras la aprobación regulatoria',
+      joinH: 'Entra temprano', joinP: 'Únete a la lista y te avisaremos de nuevos juegos, eventos y el lanzamiento de $GNG. Es gratis.', joinSafe: 'Nunca te pediremos que pagues ni que envíes cripto para unirte.',
+      fContact: 'Correo o número de teléfono', fContactPh: 'tu@correo.com o +34 612 345 678', fTag: 'Nombre de jugador', fCountry: 'País', fChoose: 'Elige tu país',
+      fAdult: 'Tengo 18 años o más.', fConsent: 'Contáctenme sobre General Ginger y el lanzamiento de $GNG. Puedo pedir que me borren en cualquier momento.', fBtn: 'Unirme a la lista', fJoining: 'Uniéndote…',
+      eContact: 'Escribe tu correo o tu número de teléfono.', eCountry: 'Elige tu país.', eTag: 'El nombre debe tener de 3 a 15 letras, números o guiones bajos.', eAdult: 'Debes tener 18 años o más para unirte.',
+      eConsent: 'Marca la casilla para que podamos contactarte sobre el lanzamiento.', eGeneric: 'Algo salió mal. Inténtalo de nuevo.', eNet: 'No se pudo conectar con el servidor. Revisa tu conexión e inténtalo de nuevo.',
+      sPhone: 'Escribe un correo válido o un número con el prefijo de tu país (como +34 612 345 678).', sBlocked: 'Lo sentimos, no podemos aceptar registros desde este país.', sRate: 'Demasiados registros desde esta red. Inténtalo en unos minutos.',
+      okNew: '¡Ya estás dentro! Eres el n.º {n} en la lista de espera.', okAlready: 'Ya estás en la lista, en el puesto {n}.',
+      faqH: 'Preguntas',
+      q1: '¿Puedo comprar $GNG ahora?', a1: 'No. $GNG no se ha creado, así que quien lo venda ahora es un estafador. Nunca te escribiremos pidiéndote dinero ni cripto.',
+      q2: '¿Los juegos cuestan algo?', a2: 'No. Los juegos son gratis y nunca pagas por ganar puntos.',
+      q3: '¿Los puntos valen dinero?', a3: 'No. Los puntos no tienen valor en dinero. Si $GNG se lanza, los puntos verificados deciden tu parte del airdrop, pero el valor del token no está garantizado y podría ser cero.',
+      q4: '¿Cuándo será el airdrop?', a4: 'Todavía no hay fecha. Las reglas sobre activos digitales cambian en cada país (en Nigeria, por ejemplo, se regulan como valores), así que solo lanzaremos tras una revisión legal y únicamente donde la ley lo permita. La lista de espera es la mejor forma de enterarte primero.',
+      q5: '¿Quién puede unirse?', a5: 'Cualquier persona de 18 años o más, en cualquier parte del mundo, puede jugar y unirse a la lista. Recibir $GNG dependerá de la ley de tu país, así que algunos países podrían quedar fuera del airdrop. No podemos aceptar registros de países bajo sanciones internacionales totales.',
+      q6: '¿Puedo jugar desde mi país?', a6: 'Sí. El juego es gratis y funciona en cualquier país con un navegador web. Los números de teléfono necesitan el prefijo del país, como +34 o +1. Los límites diarios de puntos se reinician a medianoche UTC.',
+      q7: '¿Qué hacen con mis datos?', a7: 'Solo usamos tu correo o teléfono para contactarte sobre General Ginger y el lanzamiento. No los vendemos, y puedes pedirnos una copia o que los borremos cuando quieras, vivas donde vivas.',
+      warn: 'Nunca te escribiremos para venderte $GNG ni para pedirte la frase secreta de tu billetera.',
+      legal: '$GNG no ha sido emitido. Nada en esta página es una oferta de venta ni una solicitud de compra de valores o activos digitales, ni constituye asesoramiento financiero. Cualquier airdrop, incluido quién califica, cuánto y cuándo, depende de la aprobación regulatoria y puede cambiar o no ocurrir.'
+    },
+    pt: {
+      meta: 'Jogos de arcade 3D grátis para jogar em qualquer lugar do mundo, em qualquer celular. Derrube o Rei Gengibre, ganhe pontos e entre na lista de espera do airdrop de $GNG.', language: 'Idioma',
+      navArcade: 'O arcade', navHow: 'Como funciona', navToken: 'Tokenomics', navFaq: 'Perguntas', navPlay: 'Jogar', navJoin: 'Lista de espera',
+      chipWl: 'Lista de espera aberta', chipToken: 'Token ainda não lançado', h1: 'Derrube o Rei Gengibre.',
+      lede: 'Jogos de arcade 3D grátis para jogadores do mundo todo. Rodam em qualquer celular, mesmo com internet lenta. Voe com General Ginger pelas ruas de Lagos, vença o exército de pragas do Rei e ganhe pontos que contam para o airdrop planejado de $GNG.',
+      ctaJoin: 'Entrar na lista do airdrop', ctaPlay: 'Jogar no navegador', statWl: 'na lista de espera', statPlayers: 'pilotos com conta', statLangs: 'idiomas',
+      kingAlt: 'O Rei Gengibre, uma raiz de gengibre sorridente com coroa de ouro e agbada verde, segurando um pote de temperos brilhante.', lockLabel: 'Alvo travado: o Rei Gengibre', lockCap: 'Procurado por crimes contra os temperos.',
+      arcH: 'Dentro do arcade', arcP: 'Um jogo já está no ar. Outros dois estão a caminho, todos contra o mesmo exército.',
+      flightTag: 'Jogável agora', flightH: 'General Ginger Flight', flightP: 'Um jogo de voo em 3D no seu navegador. Desvie de bombas podres, tesouras e redes grudentas, pegue power-ups e derrube o dirigível do Rei para passar de nível.', flightCta: 'Jogar agora',
+      liveTag: 'Ao vivo', boardH: 'Melhores pilotos agora', boardEmpty: 'Carregando o ranking…', boardNone: 'Ainda não há pilotos no ranking. Jogue um voo e seja o primeiro.', ptsN: '{n} pts',
+      checkH: 'Cada pontuação é repetida', checkP: 'Nosso servidor repete cada voo lance a lance antes de contar os pontos, então ninguém consegue trapacear no airdrop.',
+      langH: 'Jogue no seu idioma', langP: 'O jogo e esta página falam inglês, francês, espanhol, português e árabe.',
+      nextTag: 'Em breve', castle: 'Ginger Castle Run', castleP: 'Um jogo de plataforma retrô pelo castelo do Rei. Colete temperos, desvie de armadilhas e chegue à sala do trono.',
+      laterTag: 'Mais tarde', revenge: "Ginger King's Revenge", revengeP: 'Um jogo de briga contra chefões das pragas, com o próprio Rei na luta final.',
+      storyH: 'Um golpe em Spicelantis', roleHero: 'Herói', gg: 'General Ginger', ggP: 'Um general rebelde da Força Aérea num velho biplano remendado, voando para libertar o trono de Spicelantis.',
+      roleVillain: 'Vilão', king: 'O Rei Gengibre', kingP: 'O tirano no trono. Ele anda num dirigível real e joga bombas de tempero em quem o desafia.',
+      roleArmy: 'Seu exército', army: 'O Batalhão das Pragas', armyP: 'Lagartas brocadoras em catapultas, larvas brancas que atiram tesouras e nematoides que cospem redes grudentas.',
+      howH: 'Jogue grátis. Ganhe pontos.', s1H: 'Cadastre-se com seu e-mail', s1P: 'Depois entre quando quiser com seu nome de jogador e senha. Sem carteira cripto, frase-semente ou taxas.',
+      s2H: 'Jogue e ganhe pontos', s2P: 'Quanto mais longe voar, mais pontos: até 300 por partida e 1.500 por dia. Cada golpe custa 15%.',
+      s3H: 'Os pontos contam para o airdrop', s3P: 'Se e quando $GNG for lançado, seus pontos verificados decidem sua parte do airdrop.',
+      tokH: 'A maior parte vai para os jogadores', tokAria: 'Divisão planejada de $GNG: 40% airdrop para jogadores, 25% liquidez, 15% ecossistema e merch, 10% marketing, 10% equipe', supply: 'oferta fixa',
+      thPool: 'Reserva', thShare: 'Parte', thRelease: 'Liberação',
+      p1: 'Airdrop para jogadores', p1r: 'Ganho pelos jogadores com pontos verificados', p2: 'Liquidez', p2r: 'Travada em contrato por 24 meses', p3: 'Ecossistema e merch', p3r: 'Liberado conforme o merch e as parcerias crescem',
+      p4: 'Marketing', p4r: '10% no lançamento, o resto em 12 meses', p5: 'Equipe', p5r: 'Carência de 6 meses e depois 18 meses de liberação gradual',
+      tokNote: 'Esta é a divisão planejada e pode mudar antes do lançamento. $GNG ainda não foi criado.',
+      roadH: 'Onde estamos', now: 'Agora', next: 'Depois', later: 'Mais tarde',
+      r1: 'General Ginger Flight jogável no mundo todo', r2: 'Contas de jogador com pontos salvos', r3: 'Verificação antitrapaça de pontuações', r4: 'O jogo em cinco idiomas', r5: 'Lista de espera do airdrop aberta a todos os países',
+      r6: 'Página de ranking mundial', r7: 'Eventos ao vivo Sound & Sip, começando em Abuja', r8: 'Revisão jurídica na Nigéria e nos nossos outros grandes países de jogadores',
+      r9: 'Mais dois jogos', r10: 'Loja de merch', r11: 'Lançamento de $GNG e airdrop, só depois da aprovação regulatória',
+      joinH: 'Chegue antes', joinP: 'Entre na lista e avisaremos sobre novos jogos, eventos e o lançamento de $GNG. É grátis.', joinSafe: 'Nunca vamos pedir que você pague ou envie cripto para entrar.',
+      fContact: 'E-mail ou telefone', fContactPh: 'voce@email.com ou +55 11 91234 5678', fTag: 'Nome de jogador', fCountry: 'País', fChoose: 'Escolha seu país',
+      fAdult: 'Tenho 18 anos ou mais.', fConsent: 'Quero receber contato sobre General Ginger e o lançamento de $GNG. Posso pedir para sair a qualquer momento.', fBtn: 'Entrar na lista', fJoining: 'Entrando…',
+      eContact: 'Digite seu e-mail ou telefone.', eCountry: 'Escolha seu país.', eTag: 'O nome deve ter de 3 a 15 letras, números ou sublinhados.', eAdult: 'Você precisa ter 18 anos ou mais para entrar.',
+      eConsent: 'Marque a caixa para que possamos falar com você sobre o lançamento.', eGeneric: 'Algo deu errado. Tente de novo.', eNet: 'Não foi possível falar com o servidor. Verifique sua conexão e tente de novo.',
+      sPhone: 'Digite um e-mail válido ou um telefone com o código do país (como +55 11 91234 5678).', sBlocked: 'Desculpe, não podemos aceitar cadastros deste país.', sRate: 'Cadastros demais desta rede. Tente de novo em alguns minutos.',
+      okNew: 'Pronto! Você é o nº {n} na lista de espera.', okAlready: 'Você já está na lista, na posição {n}.',
+      faqH: 'Perguntas',
+      q1: 'Posso comprar $GNG agora?', a1: 'Não. $GNG ainda não foi criado, então quem estiver vendendo é golpista. Nunca vamos mandar mensagem pedindo dinheiro ou cripto.',
+      q2: 'Os jogos custam alguma coisa?', a2: 'Não. Os jogos são grátis e você nunca paga para ganhar pontos.',
+      q3: 'Os pontos valem dinheiro?', a3: 'Não. Os pontos não têm valor em dinheiro. Se $GNG for lançado, os pontos verificados decidem sua parte do airdrop, mas o valor do token não é garantido e pode ser zero.',
+      q4: 'Quando será o airdrop?', a4: 'Ainda não há data. As regras para ativos digitais mudam de país para país (na Nigéria, por exemplo, são regulados como valores mobiliários), então só vamos lançar depois de uma revisão jurídica e apenas onde a lei permitir. A lista de espera é a melhor forma de saber primeiro.',
+      q5: 'Quem pode participar?', a5: 'Qualquer pessoa com 18 anos ou mais, em qualquer lugar do mundo, pode jogar e entrar na lista. Receber $GNG depende da lei do seu país, então alguns países podem ficar fora do airdrop. Não podemos aceitar cadastros de países sob sanções internacionais totais.',
+      q6: 'Posso jogar do meu país?', a6: 'Sim. O jogo é grátis e funciona em qualquer país com um navegador. Os telefones precisam do código do país, como +55 ou +1. Os limites diários de pontos reiniciam à meia-noite UTC.',
+      q7: 'O que vocês fazem com meus dados?', a7: 'Usamos seu e-mail ou telefone apenas para falar com você sobre General Ginger e o lançamento. Não vendemos, e você pode pedir uma cópia ou a exclusão a qualquer momento, onde quer que more.',
+      warn: 'Nunca vamos mandar mensagem para vender $GNG nem pedir a frase secreta da sua carteira.',
+      legal: '$GNG não foi emitido. Nada nesta página é uma oferta de venda ou um pedido de compra de valores mobiliários ou ativos digitais, nem aconselhamento financeiro. Qualquer airdrop, incluindo quem tem direito, quanto e quando, depende de aprovação regulatória e pode mudar ou não acontecer.'
+    },
+    ar: {
+      meta: 'ألعاب أركيد ثلاثية الأبعاد مجانية يمكنك لعبها من أي مكان في العالم وعلى أي هاتف. أطِح بملك الزنجبيل، واجمع النقاط، وانضم إلى قائمة انتظار توزيع $GNG.', language: 'اللغة',
+      navArcade: 'صالة الألعاب', navHow: 'كيف تعمل', navToken: 'اقتصاد العملة', navFaq: 'الأسئلة', navPlay: 'العب', navJoin: 'قائمة الانتظار',
+      chipWl: 'قائمة الانتظار مفتوحة', chipToken: 'لم تُطلق العملة بعد', h1: 'أطِح بملك الزنجبيل.',
+      lede: 'ألعاب أركيد ثلاثية الأبعاد مجانية للاعبين في كل مكان. تعمل على أي هاتف حتى مع إنترنت بطيء. حلّق مع General Ginger من شوارع لاغوس، واهزم جيش آفات الملك، واجمع نقاطًا تُحتسب في توزيع $GNG المخطط له.',
+      ctaJoin: 'انضم إلى قائمة التوزيع', ctaPlay: 'العب في المتصفح', statWl: 'في قائمة الانتظار', statPlayers: 'طيارًا لديهم حساب', statLangs: 'لغات',
+      kingAlt: 'ملك الزنجبيل، جذر زنجبيل مبتسم يرتدي تاجًا ذهبيًا وأغبادا خضراء، ويرفع جرة توابل مضيئة.', lockLabel: 'تم تحديد الهدف: ملك الزنجبيل', lockCap: 'مطلوب بتهمة الجرائم ضد التوابل.',
+      arcH: 'داخل صالة الألعاب', arcP: 'لعبة واحدة متاحة اليوم، ولعبتان في الطريق، وكلها ضد الجيش نفسه.',
+      flightTag: 'متاحة الآن', flightH: 'General Ginger Flight', flightP: 'لعبة طيران ثلاثية الأبعاد في متصفحك. تفادَ القنابل الفاسدة والمقصّات والشِّباك اللزجة، واجمع المكافآت، وأسقط منطاد الملك لتنتقل إلى المستوى التالي.', flightCta: 'العب الآن',
+      liveTag: 'مباشر', boardH: 'أفضل الطيارين الآن', boardEmpty: 'جارٍ تحميل الترتيب…', boardNone: 'لا يوجد طيارون في الترتيب بعد. العب رحلة لتكون الأول.', ptsN: '{n} نقطة',
+      checkH: 'كل نتيجة تُعاد', checkP: 'يعيد خادمنا كل رحلة خطوة بخطوة قبل احتساب النقاط، فلا يستطيع الغشاشون استغلال التوزيع.',
+      langH: 'العب بلغتك', langP: 'اللعبة وهذه الصفحة متاحتان بالإنجليزية والفرنسية والإسبانية والبرتغالية والعربية.',
+      nextTag: 'قريبًا', castle: 'Ginger Castle Run', castleP: 'لعبة منصات كلاسيكية داخل قلعة الملك. اجمع التوابل وتفادَ الفخاخ واصل إلى قاعة العرش.',
+      laterTag: 'لاحقًا', revenge: "Ginger King's Revenge", revengeP: 'لعبة قتال ضد زعماء الآفات، والملك نفسه في المعركة الأخيرة.',
+      storyH: 'انقلاب في سبايسلانتس', roleHero: 'البطل', gg: 'General Ginger', ggP: 'جنرال متمرد من سلاح الجو في طائرة ثنائية قديمة مرقّعة، يطير لتحرير عرش سبايسلانتس.',
+      roleVillain: 'الشرير', king: 'ملك الزنجبيل', kingP: 'الطاغية على العرش. يتنقل في منطاد ملكي ويمطر بقنابل التوابل كل من يتحداه.',
+      roleArmy: 'جيشه', army: 'كتيبة الآفات', armyP: 'يرقات ثاقبة على المنجنيقات، ويرقات بيضاء ترمي المقصّات، وديدان خيطية تبصق شِباكًا لزجة.',
+      howH: 'العب مجانًا. اجمع النقاط.', s1H: 'سجّل ببريدك الإلكتروني', s1P: 'بعدها سجّل الدخول متى شئت باسم اللاعب وكلمة المرور. لا محفظة رقمية ولا عبارة سرية ولا رسوم.',
+      s2H: 'العب واجمع النقاط', s2P: 'كلما طرت أبعد جمعت نقاطًا أكثر: حتى 300 نقطة في الجولة و1,500 في اليوم. كل إصابة تكلّفك 15%.',
+      s3H: 'النقاط تُحتسب في التوزيع', s3P: 'إذا أُطلقت $GNG، فستحدد نقاطك الموثّقة حصتك من التوزيع.',
+      tokH: 'معظمها يذهب إلى اللاعبين', tokAria: 'التوزيع المخطط لـ $GNG: 40% توزيع على اللاعبين، 25% سيولة، 15% منظومة ومنتجات، 10% تسويق، 10% الفريق', supply: 'إجمالي ثابت',
+      thPool: 'الحصة', thShare: 'النسبة', thRelease: 'الإصدار',
+      p1: 'توزيع على اللاعبين', p1r: 'يكسبه اللاعبون عبر النقاط الموثّقة', p2: 'السيولة', p2r: 'مقفلة في عقد لمدة 24 شهرًا', p3: 'المنظومة والمنتجات', p3r: 'تُطلق مع نمو المنتجات والشراكات',
+      p4: 'التسويق', p4r: '10% عند الإطلاق والباقي على مدى 12 شهرًا', p5: 'الفريق', p5r: 'فترة قفل 6 أشهر ثم إطلاق تدريجي على مدى 18 شهرًا',
+      tokNote: 'هذا هو التوزيع المخطط وقد يتغير قبل الإطلاق. لم تُنشأ $GNG بعد.',
+      roadH: 'أين نحن الآن', now: 'الآن', next: 'التالي', later: 'لاحقًا',
+      r1: 'General Ginger Flight متاحة في كل العالم', r2: 'حسابات لاعبين مع حفظ النقاط', r3: 'فحص النتائج ضد الغش', r4: 'اللعبة بخمس لغات', r5: 'قائمة انتظار التوزيع مفتوحة لكل الدول',
+      r6: 'صفحة ترتيب عالمية', r7: 'فعاليات Sound & Sip المباشرة، بدءًا من أبوجا', r8: 'مراجعة قانونية في نيجيريا وفي أكبر دول لاعبينا الأخرى',
+      r9: 'لعبتان إضافيتان', r10: 'متجر منتجات', r11: 'إطلاق $GNG والتوزيع، فقط بعد موافقة الجهات التنظيمية',
+      joinH: 'انضم مبكرًا', joinP: 'انضم إلى القائمة وسنخبرك بالألعاب الجديدة والفعاليات وإطلاق $GNG. الانضمام مجاني.', joinSafe: 'لن نطلب منك أبدًا الدفع أو إرسال عملات رقمية للانضمام.',
+      fContact: 'البريد الإلكتروني أو رقم الهاتف', fContactPh: 'you@email.com أو ‎+971 50 123 4567', fTag: 'اسم اللاعب', fCountry: 'الدولة', fChoose: 'اختر دولتك',
+      fAdult: 'عمري 18 عامًا أو أكثر.', fConsent: 'تواصلوا معي بخصوص General Ginger وإطلاق $GNG. يمكنني طلب الحذف في أي وقت.', fBtn: 'انضم إلى القائمة', fJoining: 'جارٍ الانضمام…',
+      eContact: 'أدخل بريدك الإلكتروني أو رقم هاتفك.', eCountry: 'اختر دولتك.', eTag: 'يجب أن يتكوّن اسم اللاعب من 3 إلى 15 حرفًا لاتينيًا أو رقمًا أو شرطة سفلية.', eAdult: 'يجب أن يكون عمرك 18 عامًا أو أكثر للانضمام.',
+      eConsent: 'ضع علامة في المربع لنتمكن من التواصل معك بخصوص الإطلاق.', eGeneric: 'حدث خطأ ما. حاول مرة أخرى.', eNet: 'تعذّر الوصول إلى الخادم. تحقّق من اتصالك وحاول مرة أخرى.',
+      sPhone: 'أدخل بريدًا إلكترونيًا صحيحًا، أو رقم هاتف مع رمز الدولة (مثل ‎+971 50 123 4567).', sBlocked: 'عذرًا، لا يمكننا قبول التسجيل من هذه الدولة.', sRate: 'تسجيلات كثيرة من هذه الشبكة. حاول بعد بضع دقائق.',
+      okNew: 'تم! ترتيبك {n} في قائمة الانتظار.', okAlready: 'أنت في القائمة بالفعل، وترتيبك {n}.',
+      faqH: 'الأسئلة',
+      q1: 'هل يمكنني شراء $GNG الآن؟', a1: 'لا. لم تُنشأ $GNG بعد، لذا فإن أي شخص يبيعها الآن محتال. لن نراسلك أبدًا لطلب المال أو العملات الرقمية.',
+      q2: 'هل الألعاب مدفوعة؟', a2: 'لا. الألعاب مجانية، ولن تدفع أبدًا لكسب النقاط.',
+      q3: 'هل للنقاط قيمة مالية؟', a3: 'لا. ليس للنقاط قيمة نقدية. إذا أُطلقت $GNG فستحدد النقاط الموثّقة حصتك من التوزيع، لكن قيمة العملة غير مضمونة وقد تكون صفرًا.',
+      q4: 'متى سيكون التوزيع؟', a4: 'لا يوجد موعد بعد. تختلف قواعد الأصول الرقمية من دولة إلى أخرى (ففي نيجيريا مثلًا تُنظَّم كأوراق مالية)، لذا لن نطلقها إلا بعد مراجعة قانونية وفقط حيث يسمح القانون. الانضمام إلى قائمة الانتظار هو أفضل طريقة لتعرف أولًا.',
+      q5: 'من يمكنه الانضمام؟', a5: 'يمكن لأي شخص عمره 18 عامًا أو أكثر، في أي مكان في العالم، أن يلعب وينضم إلى القائمة. أما استلام $GNG فيعتمد على قانون بلدك، لذا قد تُستثنى بعض الدول من التوزيع. لا يمكننا قبول التسجيل من الدول الخاضعة لعقوبات دولية شاملة.',
+      q6: 'هل يمكنني اللعب من بلدي؟', a6: 'نعم. اللعبة مجانية وتعمل في أي دولة فيها متصفح إنترنت. يجب أن تتضمن أرقام الهواتف رمز الدولة مثل ‎+44 أو ‎+1. يُعاد ضبط الحد اليومي للنقاط عند منتصف الليل بتوقيت UTC.',
+      q7: 'ماذا تفعلون ببياناتي؟', a7: 'نستخدم بريدك أو رقم هاتفك فقط للتواصل معك بخصوص General Ginger والإطلاق. لا نبيعها، ويمكنك طلب نسخة منها أو حذفها في أي وقت، أينما كنت تعيش.',
+      warn: 'لن نراسلك أبدًا لبيعك $GNG أو لطلب العبارة السرية لمحفظتك.',
+      legal: 'لم تُصدر $GNG بعد. لا شيء في هذه الصفحة يُعد عرضًا لبيع أو طلبًا لشراء أوراق مالية أو أصول رقمية، ولا يُعد نصيحة مالية. أي توزيع، بما في ذلك من يحق له ومقداره وموعده، يعتمد على موافقة الجهات التنظيمية وقد يتغير أو لا يحدث.'
+    }
+  };
+  // waitlist server messages, by their English text
+  const SRVMAP = {
+    'Enter a valid email, or a phone number with your country code (like +44 7700 900123).': 'sPhone', 'Choose your country.': 'eCountry',
+    "Sorry, we can't accept sign-ups from this country.": 'sBlocked', 'Gamer tag must be 3 to 15 letters, numbers or underscores.': 'eTag',
+    'You must be 18 or older to join.': 'eAdult', 'Please agree to be contacted about the launch.': 'eConsent',
+    'Too many sign-ups from this network. Try again in a few minutes.': 'sRate', 'Bad request.': 'eGeneric'
+  };
+  const $ = id => document.getElementById(id);
+
+  // ---------- language ----------
+  const LANGS = { en: 'English', fr: 'Français', es: 'Español', pt: 'Português', ar: 'العربية' };
+  const pick = () => {
+    let saved = null; try { saved = localStorage.getItem('ggLang'); } catch (e) {}
+    if (saved && LANGS[saved]) return saved;
+    const q = new URLSearchParams(location.search).get('lang'); if (q && LANGS[q]) return q;
+    return (navigator.languages || [navigator.language || 'en']).map(l => String(l).slice(0, 2).toLowerCase()).find(l => LANGS[l]) || 'en';
+  };
+  let LANG = pick();
+  const t = (k, v) => { let s = (L[LANG] && L[LANG][k]) || L.en[k] || ''; if (v) for (const x in v) s = s.split('{' + x + '}').join(v[x]); return LANG === 'ar' ? s.split('$GNG').join('\u2066$GNG\u2069') : s; };
+  const fmt = n => Number(n || 0).toLocaleString(LANG === 'ar' ? 'en' : LANG);
+  function apply() {
+    document.documentElement.lang = LANG;
+    document.documentElement.dir = LANG === 'ar' ? 'rtl' : 'ltr';
+    if (LANG === 'ar' && !document.getElementById('ar-font')) {
+      const l = document.createElement('link'); l.id = 'ar-font'; l.rel = 'stylesheet';
+      l.href = 'https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;600;700&display=swap'; document.head.appendChild(l);
+    }
+    document.querySelectorAll('[data-t]').forEach(el => { const s = t(el.dataset.t); if (s) el.textContent = s; });
+    document.querySelectorAll('[data-ta]').forEach(el => { const s = t(el.dataset.ta); if (s) el.setAttribute(el.tagName === 'IMG' ? 'alt' : 'aria-label', s); });
+    document.querySelectorAll('[data-tp]').forEach(el => { const s = t(el.dataset.tp); if (s) el.placeholder = s; });
+    document.title = 'General Ginger $GNG';
+    const m = document.querySelector('meta[name=description]'); if (m && t('meta')) m.content = t('meta');
+    $('lang').value = LANG; $('lang').setAttribute('aria-label', t('language'));
+    document.querySelectorAll('#langlist button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.l === LANG)));
+    fillCountries(); renderBoard();
+  }
+  function setLang(l) { LANG = l; try { localStorage.setItem('ggLang', l); } catch (e) {} apply(); }
+  for (const k in LANGS) {
+    $('lang').add(new Option(LANGS[k], k));
+    const b = document.createElement('button'); b.type = 'button'; b.dataset.l = k; b.lang = k; b.textContent = LANGS[k];
+    b.addEventListener('click', () => setLang(k)); $('langlist').appendChild(b);
+  }
+  $('lang').addEventListener('change', e => setLang(e.target.value));
+
+  // ---------- countries, named in the reader's language ----------
+  const sel = $('wl-country'), codes = sel.dataset.codes.split(' ');
+  const guess = (navigator.languages || [navigator.language || '']).map(l => (String(l).split('-')[1] || '').toUpperCase()).find(r => codes.includes(r)) || '';
+  function fillCountries() {
+    const keep = sel.value || guess;
+    let names = null; try { names = new Intl.DisplayNames([LANG, 'en'], { type: 'region' }); } catch (e) {}
+    const name = c => { try { return (names && names.of(c)) || c; } catch (e) { return c; } };
+    while (sel.options.length > 1) sel.remove(1);
+    codes.map(c => [c, name(c)]).sort((a, b) => a[1].localeCompare(b[1], LANG)).forEach(([c, n]) => sel.add(new Option(n, c)));
+    sel.value = keep;
+  }
+
+  // ---------- live numbers and leaderboard ----------
+  let top = null;
+  function renderBoard() {
+    const ol = $('lb'), empty = $('lb-empty');
+    if (top === null) return;
+    ol.textContent = '';
+    top.forEach((r, i) => {
+      const li = document.createElement('li');
+      const pos = document.createElement('span'); pos.className = 'pos'; pos.textContent = i + 1;
+      const who = document.createElement('span'); who.className = 'who'; who.textContent = r.tag;
+      const pts = document.createElement('span'); pts.className = 'pts'; pts.textContent = t('ptsN', { n: fmt(r.points) });
+      li.append(pos, who, pts); ol.appendChild(li);
+    });
+    empty.hidden = top.length > 0;
+    empty.textContent = t(top.length ? 'boardEmpty' : 'boardNone');
+  }
+  (async () => {
+    if (!WAITLIST_API) { top = []; renderBoard(); return; }
+    try {
+      const r = await fetch(WAITLIST_API + '/stats', { method: 'POST' });
+      const s = await r.json();
+      const set = (id, v) => { if (typeof v === 'number') { $(id).textContent = fmt(v); $(id).parentElement.classList.remove('pending'); } };
+      set('st-wl', s.waitlist); set('st-pl', s.players);
+      top = Array.isArray(s.top) ? s.top : []; renderBoard();
+    } catch (e) { top = []; renderBoard(); }
+  })();
+  // a flight being replayed, drawn as bars
+  const rp = $('replay'); for (let i = 0; i < 48; i++) { const b = document.createElement('i'); b.style.height = (18 + Math.round(Math.abs(Math.sin(i * 0.7) * 60 + Math.sin(i * 0.23) * 22))) + '%'; rp.appendChild(b); }
+
+  // ---------- waitlist ----------
+  const form = $('wl-form'), msg = $('wl-msg'), btn = $('wl-btn');
+  const say = (text, kind) => { msg.hidden = false; msg.className = 'fmsg ' + kind; msg.textContent = text; };
+  const reason = r => { const k = SRVMAP[r]; return k ? t(k) : r; };
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+    const body = { contact: $('wl-contact').value.trim(), tag: $('wl-tag').value.trim(), country: sel.value, adult: $('wl-adult').checked, consent: $('wl-consent').checked };
+    if (!body.contact) return say(t('eContact'), 'err');
+    if (!body.country) return say(t('eCountry'), 'err');
+    if (!/^[A-Za-z0-9_]{3,15}$/.test(body.tag)) return say(t('eTag'), 'err');
+    if (!body.adult) return say(t('eAdult'), 'err');
+    if (!body.consent) return say(t('eConsent'), 'err');
+    if (!WAITLIST_API) return say('Preview: the waitlist is not connected to a server, so nothing was saved.', 'err');
+    btn.disabled = true; btn.textContent = t('fJoining');
+    try {
+      const res = await fetch(WAITLIST_API + '/waitlist', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+      const j = await res.json();
+      if (j.ok) {
+        say(t(j.already ? 'okAlready' : 'okNew', { n: fmt(j.position) }), 'ok');
+        form.querySelectorAll('input').forEach(i => { if (i.type === 'checkbox') i.checked = false; else i.value = ''; });
+      } else say(reason(j.reason) || t('eGeneric'), 'err');
+    } catch (err) { say(t('eNet'), 'err'); }
+    finally { btn.disabled = false; btn.textContent = t('fBtn'); }
+  });
+
+  apply();
+})();
+</script>
+</body>
+</html>

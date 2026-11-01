@@ -1,0 +1,1987 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>General Ginger Flight</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body {
+      background: #0a0e1a; color: #fff;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      overflow: hidden; user-select: none; -webkit-user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    #stage { position: fixed; inset: 0; }
+    canvas { display: block; width: 100%; height: 100%; touch-action: none; }
+
+    #hud {
+      position: fixed; top: 0; left: 0; right: 0;
+      display: flex; justify-content: space-between; align-items: flex-start;
+      padding: calc(10px + env(safe-area-inset-top)) 16px 0;
+      pointer-events: none; font-weight: 800;
+      text-shadow: 0 2px 6px rgba(0,0,0,0.6);
+      opacity: 0; transition: opacity 0.3s;
+    }
+    #hud.on { opacity: 1; }
+    #score { font-size: 1.6rem; color: #fde047; }
+    #dist { font-size: 0.85rem; color: #f1f5f9; }
+    #right { text-align: right; }
+    #hearts { font-size: 1.15rem; letter-spacing: 2px; }
+    #pts { font-size: 0.85rem; color: #fef3c7; margin-top: 2px; }
+    #status { font-size: 0.8rem; color: #fde047; margin-top: 2px; min-height: 1em; }
+
+    #overlay {
+      position: fixed; inset: 0;
+      display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
+      padding: 0 20px calc(36px + env(safe-area-inset-bottom));
+      text-align: center; pointer-events: none;
+      background: linear-gradient(180deg, rgba(10,14,26,0) 40%, rgba(10,14,26,0.7) 100%);
+      transition: opacity 0.3s;
+    }
+    #overlay.hidden { opacity: 0; }
+    #overlay.hidden * { pointer-events: none !important; }
+    #overlay h1 {
+      font-size: clamp(1.7rem, 6.5vw, 2.7rem); line-height: 1.05; margin-bottom: 6px;
+      color: #fde047; text-shadow: 0 3px 0 #b45309, 0 6px 18px rgba(0,0,0,0.6);
+    }
+    #overlay p { color: #f1f5f9; font-size: 1rem; margin-bottom: 14px; max-width: 520px; text-shadow: 0 2px 6px rgba(0,0,0,0.8); line-height: 1.4; }
+    #result { font-size: 0.95rem; color: #fef3c7; margin: -6px 0 14px; min-height: 1.2em; }
+    #go-btn {
+      pointer-events: auto;
+      background: linear-gradient(135deg, #16a34a, #15803d);
+      border: 3px solid #fde047; color: #fff;
+      font-size: 1.2rem; font-weight: 800;
+      padding: 13px 36px; border-radius: 999px; cursor: pointer;
+      box-shadow: 0 6px 0 #14532d, 0 10px 24px rgba(0,0,0,0.4);
+    }
+    #go-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #14532d; }
+    #go-btn:disabled { opacity: 0.7; }
+    #hint { margin-top: 12px; font-size: 0.78rem; color: #cbd5e1; line-height: 1.7; }
+    #hint span { background: rgba(30,41,59,0.85); padding: 2px 7px; border-radius: 4px; color: #fff; }
+    #rotate { font-size: 0.78rem; color: #fde047; margin-top: 6px; display: none; }
+    #account { pointer-events: auto; margin: -4px 0 14px; font-size: 0.9rem; color: #f1f5f9; text-shadow: 0 2px 6px rgba(0,0,0,0.8); }
+    #account b { color: #fde047; }
+    .link-btn { pointer-events: auto; background: none; border: 0; color: #fde047; font: inherit; font-weight: 700; text-decoration: underline; cursor: pointer; padding: 4px; }
+    #signin {
+      position: fixed; inset: 0; z-index: 20; display: flex; align-items: center; justify-content: center;
+      background: rgba(10,14,26,0.75); padding: 20px;
+    }
+    #signin[hidden] { display: none; }
+    #signin .card {
+      width: min(380px, 100%); background: #0f3d2a; border: 3px solid #fde047; border-radius: 18px;
+      padding: 22px; display: flex; flex-direction: column; gap: 12px; text-align: left;
+    }
+    #signin h2 { margin: 0; color: #fde047; font-size: 1.3rem; }
+    #signin p { margin: 0; color: #dbe7dd; font-size: 0.92rem; line-height: 1.4; }
+    #signin input[hidden] { display: none; }
+    #signin #si-alt { font-size: 0.85rem; align-self: center; }
+    #signin input {
+      font: inherit; font-size: 1.05rem; padding: 12px 14px; border-radius: 12px; border: 1px solid #2b6046;
+      background: #12482f; color: #fff; width: 100%;
+    }
+    #signin .row { display: flex; gap: 10px; justify-content: space-between; align-items: center; }
+    #signin .go { margin-left: auto; background: #fde047; color: #1b1404; border: 0; border-radius: 999px; padding: 12px 20px; font-weight: 800; font-size: 1rem; cursor: pointer; }
+    #signin .go:disabled { opacity: 0.6; }
+    #si-msg { color: #ffd2c8; font-size: 0.88rem; min-height: 1.1em; }
+
+    #loading { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; color: #fde047; font-weight: 700; padding: 20px; text-align: center; }
+    #flash { position: fixed; inset: 0; background: #ef4444; opacity: 0; pointer-events: none; }
+    #toast {
+      position: fixed; top: 24%; left: 50%; transform: translateX(-50%);
+      font-weight: 900; font-size: clamp(1.1rem, 4.5vw, 1.6rem); color: #fde047; pointer-events: none;
+      text-shadow: 0 3px 0 #b45309, 0 4px 12px rgba(0,0,0,0.6);
+      opacity: 0; transition: opacity 0.25s, transform 0.25s; white-space: nowrap;
+    }
+    #toast.show { opacity: 1; transform: translateX(-50%) translateY(-8px); }
+    #level { font-size: 0.8rem; color: #86efac; margin-top: 2px; }
+    #bossbar {
+      position: fixed; left: 50%; transform: translateX(-50%);
+      top: calc(64px + env(safe-area-inset-top)); width: min(360px, 70vw);
+      pointer-events: none; text-align: center; font-weight: 900; font-size: 0.75rem;
+      letter-spacing: 0.12em; color: #fde047; text-shadow: 0 2px 4px rgba(0,0,0,0.7);
+    }
+    #bossbar .bb { margin-top: 4px; height: 10px; border-radius: 6px; background: rgba(15,23,42,0.7); border: 2px solid #fde047; overflow: hidden; }
+    #bossbar i { display: block; height: 100%; width: 100%; background: linear-gradient(90deg, #dc2626, #f59e0b); transition: width 0.15s; }
+    #fx { position: fixed; right: calc(10px + env(safe-area-inset-right)); bottom: calc(10px + env(safe-area-inset-bottom)); display: flex; gap: 8px; z-index: 30; }
+    #fx button { width: 40px; height: 40px; border-radius: 50%; border: 2px solid rgba(253,224,71,0.7); background: rgba(15,23,42,0.55); font-size: 1.1rem; cursor: pointer; pointer-events: auto; }
+    #fx button[hidden] { display: none; }
+    #lang { position: absolute; top: calc(12px + env(safe-area-inset-top)); inset-inline-end: 12px; background: rgba(15,23,42,0.6); color: #fde047; border: 2px solid rgba(253,224,71,0.6); border-radius: 999px; padding: 6px 12px; font: inherit; font-weight: 700; font-size: 0.85rem; pointer-events: auto; }
+    #pause { position: fixed; inset: 0; z-index: 25; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(5,20,12,0.6); }
+    #pause[hidden] { display: none; }
+    #pause .card { width: min(340px, 100%); background: #0f3d2a; border: 3px solid #fde047; border-radius: 18px; padding: 22px; display: flex; flex-direction: column; gap: 12px; text-align: center; }
+    #pause h2 { margin: 0; color: #fde047; font-size: 1.5rem; }
+    #pause p { margin: 0; color: #dbe7dd; }
+    #pause .go { background: #fde047; color: #1b1404; border: 0; border-radius: 999px; padding: 14px 20px; font-weight: 900; font-size: 1.15rem; cursor: pointer; }
+    #pause .tip { font-size: 0.8rem; opacity: 0.75; }
+    #count { position: fixed; inset: 0; z-index: 24; display: flex; align-items: center; justify-content: center; pointer-events: none; font-size: 7rem; font-weight: 900; color: #fde047; text-shadow: 0 6px 18px rgba(0,0,0,0.6); }
+    #count[hidden] { display: none; }
+  </style>
+</head>
+<body>
+  <div id="stage"></div>
+  <div id="loading" data-t="loading">Loading General Ginger…</div>
+
+  <div id="hud">
+    <div>
+      <div id="score">0</div>
+      <div id="dist">0 m</div>
+      <div id="level">Level 1</div>
+    </div>
+    <div id="right">
+      <div id="hearts"></div>
+      <div id="pts">0 pts</div>
+      <div id="status"></div>
+    </div>
+  </div>
+
+  <div id="overlay">
+    <h1 id="ov-title">General Ginger<br>Flight</h1>
+    <select id="lang"></select>
+    <p id="ov-text" data-t="intro">The Ginger King's pest army is firing from the ground. Dodge rot bombs, shears and sticky nets, grab power-ups, and shoot down the King's airship to reach the next level!</p>
+    <div id="result"></div>
+    <div id="account" hidden></div>
+    <button id="go-btn" data-t="takeOff">Oya, Take Off!</button>
+    <div id="hint" data-th="hint">
+      <span>↑ ↓</span> / <span>W S</span> fly up and down • <span>Space</span> spice boost<br>
+      Phone: drag up and down to fly • tap to boost
+    </div>
+    <div id="rotate" data-t="rotate">Tip: turn your phone sideways for a wider view</div>
+  </div>
+  <div id="bossbar" hidden><span data-t="boss">THE GINGER KING</span><div class="bb"><i id="bossfill"></i></div></div>
+  <div id="signin" hidden role="dialog" aria-modal="true" aria-labelledby="si-title">
+    <form class="card" id="si-form" novalidate>
+      <h2 id="si-title">Sign in to save points</h2>
+      <p id="si-text">Enter your email and we'll email you a sign-in link. No password needed.</p>
+      <input id="si-input" type="email" autocomplete="email" placeholder="you@email.com">
+      <input id="si-pass" type="password" hidden maxlength="72">
+      <div id="si-msg" role="status"></div>
+      <div class="row">
+        <button type="button" class="link-btn" id="si-cancel" data-t="cancel">Cancel</button>
+        <button type="submit" class="go" id="si-go">Send link</button>
+      </div>
+      <button type="button" class="link-btn" id="si-alt" hidden></button>
+    </form>
+  </div>
+  <div id="fx"><button type="button" id="fx-pause" hidden aria-label="Pause" data-ta="pause">⏸</button><button type="button" id="fx-sound"></button><button type="button" id="fx-buzz"></button></div>
+  <div id="pause" hidden role="dialog" aria-modal="true" aria-labelledby="pause-title"><div class="card"><h2 id="pause-title" data-t="paused">⏸ Paused</h2><p id="pause-info"></p><button type="button" class="go" id="resume-btn" data-t="resume">▶ Resume</button><button type="button" class="link-btn" id="quit-btn" data-t="quit">Quit flight (points not saved)</button><p class="tip" data-t="pauseTip">Tip: press P or Esc to pause on a keyboard.</p></div></div>
+  <div id="count" hidden></div>
+  <div id="toast"></div>
+  <div id="flash"></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+  <script>
+// <GGSIM>
+/*
+ * General Ginger Flight — deterministic game simulation.
+ *
+ * This file holds ALL game rules. The phone runs it to play, and the
+ * Cloudflare Worker runs the exact same file to replay a session and check
+ * the score. Rules for keeping it replayable:
+ *   - fixed step (60 per second), never real time
+ *   - randomness only from the seeded generator (rng), never Math.random
+ *   - no Math.sin / cos / tan / pow / exp / log (results can differ between
+ *     engines); + - * / and Math.sqrt are safe
+ *   - rendering code may READ the state but never change it
+ *
+ * Version 2: levels, the Ginger King boss fight, the spice cannon,
+ * and ginger-root hearts.
+ */
+const GGSim = (() => {
+  const VERSION = 3;
+  const DT = 1 / 60;
+  const MAX_TICKS = 60 * 60 * 30; // 30 minutes
+  const FLOOR = 1.6, CEIL = 13;
+  const MAX_HP = 4;
+
+  // Points rules (architecture spec): a sigmoid curve over distance flown,
+  //   P(x, h) = Pmax * (1 - gamma)^h / (1 + e^(-k (x - x0)))
+  // cut by 15% for every hit taken, and still capped at 100 points per
+  // minute (blueprint) so short games can't max out.
+  const PPM_CAP = 100, SESSION_CAP = 300;
+  const P_MAX = 300, CURVE_K = 0.01, CURVE_X0 = 400, HIT_PENALTY = 0.15;
+
+  // Level and boss tuning
+  const FIRST_BOSS_X = 300, BOSS_GAP_X = 600;
+  const BOSS_OFFSET = 15;        // how far ahead of the plane the King's airship hovers
+  const CANNON_RATE = 0.16;      // seconds between cannon shots
+  const CANNON_POWERUP = 8;      // seconds of cannon from a pick-up
+
+  // Pick-up kinds
+  const ITEM_JAR = 0, ITEM_PEPPER = 1, ITEM_HEART = 2, ITEM_CANNON = 3;
+  // Projectile kinds
+  const SHOT_BOMB = 0, SHOT_SHEARS = 1, SHOT_NET = 2, SHOT_ROYAL = 3;
+
+  const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
+
+  function hashStr(str) { // FNV-1a, 32 bit
+    let h = 2166136261 >>> 0;
+    for (let i = 0; i < str.length; i++) {
+      h ^= str.charCodeAt(i);
+      h = Math.imul(h, 16777619) >>> 0;
+    }
+    return h >>> 0;
+  }
+
+  function rng(s) { // mulberry32
+    s.r = (s.r + 0x6D2B79F5) | 0;
+    let t = Math.imul(s.r ^ (s.r >>> 15), 1 | s.r);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  }
+
+  function ev(s, e) { if (s.events) s.events.push(e); }
+
+  function create(seed) {
+    return {
+      v: VERSION, tick: 0, r: hashStr(String(seed)) | 0,
+      x: 0, y: 5, vy: 0, speed: 7,
+      hp: MAX_HP, boost: 0, boostCd: 0, slow: 0, shield: 0, inv: 0,
+      cannon: 0, fireCd: 0,
+      level: 1, levelStartX: 0,
+      alive: true, score: 0, acc: 0, jars: 0, bossesBeaten: 0, hits: 0,
+      nextId: 1, nextSpawnX: 30, nextBossX: FIRST_BOSS_X,
+      boss: null,
+      units: [], shots: [], items: [], bullets: [],
+      events: [] // render-only; set to null on the server
+    };
+  }
+
+  // Difficulty: rises inside a level and jumps with each new level.
+  function difficulty(s) {
+    const inLevel = Math.min(1, (s.x - s.levelStartX) / 700);
+    return Math.min(1.2, 0.25 * (s.level - 1) + 0.4 * inLevel);
+  }
+
+  function hurt(s, k) {
+    if (s.shield > 0) { ev(s, { t: 'block', k }); return; }
+    if (s.inv > 0) return;
+    s.hp -= 1; s.hits++; s.inv = 1.8;
+    ev(s, { t: 'hit', k });
+    if (s.hp <= 0) { s.alive = false; ev(s, { t: 'crash' }); }
+  }
+
+  function startBoss(s) {
+    const hp = 18 + 8 * (s.level - 1);
+    s.boss = {
+      id: s.nextId++, hp, maxHp: hp,
+      off: BOSS_OFFSET + 18,   // flies in from off-screen
+      y: 8, dir: 1,
+      cd: 2.2, pattern: 0, age: 0
+    };
+    ev(s, { t: 'bossIn', level: s.level });
+  }
+
+  function bossX(s) { return s.x + s.boss.off; }
+
+  // inp = { axis: -1|0|1 (down/up), py: target height in hundredths or null, boost: bool }
+  function step(s, inp) {
+    if (!s.alive) return;
+    const d = difficulty(s);
+    const fighting = !!s.boss;
+
+    // --- Player ---
+    if (inp.boost && s.boostCd <= 0) { s.boost = 1; s.boostCd = 0.6; ev(s, { t: 'boost' }); }
+    s.boostCd = Math.max(0, s.boostCd - DT);
+
+    const slowF = s.slow > 0 ? 0.6 : 1;
+    s.speed = (7 + 2.4 * d) * slowF * (1 + s.boost * 0.9);
+    s.x += s.speed * DT;
+
+    const maxV = 8 * (s.slow > 0 ? 0.55 : 1);
+    let target = 0;
+    if (inp.axis) target = inp.axis * maxV;
+    else if (inp.py !== null && inp.py !== undefined) target = clamp((inp.py / 100 - s.y) * 5, -maxV, maxV);
+    s.vy += (target - s.vy) * Math.min(1, DT * 10);
+    s.y = clamp(s.y + s.vy * DT, FLOOR, CEIL);
+
+    s.boost = Math.max(0, s.boost - DT * 1.1);
+    s.slow = Math.max(0, s.slow - DT);
+    s.shield = Math.max(0, s.shield - DT);
+    s.inv = Math.max(0, s.inv - DT);
+    s.cannon = Math.max(0, s.cannon - DT);
+
+    s.acc += s.speed * DT * 10 * (1 + 0.25 * (s.level - 1));
+    const whole = Math.floor(s.acc);
+    s.score += whole; s.acc -= whole;
+
+    // --- Spice cannon: always on in a boss fight, or from a pick-up ---
+    s.fireCd = Math.max(0, s.fireCd - DT);
+    if ((fighting || s.cannon > 0) && s.fireCd <= 0) {
+      s.bullets.push({ id: s.nextId++, x: s.x + 1.8, y: s.y + 0.05, vx: s.speed + 24, age: 0 });
+      s.fireCd = CANNON_RATE;
+    }
+
+    // --- Boss fight trigger ---
+    if (!fighting && s.x >= s.nextBossX) startBoss(s);
+
+    // --- Spawning the King's pest army on the ground (quieter during a boss fight) ---
+    while (s.nextSpawnX < s.x + 45) {
+      const gap = Math.max(9, 18 - 4 * d + rng(s) * 9);
+      if (s.boss) { s.nextSpawnX += gap * 1.8; continue; }
+      const r = rng(s);
+      const k = r < 0.45 ? 0 : r < 0.8 ? 1 : 2; // 0 trebuchet crew, 1 white grub, 2 nematode
+      s.units.push({ id: s.nextId++, k, x: s.nextSpawnX, cd: 1.2 + rng(s) * 1.5, fired: -999, up: 0 });
+      if (rng(s) < 0.7) {
+        const q = rng(s);
+        const ik = q < 0.6 ? ITEM_JAR : q < 0.75 ? ITEM_PEPPER : q < 0.88 ? ITEM_CANNON : ITEM_HEART;
+        s.items.push({ id: s.nextId++, k: ik, x: s.nextSpawnX + 4, y: 3 + rng(s) * 8 });
+      }
+      s.nextSpawnX += gap;
+    }
+
+    // --- Ground units fire ---
+    for (let i = s.units.length - 1; i >= 0; i--) {
+      const u = s.units[i];
+      const dx = u.x - s.x;
+      if (dx < -15) { s.units.splice(i, 1); continue; }
+      u.cd -= DT;
+      if (u.k === 1 && dx < 20) u.up = Math.min(1, u.up + DT * 3);
+      if (u.cd > 0 || dx < -3 || dx > 26) continue;
+
+      if (u.k === 0 && dx > 3) { // trebuchet lobs a rot bomb at where the plane will be
+        const T = Math.max(0.9, 1.3 - 0.15 * (s.level - 1)) + rng(s) * 0.5, g = 12, x0 = u.x, y0 = 2.6;
+        const tx = s.x + s.speed * T, ty = s.y + (rng(s) * 2 - 1);
+        s.shots.push({ id: s.nextId++, k: SHOT_BOMB, x: x0, y: y0, vx: (tx - x0) / T, vy: (ty - y0 + 0.5 * g * T * T) / T, g, r: 0.55, age: 0 });
+        u.cd = 4 - 1.2 * d + rng(s) * 1; u.fired = s.tick;
+        ev(s, { t: 'fire', id: u.id });
+      } else if (u.k === 1 && u.up >= 1) { // white grub throws shears (two from level 2)
+        const x0 = u.x, y0 = 0.8;
+        const ax = s.x + s.speed * 0.5 - x0, ay = s.y - y0;
+        const len = Math.sqrt(ax * ax + ay * ay) || 1, sp = 12;
+        s.shots.push({ id: s.nextId++, k: SHOT_SHEARS, x: x0, y: y0, vx: ax / len * sp, vy: ay / len * sp, g: 2, r: 0.45, age: 0 });
+        if (s.level >= 2) s.shots.push({ id: s.nextId++, k: SHOT_SHEARS, x: x0, y: y0, vx: ax / len * sp, vy: ay / len * sp + 2.5, g: 2, r: 0.45, age: 0 });
+        u.cd = Math.max(1.8, 3 - 0.6 * d) + rng(s) * 0.8; u.fired = s.tick;
+        ev(s, { t: 'fire', id: u.id });
+      } else if (u.k === 2 && dx > 1) { // nematode spits a sticky net (two from level 3)
+        const x0 = u.x, y0 = 0.6;
+        const ax = s.x + s.speed - x0, ay = s.y - y0;
+        const len = Math.sqrt(ax * ax + ay * ay) || 1, sp = 8;
+        s.shots.push({ id: s.nextId++, k: SHOT_NET, x: x0, y: y0, vx: ax / len * sp, vy: ay / len * sp, g: 0, r: 0.85, age: 0 });
+        if (s.level >= 3) s.shots.push({ id: s.nextId++, k: SHOT_NET, x: x0, y: y0, vx: ax / len * sp, vy: ay / len * sp + 2, g: 0, r: 0.85, age: 0 });
+        u.cd = Math.max(2.6, 4.2 - d) + rng(s) * 1; u.fired = s.tick;
+        ev(s, { t: 'fire', id: u.id });
+      }
+    }
+
+    // --- The Ginger King's airship ---
+    if (s.boss) {
+      const b = s.boss;
+      b.age += DT;
+      b.off += (BOSS_OFFSET - b.off) * Math.min(1, DT * 1.5);
+      // patrol up and down (triangle wave; faster at higher levels)
+      b.y += b.dir * (2.2 + 0.6 * (s.level - 1)) * DT;
+      if (b.y > 11) { b.y = 11; b.dir = -1; }
+      if (b.y < 3.5) { b.y = 3.5; b.dir = 1; }
+      b.cd -= DT;
+      if (b.cd <= 0 && b.off < BOSS_OFFSET + 3) {
+        const bx = bossX(s), by = b.y - 0.4;
+        const pat = b.pattern % 3;
+        if (pat === 0) { // three aimed royal spice bombs
+          for (let k = 0; k < 3; k++) {
+            const ax = s.x - bx, ay = s.y - by + (k - 1) * 1.2;
+            const len = Math.sqrt(ax * ax + ay * ay) || 1, sp = 9 + s.level;
+            s.shots.push({ id: s.nextId++, k: SHOT_ROYAL, x: bx, y: by, vx: s.speed + ax / len * sp, vy: ay / len * sp, g: 0, r: 0.5, age: 0 });
+          }
+        } else if (pat === 1) { // fan of five
+          for (let k = 0; k < 5; k++) {
+            s.shots.push({ id: s.nextId++, k: SHOT_ROYAL, x: bx, y: by, vx: s.speed - 8, vy: (k - 2) * 2.2, g: 0, r: 0.5, age: 0 });
+          }
+        } else { // jar rain: drops ahead of the plane
+          for (let k = 0; k < 4; k++) {
+            s.shots.push({ id: s.nextId++, k: SHOT_ROYAL, x: s.x + 3 + k * 2.5 + rng(s) * 1.5, y: 15, vx: s.speed * 0.6, vy: -2, g: 6, r: 0.5, age: 0 });
+          }
+        }
+        b.pattern++;
+        b.cd = Math.max(0.9, 2.1 - 0.25 * (s.level - 1)) + rng(s) * 0.5;
+        ev(s, { t: 'bossFire', pat });
+      }
+    }
+
+    // --- Cannon shots ---
+    for (let i = s.bullets.length - 1; i >= 0; i--) {
+      const bl = s.bullets[i];
+      bl.x += bl.vx * DT; bl.age += DT;
+      if (bl.age > 1.2) { s.bullets.splice(i, 1); continue; }
+      let used = false;
+      if (s.boss && s.boss.off < BOSS_OFFSET + 6) {
+        const dx = bl.x - bossX(s), dy = bl.y - s.boss.y;
+        if (dx > -1.8 && dx < 1.8 && dy > -1.7 && dy < 1.9) {
+          used = true;
+          s.boss.hp -= 1; s.score += 20;
+          ev(s, { t: 'bossHit', x: bl.x, y: bl.y });
+          if (s.boss.hp <= 0) {
+            const lvl = s.level;
+            s.score += 1500 * lvl; s.bossesBeaten++;
+            s.hp = Math.min(MAX_HP, s.hp + 1);
+            ev(s, { t: 'bossDown', x: bossX(s), y: s.boss.y, level: lvl });
+            s.boss = null;
+            s.shots = s.shots.filter(sh => sh.k !== SHOT_ROYAL);
+            s.level++; s.levelStartX = s.x;
+            s.nextBossX = s.x + BOSS_GAP_X;
+            s.nextSpawnX = Math.max(s.nextSpawnX, s.x + 20);
+            ev(s, { t: 'level', level: s.level });
+          }
+        }
+      }
+      if (!used) {
+        for (let j = s.shots.length - 1; j >= 0; j--) {
+          const sh = s.shots[j];
+          const dx = sh.x - bl.x, dy = sh.y - bl.y, rr = sh.r + 0.25;
+          if (dx * dx + dy * dy < rr * rr) {
+            s.shots.splice(j, 1); used = true; s.score += 50;
+            ev(s, { t: 'shotDown', x: sh.x, y: sh.y, k: sh.k });
+            break;
+          }
+        }
+      }
+      if (used) s.bullets.splice(i, 1);
+    }
+
+    // --- Projectiles ---
+    for (let i = s.shots.length - 1; i >= 0; i--) {
+      const sh = s.shots[i];
+      sh.vy -= sh.g * DT;
+      sh.x += sh.vx * DT; sh.y += sh.vy * DT; sh.age += DT;
+      if (sh.y < 0 || sh.y > 20 || sh.age > 6 || sh.x < s.x - 20) { s.shots.splice(i, 1); continue; }
+      const ex = (sh.x - s.x) / 1.4, ey = sh.y - s.y, rr = sh.r + 0.6;
+      if (ex * ex + ey * ey < rr * rr) {
+        s.shots.splice(i, 1);
+        if (sh.k === SHOT_NET) { s.slow = 2.5; ev(s, { t: 'net' }); }
+        else hurt(s, sh.k);
+        if (!s.alive) break;
+      }
+    }
+
+    // --- Pick-ups ---
+    for (let i = s.items.length - 1; i >= 0; i--) {
+      const it = s.items[i];
+      if (it.x < s.x - 15) { s.items.splice(i, 1); continue; }
+      const dx = it.x - s.x, dy = it.y - s.y;
+      if (dx * dx + dy * dy < 1.69) {
+        s.items.splice(i, 1);
+        if (it.k === ITEM_JAR) { s.score += 250; s.jars++; ev(s, { t: 'jar', x: it.x, y: it.y }); }
+        else if (it.k === ITEM_PEPPER) { s.shield = 6; ev(s, { t: 'pepper', x: it.x, y: it.y }); }
+        else if (it.k === ITEM_HEART) {
+          if (s.hp < MAX_HP) s.hp++; else s.score += 300;
+          ev(s, { t: 'heart', x: it.x, y: it.y });
+        } else { s.cannon = CANNON_POWERUP; ev(s, { t: 'cannon', x: it.x, y: it.y }); }
+      }
+    }
+
+    s.tick++;
+    if (s.tick >= MAX_TICKS) s.alive = false;
+  }
+
+  // e^z using only + - * /, so the phone and the server always agree.
+  function detExp(z) {
+    const r = z / 64;
+    let term = 1, sum = 1;
+    for (let n = 1; n <= 14; n++) { term = term * r / n; sum += term; }
+    for (let i = 0; i < 6; i++) sum *= sum;
+    return sum;
+  }
+
+  // Points the session is worth. Takes the finished game state (x, hits, tick).
+  function points(s) {
+    const minutes = s.tick * DT / 60;
+    let factor = 1;
+    for (let i = 0; i < s.hits; i++) factor *= (1 - HIT_PENALTY);
+    const curve = P_MAX * factor / (1 + detExp(-CURVE_K * (s.x - CURVE_X0)));
+    return Math.max(0, Math.min(Math.floor(curve), Math.floor(PPM_CAP * minutes), SESSION_CAP));
+  }
+
+  function digest(s) {
+    return hashStr(`${VERSION}|${s.tick}|${s.score}|${s.hp}|${s.jars}|${s.level}|${s.bossesBeaten}`).toString(16);
+  }
+
+  // Input log entries: [tick, code, value]
+  //   code 0 = steer axis (-1, 0, 1)
+  //   code 1 = pointer target height in hundredths, or -1 when released
+  //   code 2 = boost pressed (value 1)
+  function recorder() {
+    const last = { axis: 0, py: null };
+    const log = [];
+    return {
+      log,
+      take(s, want) {
+        const inp = { axis: want.axis | 0, py: want.py === null ? null : Math.round(want.py), boost: !!want.boost };
+        if (inp.axis !== last.axis) { log.push([s.tick, 0, inp.axis]); last.axis = inp.axis; }
+        if (inp.py !== last.py) { log.push([s.tick, 1, inp.py === null ? -1 : inp.py]); last.py = inp.py; }
+        if (inp.boost) log.push([s.tick, 2, 1]);
+        return inp;
+      }
+    };
+  }
+
+  function validateLog(log, ticks) {
+    if (!Array.isArray(log) || log.length > 60000) return 'log must be an array of at most 60000 entries';
+    if (!Number.isInteger(ticks) || ticks < 1 || ticks > MAX_TICKS) return 'bad tick count';
+    let prev = 0;
+    for (const e of log) {
+      if (!Array.isArray(e) || e.length !== 3) return 'bad entry';
+      const [tk, code, val] = e;
+      if (!Number.isInteger(tk) || tk < prev || tk >= ticks) return 'ticks out of order or range';
+      prev = tk;
+      if (code === 0) { if (val !== -1 && val !== 0 && val !== 1) return 'bad axis'; }
+      else if (code === 1) { if (!Number.isInteger(val) || val < -1 || val > 2000) return 'bad pointer'; }
+      else if (code === 2) { if (val !== 1) return 'bad boost'; }
+      else return 'bad code';
+    }
+    return null;
+  }
+
+  // Replays a whole session from its seed and input log.
+  function replay(seed, log, ticks) {
+    const s = create(seed);
+    s.events = null;
+    const inp = { axis: 0, py: null, boost: false };
+    let j = 0;
+    while (s.alive && s.tick < ticks) {
+      inp.boost = false;
+      while (j < log.length && log[j][0] === s.tick) {
+        const [, code, val] = log[j];
+        if (code === 0) inp.axis = val;
+        else if (code === 1) inp.py = val === -1 ? null : val;
+        else if (code === 2) inp.boost = true;
+        j++;
+      }
+      step(s, inp);
+    }
+    return s;
+  }
+
+  return {
+    VERSION, DT, MAX_TICKS, MAX_HP, FLOOR, CEIL, PPM_CAP, SESSION_CAP, P_MAX, HIT_PENALTY, detExp,
+    ITEM_JAR, ITEM_PEPPER, ITEM_HEART, ITEM_CANNON, SHOT_BOMB, SHOT_SHEARS, SHOT_NET, SHOT_ROYAL,
+    BOSS_OFFSET, create, step, points, digest, recorder, validateLog, replay, hashStr, bossX
+  };
+})();
+
+if (typeof module !== 'undefined' && module.exports) module.exports = GGSim;
+if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
+
+// </GGSIM>
+  </script>
+  <script>
+  /* ================= Settings ================= */
+  // Put your Worker's address here to save verified points, e.g.
+  // const GG_API = 'https://gng-flight-verify.yourname.workers.dev';
+  // Leave empty to play in practice mode (nothing is saved).
+  const GG_API = '/api';
+  // Sign-in (Supabase). Both values are public and safe to put here.
+  const SUPABASE_URL = 'https://cfpzeiesbkhmluafuosx.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNmcHplaWVzYmtobWx1YWZ1b3N4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM0Mjk5MDQsImV4cCI6MjEwOTAwNTkwNH0.FaT_oenSz4Wg2NKrsRy6ac0wjLeMuxOrF8CGNYHmoCA';
+
+  (function () {
+    /* ================= Languages: English, Français, Español, Português, العربية ================= */
+    const LANGS = { en: 'English', fr: 'Français', es: 'Español', pt: 'Português', ar: 'العربية' };
+    const STR = {
+      en: {
+        loading: 'Loading General Ginger…', loadFail: 'Could not load the 3D engine. Check your connection and refresh.',
+        intro: "The Ginger King's pest army is firing from the ground. Dodge rot bombs, shears and sticky nets, grab power-ups, and shoot down the King's airship to reach the next level!",
+        takeOff: 'Oya, Take Off!', flyAgain: 'Fly Again', loadingAcct: 'Loading your account…', connecting: 'Connecting…',
+        hint: '<span>↑ ↓</span> / <span>W S</span> fly up and down • <span>Space</span> spice boost<br>Phone: drag up and down to fly • tap to boost',
+        rotate: 'Tip: turn your phone sideways for a wider view', boss: 'THE GINGER KING', cancel: 'Cancel',
+        paused: '⏸ Paused', resume: '▶ Resume', quit: 'Quit flight (points not saved)', pauseTip: 'Tip: press P or Esc to pause on a keyboard.', pause: 'Pause',
+        guest: 'Playing as a guest. ', signIn: 'Sign in', signUp: 'New player? Sign up', signedIn: 'Signed in. ', chooseTag: 'Choose your gamer tag',
+        acct: ' · {total} pts · today {today}/{cap} ', setPw: 'Set password', signOut: 'Sign out', signedOut: 'Signed out',
+        loginText: 'Use your gamer tag and password.', phTag: 'Gamer tag', phPw: 'Password', phNewPw: 'New password',
+        altEmail: 'New player or forgot your password? Use your email', altLogin: 'Already have a password? Sign in with your gamer tag',
+        emailTitle: 'Sign up or reset password', emailText: "Enter your email and we'll send you a sign-in link. You only need it once: after that you sign in with your gamer tag and password.", sendLink: 'Send link',
+        codeTitle: 'Check your email', codeText: 'We sent a sign-in email to {email}. Open it on this device and tap the link, or type the 6-digit code if the email shows one. Check spam too.',
+        tagTitle: 'Create your player', tagText: 'Pick your gamer tag (3 to 15 letters, numbers or underscores) and a password with at least 8 characters.', save: 'Save',
+        pwTitle: 'Set your password', pwText: 'Choose a password with at least 8 characters. Next time, sign in with {tag} and this password.', yourTag: 'your gamer tag', savePw: 'Save password',
+        enterTagPw: 'Enter your gamer tag and password.', noConn: 'No connection. Try again.', signInFail: 'Could not sign you in. Try again.', welcomeBack: 'Welcome back, {tag}!',
+        badEmail: 'Enter a valid email address.', sendFail: 'Could not send the email. Try again.', tapLink: 'Tap the link in the email, or enter the 6-digit code if it has one.',
+        codeBad: 'That code is wrong or has expired. Check it, or press Cancel and send a new one.', tagRule: 'Gamer tag: use 3 to 15 letters, numbers or underscores.',
+        welcome: 'Welcome, {tag}! Tap Take Off to fly', pwSaved: 'Password saved', pwShort: 'Use at least 8 characters for your password.', pwLong: 'That password is too long.', pwFail: 'Could not save your password. Try again.',
+        stNoSign: 'Not signed in: practice', stOffline: 'Offline: practice mode', stPractice: 'Practice mode', stSignToSave: 'Practice: sign in to save', stOffline2: 'Offline: practice',
+        record: '🏆 New Record!', wahala: '💥 Wahala!', kings: ' Beat the King {n}×.',
+        summary: 'General Ginger reached level {level}, flew {m} m and scored {score}.{kings} Best: {best}.',
+        checking: 'Checking {pts} points with the server…', signToSave: '{pts} points. Sign in to save them next time.', practiceRes: '{pts} points (practice mode, not saved)',
+        saved: '✅ {n} points saved · {total} total', capped: ' (daily limit reached)', verified: '✅ {n} points verified and saved', notSaved: '⚠️ Points not saved: {reason}', srvErr: 'server error',
+        shears: 'Shears! Ouch!', bomb: 'Rot bomb! Ouch!', net: 'Sticky net! Slowed down', block: 'Blocked by pepper!', jar: '+250 Spice!', pepper: 'Pepper shield!',
+        heartFull: 'Ginger root! +1 heart', heart: 'Ginger root!', cannon: 'Spice cannon! Shoot it down', bossIn: 'The Ginger King attacks! (Level {level})',
+        kingDown: 'King defeated! +{pts}', levelUp: 'Level {level}! Pests fight harder', go: 'Go!',
+        soundOn: 'Sound on', soundOff: 'Sound off', buzzOn: 'Vibration on', buzzOff: 'Vibration off',
+        pauseInfo: 'Score {score} · Level {level} · {m} m', cancelled: 'Flight cancelled', quitText: 'You quit at level {level} with {score}. Ready to fly again?', quitRes: 'Points from a quit flight are not saved.',
+        pts: '{n} pts', level: 'Level {n}', levelBoss: 'Level {n} · Boss fight', slowed: 'Slowed!', shield: 'Shield {n}s', cannonT: 'Cannon {n}s', language: 'Language'
+      },
+      fr: {
+        loading: 'Chargement de General Ginger…', loadFail: 'Impossible de charger le moteur 3D. Vérifie ta connexion et recharge la page.',
+        intro: "L'armée de nuisibles du Roi Gingembre tire depuis le sol. Esquive les bombes pourries, les cisailles et les filets collants, attrape les bonus et abats le dirigeable du Roi pour passer au niveau suivant !",
+        takeOff: 'Oya, décollage !', flyAgain: 'Rejouer', loadingAcct: 'Chargement de ton compte…', connecting: 'Connexion…',
+        hint: '<span>↑ ↓</span> / <span>W S</span> monter et descendre • <span>Espace</span> turbo épicé<br>Téléphone : glisse vers le haut ou le bas pour voler • touche pour le turbo',
+        rotate: 'Astuce : tourne ton téléphone pour une vue plus large', boss: 'LE ROI GINGEMBRE', cancel: 'Annuler',
+        paused: '⏸ Pause', resume: '▶ Reprendre', quit: 'Quitter le vol (points non enregistrés)', pauseTip: 'Astuce : appuie sur P ou Échap pour mettre en pause au clavier.', pause: 'Pause',
+        guest: 'Tu joues en invité. ', signIn: 'Se connecter', signUp: 'Nouveau joueur ? Inscris-toi', signedIn: 'Connecté. ', chooseTag: 'Choisis ton pseudo',
+        acct: ' · {total} pts · aujourd’hui {today}/{cap} ', setPw: 'Mot de passe', signOut: 'Se déconnecter', signedOut: 'Déconnecté',
+        loginText: 'Utilise ton pseudo et ton mot de passe.', phTag: 'Pseudo', phPw: 'Mot de passe', phNewPw: 'Nouveau mot de passe',
+        altEmail: 'Nouveau joueur ou mot de passe oublié ? Utilise ton e-mail', altLogin: 'Tu as déjà un mot de passe ? Connecte-toi avec ton pseudo',
+        emailTitle: 'Inscription ou nouveau mot de passe', emailText: "Entre ton e-mail et nous t'enverrons un lien de connexion. Tu n'en as besoin qu'une fois : ensuite, tu te connectes avec ton pseudo et ton mot de passe.", sendLink: 'Envoyer le lien',
+        codeTitle: 'Vérifie tes e-mails', codeText: "Nous avons envoyé un e-mail de connexion à {email}. Ouvre-le sur cet appareil et touche le lien, ou tape le code à 6 chiffres s'il y en a un. Vérifie aussi les spams.",
+        tagTitle: 'Crée ton joueur', tagText: 'Choisis ton pseudo (3 à 15 lettres, chiffres ou tirets bas) et un mot de passe d’au moins 8 caractères.', save: 'Enregistrer',
+        pwTitle: 'Choisis ton mot de passe', pwText: 'Au moins 8 caractères. La prochaine fois, connecte-toi avec {tag} et ce mot de passe.', yourTag: 'ton pseudo', savePw: 'Enregistrer',
+        enterTagPw: 'Entre ton pseudo et ton mot de passe.', noConn: 'Pas de connexion. Réessaie.', signInFail: 'Connexion impossible. Réessaie.', welcomeBack: 'Bon retour, {tag} !',
+        badEmail: 'Entre une adresse e-mail valide.', sendFail: "Impossible d'envoyer l'e-mail. Réessaie.", tapLink: "Touche le lien dans l'e-mail, ou entre le code à 6 chiffres s'il y en a un.",
+        codeBad: 'Ce code est faux ou a expiré. Vérifie-le, ou appuie sur Annuler pour en recevoir un nouveau.', tagRule: 'Pseudo : 3 à 15 lettres, chiffres ou tirets bas.',
+        welcome: 'Bienvenue, {tag} ! Touche Décollage pour voler', pwSaved: 'Mot de passe enregistré', pwShort: 'Ton mot de passe doit faire au moins 8 caractères.', pwLong: 'Ce mot de passe est trop long.', pwFail: "Impossible d'enregistrer ton mot de passe. Réessaie.",
+        stNoSign: 'Non connecté : entraînement', stOffline: 'Hors ligne : entraînement', stPractice: 'Entraînement', stSignToSave: 'Entraînement : connecte-toi pour enregistrer', stOffline2: 'Hors ligne : entraînement',
+        record: '🏆 Nouveau record !', wahala: '💥 Wahala !', kings: ' Roi battu {n}×.',
+        summary: 'General Ginger a atteint le niveau {level}, a volé {m} m et marqué {score}.{kings} Record : {best}.',
+        checking: 'Vérification de {pts} points avec le serveur…', signToSave: '{pts} points. Connecte-toi pour les enregistrer la prochaine fois.', practiceRes: '{pts} points (entraînement, non enregistrés)',
+        saved: '✅ {n} points enregistrés · {total} au total', capped: ' (limite du jour atteinte)', verified: '✅ {n} points vérifiés et enregistrés', notSaved: '⚠️ Points non enregistrés : {reason}', srvErr: 'erreur du serveur',
+        shears: 'Cisailles ! Aïe !', bomb: 'Bombe pourrie ! Aïe !', net: 'Filet collant ! Ralenti', block: 'Bloqué par le piment !', jar: '+250 Épices !', pepper: 'Bouclier piment !',
+        heartFull: 'Racine de gingembre ! +1 cœur', heart: 'Racine de gingembre !', cannon: 'Canon à épices ! Abats-les', bossIn: 'Le Roi Gingembre attaque ! (Niveau {level})',
+        kingDown: 'Roi vaincu ! +{pts}', levelUp: 'Niveau {level} ! Les nuisibles se déchaînent', go: 'Go !',
+        soundOn: 'Son activé', soundOff: 'Son coupé', buzzOn: 'Vibration activée', buzzOff: 'Vibration coupée',
+        pauseInfo: 'Score {score} · Niveau {level} · {m} m', cancelled: 'Vol annulé', quitText: 'Tu as quitté au niveau {level} avec {score}. Prêt à revoler ?', quitRes: "Les points d'un vol quitté ne sont pas enregistrés.",
+        pts: '{n} pts', level: 'Niveau {n}', levelBoss: 'Niveau {n} · Combat de boss', slowed: 'Ralenti !', shield: 'Bouclier {n}s', cannonT: 'Canon {n}s', language: 'Langue'
+      },
+      es: {
+        loading: 'Cargando General Ginger…', loadFail: 'No se pudo cargar el motor 3D. Revisa tu conexión y recarga.',
+        intro: '¡El ejército de plagas del Rey Jengibre dispara desde el suelo! Esquiva bombas podridas, tijeras y redes pegajosas, recoge mejoras y derriba el dirigible del Rey para pasar de nivel.',
+        takeOff: '¡Oya, a despegar!', flyAgain: 'Volar otra vez', loadingAcct: 'Cargando tu cuenta…', connecting: 'Conectando…',
+        hint: '<span>↑ ↓</span> / <span>W S</span> subir y bajar • <span>Espacio</span> turbo picante<br>Móvil: arrastra arriba y abajo para volar • toca para el turbo',
+        rotate: 'Consejo: gira el móvil para ver más', boss: 'EL REY JENGIBRE', cancel: 'Cancelar',
+        paused: '⏸ En pausa', resume: '▶ Continuar', quit: 'Abandonar el vuelo (no se guardan los puntos)', pauseTip: 'Consejo: pulsa P o Esc para pausar con teclado.', pause: 'Pausa',
+        guest: 'Juegas como invitado. ', signIn: 'Iniciar sesión', signUp: '¿Jugador nuevo? Regístrate', signedIn: 'Sesión iniciada. ', chooseTag: 'Elige tu nombre de jugador',
+        acct: ' · {total} pts · hoy {today}/{cap} ', setPw: 'Contraseña', signOut: 'Cerrar sesión', signedOut: 'Sesión cerrada',
+        loginText: 'Usa tu nombre de jugador y tu contraseña.', phTag: 'Nombre de jugador', phPw: 'Contraseña', phNewPw: 'Nueva contraseña',
+        altEmail: '¿Jugador nuevo u olvidaste tu contraseña? Usa tu correo', altLogin: '¿Ya tienes contraseña? Entra con tu nombre de jugador',
+        emailTitle: 'Regístrate o cambia la contraseña', emailText: 'Escribe tu correo y te enviaremos un enlace para entrar. Solo lo necesitas una vez: después entras con tu nombre de jugador y tu contraseña.', sendLink: 'Enviar enlace',
+        codeTitle: 'Revisa tu correo', codeText: 'Enviamos un correo a {email}. Ábrelo en este dispositivo y toca el enlace, o escribe el código de 6 cifras si aparece. Revisa también el spam.',
+        tagTitle: 'Crea tu jugador', tagText: 'Elige tu nombre de jugador (de 3 a 15 letras, números o guiones bajos) y una contraseña de al menos 8 caracteres.', save: 'Guardar',
+        pwTitle: 'Elige tu contraseña', pwText: 'Al menos 8 caracteres. La próxima vez, entra con {tag} y esta contraseña.', yourTag: 'tu nombre de jugador', savePw: 'Guardar contraseña',
+        enterTagPw: 'Escribe tu nombre de jugador y tu contraseña.', noConn: 'Sin conexión. Inténtalo de nuevo.', signInFail: 'No pudimos iniciar tu sesión. Inténtalo de nuevo.', welcomeBack: '¡Hola de nuevo, {tag}!',
+        badEmail: 'Escribe un correo válido.', sendFail: 'No se pudo enviar el correo. Inténtalo de nuevo.', tapLink: 'Toca el enlace del correo o escribe el código de 6 cifras si lo tiene.',
+        codeBad: 'Ese código es incorrecto o ha caducado. Revísalo o pulsa Cancelar para recibir otro.', tagRule: 'Nombre de jugador: de 3 a 15 letras, números o guiones bajos.',
+        welcome: '¡Bienvenido, {tag}! Toca Despegar para volar', pwSaved: 'Contraseña guardada', pwShort: 'Usa al menos 8 caracteres en tu contraseña.', pwLong: 'Esa contraseña es demasiado larga.', pwFail: 'No se pudo guardar tu contraseña. Inténtalo de nuevo.',
+        stNoSign: 'Sin sesión: práctica', stOffline: 'Sin conexión: modo práctica', stPractice: 'Modo práctica', stSignToSave: 'Práctica: inicia sesión para guardar', stOffline2: 'Sin conexión: práctica',
+        record: '🏆 ¡Nuevo récord!', wahala: '💥 ¡Wahala!', kings: ' Venciste al Rey {n}×.',
+        summary: 'General Ginger llegó al nivel {level}, voló {m} m y sumó {score}.{kings} Récord: {best}.',
+        checking: 'Comprobando {pts} puntos con el servidor…', signToSave: '{pts} puntos. Inicia sesión para guardarlos la próxima vez.', practiceRes: '{pts} puntos (práctica, no se guardan)',
+        saved: '✅ {n} puntos guardados · {total} en total', capped: ' (límite diario alcanzado)', verified: '✅ {n} puntos verificados y guardados', notSaved: '⚠️ Puntos no guardados: {reason}', srvErr: 'error del servidor',
+        shears: '¡Tijeras! ¡Ay!', bomb: '¡Bomba podrida! ¡Ay!', net: '¡Red pegajosa! Vas más lento', block: '¡Bloqueado por el chile!', jar: '¡+250 Especias!', pepper: '¡Escudo de chile!',
+        heartFull: '¡Raíz de jengibre! +1 corazón', heart: '¡Raíz de jengibre!', cannon: '¡Cañón de especias! Derríbalos', bossIn: '¡Ataca el Rey Jengibre! (Nivel {level})',
+        kingDown: '¡Rey derrotado! +{pts}', levelUp: '¡Nivel {level}! Las plagas atacan con más fuerza', go: '¡Ya!',
+        soundOn: 'Sonido activado', soundOff: 'Sonido apagado', buzzOn: 'Vibración activada', buzzOff: 'Vibración apagada',
+        pauseInfo: 'Puntuación {score} · Nivel {level} · {m} m', cancelled: 'Vuelo cancelado', quitText: 'Abandonaste en el nivel {level} con {score}. ¿Listo para volar otra vez?', quitRes: 'Los puntos de un vuelo abandonado no se guardan.',
+        pts: '{n} pts', level: 'Nivel {n}', levelBoss: 'Nivel {n} · Jefe final', slowed: '¡Más lento!', shield: 'Escudo {n}s', cannonT: 'Cañón {n}s', language: 'Idioma'
+      },
+      pt: {
+        loading: 'Carregando General Ginger…', loadFail: 'Não foi possível carregar o motor 3D. Verifique sua conexão e recarregue.',
+        intro: 'O exército de pragas do Rei Gengibre está atirando do chão! Desvie de bombas podres, tesouras e redes grudentas, pegue power-ups e derrube o dirigível do Rei para passar de nível.',
+        takeOff: 'Oya, decolar!', flyAgain: 'Voar de novo', loadingAcct: 'Carregando sua conta…', connecting: 'Conectando…',
+        hint: '<span>↑ ↓</span> / <span>W S</span> subir e descer • <span>Espaço</span> turbo apimentado<br>Celular: arraste para cima e para baixo para voar • toque para o turbo',
+        rotate: 'Dica: vire o celular para ver mais', boss: 'O REI GENGIBRE', cancel: 'Cancelar',
+        paused: '⏸ Pausado', resume: '▶ Continuar', quit: 'Sair do voo (pontos não são salvos)', pauseTip: 'Dica: aperte P ou Esc para pausar no teclado.', pause: 'Pausar',
+        guest: 'Jogando como convidado. ', signIn: 'Entrar', signUp: 'Jogador novo? Cadastre-se', signedIn: 'Conectado. ', chooseTag: 'Escolha seu nome de jogador',
+        acct: ' · {total} pts · hoje {today}/{cap} ', setPw: 'Senha', signOut: 'Sair', signedOut: 'Você saiu',
+        loginText: 'Use seu nome de jogador e senha.', phTag: 'Nome de jogador', phPw: 'Senha', phNewPw: 'Nova senha',
+        altEmail: 'Jogador novo ou esqueceu a senha? Use seu e-mail', altLogin: 'Já tem senha? Entre com seu nome de jogador',
+        emailTitle: 'Cadastro ou nova senha', emailText: 'Digite seu e-mail e enviaremos um link de acesso. Você só precisa dele uma vez: depois, entra com seu nome de jogador e senha.', sendLink: 'Enviar link',
+        codeTitle: 'Confira seu e-mail', codeText: 'Enviamos um e-mail para {email}. Abra neste aparelho e toque no link, ou digite o código de 6 dígitos se aparecer. Confira também o spam.',
+        tagTitle: 'Crie seu jogador', tagText: 'Escolha seu nome de jogador (3 a 15 letras, números ou sublinhados) e uma senha com pelo menos 8 caracteres.', save: 'Salvar',
+        pwTitle: 'Defina sua senha', pwText: 'Pelo menos 8 caracteres. Da próxima vez, entre com {tag} e esta senha.', yourTag: 'seu nome de jogador', savePw: 'Salvar senha',
+        enterTagPw: 'Digite seu nome de jogador e senha.', noConn: 'Sem conexão. Tente de novo.', signInFail: 'Não foi possível entrar. Tente de novo.', welcomeBack: 'Bem-vindo de volta, {tag}!',
+        badEmail: 'Digite um e-mail válido.', sendFail: 'Não foi possível enviar o e-mail. Tente de novo.', tapLink: 'Toque no link do e-mail ou digite o código de 6 dígitos, se houver.',
+        codeBad: 'Esse código está errado ou expirou. Confira ou toque em Cancelar para receber outro.', tagRule: 'Nome de jogador: 3 a 15 letras, números ou sublinhados.',
+        welcome: 'Bem-vindo, {tag}! Toque em Decolar para voar', pwSaved: 'Senha salva', pwShort: 'Use pelo menos 8 caracteres na senha.', pwLong: 'Essa senha é longa demais.', pwFail: 'Não foi possível salvar sua senha. Tente de novo.',
+        stNoSign: 'Sem login: treino', stOffline: 'Offline: modo treino', stPractice: 'Modo treino', stSignToSave: 'Treino: entre para salvar', stOffline2: 'Offline: treino',
+        record: '🏆 Novo recorde!', wahala: '💥 Wahala!', kings: ' Venceu o Rei {n}×.',
+        summary: 'General Ginger chegou ao nível {level}, voou {m} m e fez {score}.{kings} Recorde: {best}.',
+        checking: 'Conferindo {pts} pontos com o servidor…', signToSave: '{pts} pontos. Entre para salvá-los da próxima vez.', practiceRes: '{pts} pontos (treino, não salvos)',
+        saved: '✅ {n} pontos salvos · {total} no total', capped: ' (limite diário atingido)', verified: '✅ {n} pontos verificados e salvos', notSaved: '⚠️ Pontos não salvos: {reason}', srvErr: 'erro no servidor',
+        shears: 'Tesouras! Ai!', bomb: 'Bomba podre! Ai!', net: 'Rede grudenta! Mais devagar', block: 'Bloqueado pela pimenta!', jar: '+250 Temperos!', pepper: 'Escudo de pimenta!',
+        heartFull: 'Raiz de gengibre! +1 coração', heart: 'Raiz de gengibre!', cannon: 'Canhão de temperos! Derrube tudo', bossIn: 'O Rei Gengibre ataca! (Nível {level})',
+        kingDown: 'Rei derrotado! +{pts}', levelUp: 'Nível {level}! As pragas estão mais fortes', go: 'Vai!',
+        soundOn: 'Som ligado', soundOff: 'Som desligado', buzzOn: 'Vibração ligada', buzzOff: 'Vibração desligada',
+        pauseInfo: 'Pontos {score} · Nível {level} · {m} m', cancelled: 'Voo cancelado', quitText: 'Você saiu no nível {level} com {score}. Pronto para voar de novo?', quitRes: 'Pontos de um voo abandonado não são salvos.',
+        pts: '{n} pts', level: 'Nível {n}', levelBoss: 'Nível {n} · Chefão', slowed: 'Mais devagar!', shield: 'Escudo {n}s', cannonT: 'Canhão {n}s', language: 'Idioma'
+      },
+      ar: {
+        loading: 'جارٍ تحميل General Ginger…', loadFail: 'تعذّر تحميل محرك الرسوم ثلاثية الأبعاد. تحقّق من اتصالك وأعد تحميل الصفحة.',
+        intro: 'جيش آفات ملك الزنجبيل يطلق النار من الأرض! تفادَ القنابل الفاسدة والمقصّات والشِّباك اللزجة، واجمع المكافآت، وأسقط منطاد الملك لتنتقل إلى المستوى التالي!',
+        takeOff: 'هيّا، أقلِع!', flyAgain: 'طِر مجددًا', loadingAcct: 'جارٍ تحميل حسابك…', connecting: 'جارٍ الاتصال…',
+        hint: '<span>↑ ↓</span> / <span>W S</span> للصعود والنزول • <span>Space</span> دفعة التوابل<br>على الهاتف: اسحب للأعلى والأسفل للطيران • انقر للدفعة',
+        rotate: 'نصيحة: أدِر هاتفك أفقيًا لرؤية أوسع', boss: 'ملك الزنجبيل', cancel: 'إلغاء',
+        paused: '⏸ متوقف مؤقتًا', resume: '▶ استئناف', quit: 'إنهاء الرحلة (لن تُحفظ النقاط)', pauseTip: 'نصيحة: اضغط P أو Esc للإيقاف المؤقت من لوحة المفاتيح.', pause: 'إيقاف مؤقت',
+        guest: 'تلعب كضيف. ', signIn: 'تسجيل الدخول', signUp: 'لاعب جديد؟ أنشئ حسابًا', signedIn: 'تم تسجيل الدخول. ', chooseTag: 'اختر اسم اللاعب',
+        acct: ' · {total} نقطة · اليوم {today}/{cap} ', setPw: 'كلمة المرور', signOut: 'تسجيل الخروج', signedOut: 'تم تسجيل الخروج',
+        loginText: 'استخدم اسم اللاعب وكلمة المرور.', phTag: 'اسم اللاعب', phPw: 'كلمة المرور', phNewPw: 'كلمة مرور جديدة',
+        altEmail: 'لاعب جديد أو نسيت كلمة المرور؟ استخدم بريدك الإلكتروني', altLogin: 'لديك كلمة مرور؟ سجّل الدخول باسم اللاعب',
+        emailTitle: 'إنشاء حساب أو استعادة كلمة المرور', emailText: 'أدخل بريدك الإلكتروني وسنرسل لك رابط تسجيل الدخول. تحتاجه مرة واحدة فقط، وبعدها تسجّل الدخول باسم اللاعب وكلمة المرور.', sendLink: 'إرسال الرابط',
+        codeTitle: 'تحقّق من بريدك', codeText: 'أرسلنا رسالة إلى {email}. افتحها على هذا الجهاز وانقر على الرابط، أو اكتب الرمز المكوّن من 6 أرقام إن وُجد. تحقّق من مجلد الرسائل غير المرغوبة أيضًا.',
+        tagTitle: 'أنشئ لاعبك', tagText: 'اختر اسم لاعب (من 3 إلى 15 حرفًا لاتينيًا أو رقمًا أو شرطة سفلية) وكلمة مرور من 8 أحرف على الأقل.', save: 'حفظ',
+        pwTitle: 'عيّن كلمة المرور', pwText: '8 أحرف على الأقل. في المرة القادمة سجّل الدخول باسم {tag} وكلمة المرور هذه.', yourTag: 'اسم اللاعب', savePw: 'حفظ كلمة المرور',
+        enterTagPw: 'أدخل اسم اللاعب وكلمة المرور.', noConn: 'لا يوجد اتصال. حاول مرة أخرى.', signInFail: 'تعذّر تسجيل دخولك. حاول مرة أخرى.', welcomeBack: 'مرحبًا بعودتك، {tag}!',
+        badEmail: 'أدخل بريدًا إلكترونيًا صحيحًا.', sendFail: 'تعذّر إرسال البريد. حاول مرة أخرى.', tapLink: 'انقر على الرابط في البريد، أو أدخل الرمز المكوّن من 6 أرقام إن وُجد.',
+        codeBad: 'هذا الرمز خاطئ أو منتهي الصلاحية. تحقّق منه، أو اضغط إلغاء واطلب رمزًا جديدًا.', tagRule: 'اسم اللاعب: من 3 إلى 15 حرفًا لاتينيًا أو رقمًا أو شرطة سفلية.',
+        welcome: 'أهلًا {tag}! اضغط «أقلِع» لتطير', pwSaved: 'تم حفظ كلمة المرور', pwShort: 'استخدم 8 أحرف على الأقل لكلمة المرور.', pwLong: 'كلمة المرور طويلة جدًا.', pwFail: 'تعذّر حفظ كلمة المرور. حاول مرة أخرى.',
+        stNoSign: 'غير مسجّل: تدريب', stOffline: 'غير متصل: وضع التدريب', stPractice: 'وضع التدريب', stSignToSave: 'تدريب: سجّل الدخول للحفظ', stOffline2: 'غير متصل: تدريب',
+        record: '🏆 رقم قياسي جديد!', wahala: '💥 Wahala!', kings: ' هزمت الملك {n}×.',
+        summary: 'وصل General Ginger إلى المستوى {level}، وطار {m} م وسجّل {score}.{kings} الأفضل: {best}.',
+        checking: 'جارٍ التحقق من {pts} نقطة مع الخادم…', signToSave: '{pts} نقطة. سجّل الدخول لحفظها في المرة القادمة.', practiceRes: '{pts} نقطة (تدريب، لم تُحفظ)',
+        saved: '✅ حُفظت {n} نقطة · المجموع {total}', capped: ' (بلغت الحد اليومي)', verified: '✅ تم التحقق من {n} نقطة وحفظها', notSaved: '⚠️ لم تُحفظ النقاط: {reason}', srvErr: 'خطأ في الخادم',
+        shears: 'مقصّ! آخ!', bomb: 'قنبلة فاسدة! آخ!', net: 'شبكة لزجة! تباطأت', block: 'صدّها الفلفل!', jar: '+250 توابل!', pepper: 'درع الفلفل!',
+        heartFull: 'جذر زنجبيل! +1 قلب', heart: 'جذر زنجبيل!', cannon: 'مدفع التوابل! أسقطهم', bossIn: 'ملك الزنجبيل يهاجم! (المستوى {level})',
+        kingDown: 'هُزم الملك! +{pts}', levelUp: 'المستوى {level}! الآفات تشتد', go: 'انطلق!',
+        soundOn: 'الصوت مفعّل', soundOff: 'الصوت متوقف', buzzOn: 'الاهتزاز مفعّل', buzzOff: 'الاهتزاز متوقف',
+        pauseInfo: 'النقاط {score} · المستوى {level} · {m} م', cancelled: 'أُلغيت الرحلة', quitText: 'خرجت في المستوى {level} بنتيجة {score}. مستعد للطيران مجددًا؟', quitRes: 'لا تُحفظ نقاط الرحلة التي خرجت منها.',
+        pts: '{n} نقطة', level: 'المستوى {n}', levelBoss: 'المستوى {n} · معركة الزعيم', slowed: 'تباطأت!', shield: 'درع {n}ث', cannonT: 'مدفع {n}ث', language: 'اللغة'
+      }
+    };
+    // Messages that come from the server, translated by their English text
+    const SRV = {
+      'Wrong gamer tag or password.': { fr: 'Pseudo ou mot de passe incorrect.', es: 'Nombre de jugador o contraseña incorrectos.', pt: 'Nome de jogador ou senha incorretos.', ar: 'اسم اللاعب أو كلمة المرور غير صحيحة.' },
+      'Too many tries. Wait 15 minutes, or sign in with your email instead.': { fr: 'Trop de tentatives. Attends 15 minutes ou connecte-toi avec ton e-mail.', es: 'Demasiados intentos. Espera 15 minutos o entra con tu correo.', pt: 'Tentativas demais. Espere 15 minutos ou entre com seu e-mail.', ar: 'محاولات كثيرة. انتظر 15 دقيقة أو سجّل الدخول ببريدك الإلكتروني.' },
+      'That gamer tag is taken. Try another.': { fr: 'Ce pseudo est déjà pris. Essaie-en un autre.', es: 'Ese nombre ya está en uso. Prueba otro.', pt: 'Esse nome já está em uso. Tente outro.', ar: 'اسم اللاعب هذا مستخدم. جرّب اسمًا آخر.' },
+      'Gamer tag must be 3 to 15 letters, numbers or underscores.': { fr: 'Le pseudo doit faire 3 à 15 lettres, chiffres ou tirets bas.', es: 'El nombre debe tener de 3 a 15 letras, números o guiones bajos.', pt: 'O nome deve ter de 3 a 15 letras, números ou sublinhados.', ar: 'يجب أن يتكوّن اسم اللاعب من 3 إلى 15 حرفًا لاتينيًا أو رقمًا أو شرطة سفلية.' },
+      'Could not save your gamer tag. Try again.': { fr: "Impossible d'enregistrer ton pseudo. Réessaie.", es: 'No se pudo guardar tu nombre. Inténtalo de nuevo.', pt: 'Não foi possível salvar seu nome. Tente de novo.', ar: 'تعذّر حفظ اسم اللاعب. حاول مرة أخرى.' },
+      'Sign in to save points.': { fr: 'Connecte-toi pour enregistrer tes points.', es: 'Inicia sesión para guardar puntos.', pt: 'Entre para salvar pontos.', ar: 'سجّل الدخول لحفظ النقاط.' },
+      'Your sign-in has expired. Sign in again.': { fr: 'Ta session a expiré. Reconnecte-toi.', es: 'Tu sesión caducó. Vuelve a entrar.', pt: 'Sua sessão expirou. Entre de novo.', ar: 'انتهت صلاحية تسجيل الدخول. سجّل الدخول مجددًا.' },
+      'Choose a gamer tag first.': { fr: "Choisis d'abord un pseudo.", es: 'Primero elige un nombre de jugador.', pt: 'Primeiro escolha um nome de jogador.', ar: 'اختر اسم لاعب أولًا.' },
+      'unknown or used session': { fr: 'partie inconnue ou déjà utilisée', es: 'partida desconocida o ya usada', pt: 'partida desconhecida ou já usada', ar: 'جلسة غير معروفة أو مستخدمة' },
+      'score did not match replay': { fr: 'le score ne correspond pas à la partie', es: 'la puntuación no coincide con la partida', pt: 'a pontuação não confere com a partida', ar: 'النتيجة لا تطابق إعادة اللعب' },
+      'game finished faster than real time': { fr: 'partie terminée trop vite', es: 'partida terminada demasiado rápido', pt: 'partida terminou rápido demais', ar: 'انتهت اللعبة أسرع من الوقت الحقيقي' },
+      'game version changed, update the app': { fr: 'nouvelle version du jeu, recharge la page', es: 'cambió la versión del juego, recarga la página', pt: 'a versão do jogo mudou, recarregue a página', ar: 'تغيّر إصدار اللعبة، أعد تحميل الصفحة' },
+      'no connection': { fr: 'pas de connexion', es: 'sin conexión', pt: 'sem conexão', ar: 'لا يوجد اتصال' }
+    };
+    const pickLang = () => {
+      let saved = null; try { saved = localStorage.getItem('ggLang'); } catch (e) {}
+      if (saved && LANGS[saved]) return saved;
+      const fromUrl = new URLSearchParams(location.search).get('lang');
+      if (fromUrl && LANGS[fromUrl]) return fromUrl;
+      const pref = (navigator.languages || [navigator.language || 'en']).map(l => String(l).slice(0, 2).toLowerCase()).find(l => LANGS[l]);
+      return pref || 'en';
+    };
+    const LANG = pickLang();
+    function t(key, vars) {
+      let s = (STR[LANG] && STR[LANG][key]) || STR.en[key] || key;
+      if (vars) for (const k in vars) s = s.split('{' + k + '}').join(vars[k]);
+      return s;
+    }
+    const tr = msg => (msg && SRV[msg] && SRV[msg][LANG]) || msg; // server message in the player's language
+    const fmt = n => Number(n || 0).toLocaleString(LANG === 'ar' ? 'en' : LANG);
+    function applyLang() {
+      document.documentElement.lang = LANG;
+      document.documentElement.dir = LANG === 'ar' ? 'rtl' : 'ltr';
+      document.querySelectorAll('[data-t]').forEach(el => { el.textContent = t(el.dataset.t); });
+      document.querySelectorAll('[data-th]').forEach(el => { el.innerHTML = t(el.dataset.th); });
+      document.querySelectorAll('[data-ta]').forEach(el => { el.setAttribute('aria-label', t(el.dataset.ta)); });
+      const sel = document.getElementById('lang');
+      if (sel && !sel.options.length) {
+        for (const k in LANGS) sel.add(new Option(LANGS[k], k));
+        sel.value = LANG;
+        sel.setAttribute('aria-label', t('language'));
+        sel.addEventListener('change', () => { try { localStorage.setItem('ggLang', sel.value); } catch (e) {} location.reload(); });
+      }
+    }
+    applyLang();
+
+    if (!window.THREE || !window.GGSim) {
+      document.getElementById('loading').textContent = t('loadFail');
+      return;
+    }
+    document.getElementById('loading').remove();
+    const G = window.GGSim;
+
+    const rand = (a, b) => a + Math.random() * (b - a);
+    const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+    const lerp = (a, b, t) => a + (b - a) * t;
+    function loadBest() { try { return parseInt(localStorage.getItem('ggFlightBest') || '0', 10) || 0; } catch (e) { return 0; } }
+    function saveBest(v) { try { localStorage.setItem('ggFlightBest', String(v)); } catch (e) {} }
+
+    /* ================= Renderer, scene, camera ================= */
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    document.getElementById('stage').appendChild(renderer.domElement);
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x8fd3ff);
+    scene.fog = new THREE.Fog(0x8fd3ff, 40, 110);
+
+    const FOV = 45, NEED_W = 10.5, NEED_H = 8.2;
+    const camera = new THREE.PerspectiveCamera(FOV, 1, 0.1, 300);
+    let camDist = 20, halfW = 10, halfH = 8;
+    function resize() {
+      const w = window.innerWidth, h = window.innerHeight;
+      renderer.setSize(w, h);
+      camera.aspect = w / h;
+      const t = Math.tan(THREE.MathUtils.degToRad(FOV / 2));
+      camDist = Math.max(NEED_H / t, NEED_W / (t * camera.aspect));
+      halfH = t * camDist; halfW = halfH * camera.aspect;
+      camera.updateProjectionMatrix();
+      document.getElementById('rotate').style.display = camera.aspect < 0.8 ? 'block' : 'none';
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    scene.add(new THREE.HemisphereLight(0xffffff, 0x6b8e4e, 0.85));
+    const sun = new THREE.DirectionalLight(0xfff1d6, 0.75);
+    sun.position.set(-6, 12, 10);
+    scene.add(sun);
+
+    /* ================= Cartoon look ================= */
+    const gradTex = (() => {
+      const t = new THREE.DataTexture(new Uint8Array([110, 185, 255]), 3, 1, THREE.LuminanceFormat);
+      t.minFilter = t.magFilter = THREE.NearestFilter; t.generateMipmaps = false; t.needsUpdate = true;
+      return t;
+    })();
+    const mats = {};
+    const toon = (c, extra) => {
+      const k = c + JSON.stringify(extra || {});
+      return mats[k] || (mats[k] = new THREE.MeshToonMaterial(Object.assign({ color: c, gradientMap: gradTex }, extra || {})));
+    };
+    const outlineMat = new THREE.MeshBasicMaterial({ color: 0x24150a, side: THREE.BackSide });
+    const geos = {};
+    const GEO = (k, f) => geos[k] || (geos[k] = f());
+    const SPH = GEO('sph', () => new THREE.SphereGeometry(1, 20, 14));
+    const SPL = GEO('spl', () => new THREE.SphereGeometry(1, 10, 8));
+    const BOX = GEO('box', () => new THREE.BoxGeometry(1, 1, 1));
+    const CYL = GEO('cyl', () => new THREE.CylinderGeometry(1, 1, 1, 16));
+    const CONE = GEO('cone', () => new THREE.ConeGeometry(1, 1, 12));
+
+    function part(parent, geo, mat, pos, scale, outline = true, rot) {
+      const m = new THREE.Mesh(geo, mat);
+      m.position.set(pos[0], pos[1], pos[2]);
+      if (scale) m.scale.set(scale[0], scale[1], scale[2]);
+      if (rot) m.rotation.set(rot[0], rot[1], rot[2]);
+      parent.add(m);
+      if (outline) {
+        const o = new THREE.Mesh(geo, outlineMat);
+        o.scale.setScalar(typeof outline === 'number' ? outline : 1.08);
+        m.add(o);
+      }
+      return m;
+    }
+    function glowSprite(color, size) {
+      const c = document.createElement('canvas'); c.width = c.height = 64;
+      const g = c.getContext('2d');
+      const grd = g.createRadialGradient(32, 32, 0, 32, 32, 32);
+      grd.addColorStop(0, 'rgba(255,255,255,1)'); grd.addColorStop(0.3, color); grd.addColorStop(1, 'rgba(0,0,0,0)');
+      g.fillStyle = grd; g.fillRect(0, 0, 64, 64);
+      const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(c), blending: THREE.AdditiveBlending, depthWrite: false, transparent: true }));
+      s.scale.set(size, size, 1);
+      return s;
+    }
+
+    /* ================= Pick-ups ================= */
+    const glassMat = new THREE.MeshPhongMaterial({ color: 0xfff7e0, transparent: true, opacity: 0.35, shininess: 100 });
+    function buildJar() {
+      const j = new THREE.Group();
+      part(j, CYL, glassMat, [0, 0, 0], [0.2, 0.46, 0.2], false);
+      part(j, CYL, toon(0xe08a1e, { emissive: 0x5a2a00 }), [0, -0.05, 0], [0.17, 0.34, 0.17], false);
+      part(j, CYL, toon(0xf2c230, { emissive: 0x3a2a00 }), [0, 0.29, 0], [0.22, 0.14, 0.22], 1.1);
+      const glow = glowSprite('rgba(255,190,60,0.8)', 1.6); glow.position.y = 0.1; j.add(glow);
+      j.userData.glow = glow;
+      return j;
+    }
+    function buildPepper() {
+      const p = new THREE.Group();
+      part(p, SPH, toon(0xd62828, { emissive: 0x3a0000 }), [0, 0, 0], [0.22, 0.45, 0.22]);
+      part(p, CONE, toon(0x2f9e44), [0, 0.5, 0], [0.12, 0.18, 0.12], 1.1);
+      const glow = glowSprite('rgba(255,80,60,0.75)', 1.6); p.add(glow);
+      p.userData.glow = glow;
+      p.rotation.z = 0.4;
+      return p;
+    }
+    function buildHeart() { // a fresh ginger root that restores a heart
+      const h = new THREE.Group();
+      const skin = toon(0xdba95e, { emissive: 0x2a1600 });
+      part(h, SPH, skin, [0, 0, 0], [0.32, 0.22, 0.22]);
+      part(h, SPH, skin, [0.28, 0.16, 0], [0.16, 0.2, 0.16]);
+      part(h, SPH, skin, [-0.25, 0.14, 0], [0.14, 0.17, 0.14]);
+      part(h, SPL, toon(0x2f9e44), [0.3, 0.38, 0], [0.06, 0.12, 0.06], false);
+      const glow = glowSprite('rgba(255,70,90,0.8)', 1.7); h.add(glow);
+      h.userData.glow = glow;
+      return h;
+    }
+    function buildCannonItem() { // spice cannon power-up
+      const c = new THREE.Group();
+      part(c, CYL, toon(0x3a3a3a), [0, 0, 0], [0.16, 0.6, 0.16], 1.1, [0, 0, Math.PI / 2 - 0.3]);
+      part(c, CYL, toon(0xf2c230, { emissive: 0x3a2a00 }), [0.22, 0.07, 0], [0.19, 0.08, 0.19], false, [0, 0, Math.PI / 2 - 0.3]);
+      part(c, SPL, toon(0xe08a1e, { emissive: 0x5a2a00 }), [0.4, 0.13, 0], [0.12, 0.12, 0.12], false);
+      const glow = glowSprite('rgba(255,170,40,0.85)', 1.7); c.add(glow);
+      c.userData.glow = glow;
+      return c;
+    }
+
+    /* ================= General Ginger (the hero) ================= */
+    function buildGeneral() {
+      const g = new THREE.Group();
+      const skin = toon(0xdba95e), skinDark = toon(0xbd8a44);
+      const blue = toon(0x3d5a80), blueDark = toon(0x293d5a), gold = toon(0xf2c230, { emissive: 0x2a1e00 });
+      const white = toon(0xffffff), dark = toon(0x2a180c);
+      // uniform
+      part(g, CYL, blue, [0, 0.55, 0], [0.75, 1.1, 0.7]);
+      [0.85, 0.6, 0.35].forEach(y => part(g, SPL, gold, [0, y, 0.7], [0.06, 0.06, 0.04], false));
+      part(g, BOX, toon(0xc1121f), [-0.32, 0.85, 0.66], [0.18, 0.12, 0.05], false);
+      part(g, BOX, toon(0x1f8f3d), [-0.12, 0.85, 0.69], [0.18, 0.12, 0.05], false);
+      // scarf
+      part(g, SPH, white, [0, 1.12, 0], [0.62, 0.18, 0.6]);
+      const scarf = part(g, BOX, white, [-0.75, 1.1, -0.1], [0.9, 0.12, 0.3]);
+      g.userData.scarf = scarf;
+      // ginger-root head
+      part(g, SPH, skin, [0, 1.95, 0], [0.72, 0.85, 0.66]);
+      part(g, SPH, skin, [-0.7, 2.2, 0], [0.26, 0.22, 0.24]);
+      part(g, SPH, skin, [0.68, 1.7, 0.05], [0.22, 0.2, 0.22]);
+      part(g, new THREE.TorusGeometry(0.58, 0.022, 6, 24), skinDark, [0, 1.55, 0], [1, 1, 0.9], false, [Math.PI / 2, 0, 0]);
+      // eyes
+      [-1, 1].forEach(s => {
+        part(g, SPH, white, [s * 0.23, 2.05, 0.55], [0.17, 0.2, 0.1]);
+        part(g, SPL, dark, [s * 0.23, 2.03, 0.64], [0.07, 0.08, 0.04], false);
+        part(g, SPL, white, [s * 0.23 + 0.03, 2.08, 0.67], [0.025, 0.025, 0.02], false);
+        part(g, BOX, dark, [s * 0.25, 2.3, 0.55], [0.26, 0.06, 0.06], false, [0, 0, s * 0.22]);
+      });
+      // proud moustache + grin
+      [-1, 1].forEach(s => part(g, SPH, dark, [s * 0.16, 1.74, 0.6], [0.17, 0.06, 0.06], false, [0, 0, -s * 0.25]));
+      part(g, SPH, toon(0x6e1414), [0, 1.6, 0.56], [0.2, 0.09, 0.08], false);
+      // Air Force peaked cap
+      const cap = new THREE.Group(); cap.position.y = 2.66; g.add(cap);
+      part(cap, CYL, blue, [0, 0.02, 0], [0.62, 0.22, 0.62]);
+      part(cap, CYL, blueDark, [0, 0.22, 0], [0.72, 0.18, 0.72]);
+      part(cap, CYL, dark, [0, -0.08, 0.36], [0.5, 0.05, 0.36], 1.1);
+      part(cap, CYL, gold, [0, -0.02, 0.52], [0.12, 0.03, 0.06], false, [Math.PI / 2, 0, 0]);
+      part(cap, SPL, gold, [0, 0.1, 0.63], [0.1, 0.1, 0.04], false);
+      // flying goggles pushed up on the cap
+      [-1, 1].forEach(s => {
+        part(cap, new THREE.TorusGeometry(0.13, 0.04, 8, 16), toon(0x7a4a24), [s * 0.2, 0.3, 0.5], null, false, [-0.4, 0, 0]);
+        part(cap, CYL, toon(0x9fd8ff, { emissive: 0x113344 }), [s * 0.2, 0.3, 0.5], [0.11, 0.03, 0.11], false, [Math.PI / 2 - 0.4, 0, 0]);
+      });
+      // arms on the controls
+      [-1, 1].forEach(s => part(g, SPH, blue, [s * 0.75, 0.55, 0.25], [0.2, 0.42, 0.2], true, [0.6, 0, s * 0.3]));
+      return g;
+    }
+
+    /* ================= The biplane ================= */
+    function buildPlane() {
+      const root = new THREE.Group();
+      const body = new THREE.Group(); root.add(body);
+      const green = toon(0x1f8f3d), white = toon(0xffffff), canvasM = toon(0xeedfb4), wood = toon(0x8b5a2b), dark = toon(0x2b2b2b), red = toon(0xc1121f);
+      // fuselage
+      part(body, BOX, green, [0, 0, 0], [3.0, 0.62, 0.72]);
+      part(body, BOX, white, [0.05, 0, 0], [0.5, 0.64, 0.74], false);
+      part(body, BOX, green, [-1.8, 0.05, 0], [0.9, 0.4, 0.45]);
+      // wings (stacked, Wright-era style)
+      part(body, BOX, canvasM, [0.35, -0.28, 0], [1.15, 0.08, 4.6]);
+      part(body, BOX, canvasM, [0.45, 0.88, 0], [1.15, 0.08, 4.8]);
+      [-2.2, -1.2, 1.2, 2.2].forEach(z => {
+        part(body, BOX, wood, [0.1, 0.3, z], [0.06, 1.15, 0.06], false);
+        part(body, BOX, wood, [0.75, 0.3, z], [0.06, 1.15, 0.06], false);
+      });
+      [-2.3, 2.3].forEach(z => part(body, BOX, red, [0.45, 0.94, z], [1.15, 0.02, 0.4], false));
+      // tail
+      part(body, BOX, canvasM, [-2.15, 0.08, 0], [0.6, 0.06, 1.7]);
+      part(body, BOX, red, [-2.2, 0.45, 0], [0.55, 0.65, 0.06]);
+      // nose + propeller
+      part(body, CYL, dark, [1.6, 0, 0], [0.34, 0.3, 0.34], 1.1, [0, 0, Math.PI / 2]);
+      const prop = new THREE.Group(); prop.position.set(1.8, 0, 0); body.add(prop);
+      part(prop, BOX, wood, [0, 0, 0], [0.06, 1.7, 0.16], 1.15);
+      part(prop, SPL, dark, [0.05, 0, 0], [0.12, 0.12, 0.12], false);
+      // wheels
+      [-0.5, 0.5].forEach(z => {
+        part(body, BOX, dark, [0.6, -0.55, z], [0.05, 0.5, 0.05], false);
+        part(body, CYL, dark, [0.6, -0.82, z], [0.26, 0.1, 0.26], 1.1, [Math.PI / 2, 0, 0]);
+      });
+      // pilot
+      const pilot = buildGeneral();
+      pilot.scale.setScalar(0.42); pilot.position.set(-0.35, 0.05, 0); pilot.rotation.y = 0.85;
+      body.add(pilot);
+      // pepper shield + sticky net
+      const shield = new THREE.Mesh(SPH, new THREE.MeshBasicMaterial({ color: 0xff7a1a, transparent: true, opacity: 0.25, depthWrite: false }));
+      shield.scale.set(3.2, 2.1, 2.8); shield.visible = false; root.add(shield);
+      const net = new THREE.Mesh(SPH, new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true, transparent: true, opacity: 0.6 }));
+      net.scale.set(1.9, 1.2, 1.4); net.visible = false; root.add(net);
+      return { root, body, prop, pilot, shield, net };
+    }
+
+    /* ================= The Ginger King (the boss) ================= */
+    function buildKing() {
+      const root = new THREE.Group(); const body = new THREE.Group(); root.add(body);
+      const skin = toon(0xdba95e), skinDark = toon(0xbd8a44), robe = toon(0x1f8f3d), robeDark = toon(0x136b2c);
+      const gold = toon(0xf2c230, { emissive: 0x2a1e00 }), white = toon(0xffffff), dark = toon(0x2a180c);
+      part(body, SPH, skin, [0, 2.0, 0], [0.78, 0.95, 0.72]);
+      [[-0.74, 2.45, 0, 0.3, 0.24, 0.26], [0.78, 2.2, 0.05, 0.34, 0.26, 0.28], [0.6, 2.72, -0.05, 0.22, 0.2, 0.2], [-0.55, 1.75, 0.1, 0.2, 0.18, 0.18]]
+        .forEach(k => part(body, SPH, skin, [k[0], k[1], k[2]], [k[3], k[4], k[5]]));
+      [2.6, 1.55].forEach(y => part(body, new THREE.TorusGeometry(0.62, 0.025, 6, 24), skinDark, [0, y, 0], [1, 1, 0.92], false, [Math.PI / 2, 0, 0]));
+      [-1, 1].forEach(s => {
+        part(body, SPH, white, [s * 0.25, 2.15, 0.6], [0.2, 0.25, 0.11]);
+        part(body, SPH, toon(0x7a3e12), [s * 0.25, 2.12, 0.69], [0.12, 0.13, 0.06], false);
+        part(body, SPL, dark, [s * 0.25, 2.12, 0.74], [0.065, 0.07, 0.04], false);
+        part(body, SPL, white, [s * 0.25 + 0.04, 2.17, 0.78], [0.028, 0.028, 0.02], false);
+        part(body, BOX, dark, [s * 0.26, 2.47, 0.6], [0.28, 0.06, 0.06], false, [0, 0, -s * 0.18]);
+      });
+      part(body, SPH, toon(0x6e1414), [0, 1.74, 0.62], [0.32, 0.19, 0.13]);
+      part(body, SPL, toon(0xf27a8a), [0, 1.66, 0.71], [0.16, 0.07, 0.05], false);
+      part(body, BOX, white, [0, 1.86, 0.72], [0.4, 0.06, 0.05], false);
+      const crown = new THREE.Group(); crown.position.y = 2.82; body.add(crown);
+      const band = new THREE.Mesh(new THREE.CylinderGeometry(0.52, 0.48, 0.36, 24, 1, true), toon(0xf2c230, { emissive: 0x2a1e00, side: THREE.DoubleSide }));
+      crown.add(band);
+      const bo = new THREE.Mesh(band.geometry, outlineMat); bo.scale.setScalar(1.06); band.add(bo);
+      for (let i = 0; i < 7; i++) {
+        const a = (i / 7) * Math.PI * 2, x = Math.sin(a) * 0.5, z = Math.cos(a) * 0.5;
+        part(crown, CONE, gold, [x, 0.34, z], [0.09, 0.34, 0.09], 1.12);
+        part(crown, SPL, gold, [x, 0.53, z], [0.065, 0.065, 0.065], false);
+        if (z > -0.1) part(crown, SPL, toon(0x2f9e44), [x * 1.04, 0, z * 1.04], [0.07, 0.11, 0.03], false, [0, a, 0]);
+      }
+      part(body, new THREE.CylinderGeometry(0.56, 1.15, 1.7, 28), robe, [0, 0.55, 0]);
+      part(body, new THREE.TorusGeometry(1.13, 0.06, 8, 32), gold, [0, -0.25, 0], null, false, [Math.PI / 2, 0, 0]);
+      const panel = new THREE.Group(); panel.position.set(0, 0.72, 0.8); panel.rotation.x = 0.34; body.add(panel);
+      part(panel, BOX, gold, [0, 0, -0.01], [0.62, 0.7, 0.04], false);
+      part(panel, BOX, robeDark, [0, 0, 0], [0.52, 0.6, 0.05], false);
+      part(panel, BOX, gold, [0, -0.05, 0.01], [0.2, 0.2, 0.06], false, [0, 0, Math.PI / 4]);
+      for (let i = 0; i <= 12; i++) {
+        const a = Math.PI * (0.12 + 0.76 * (i / 12));
+        part(body, SPL, gold, [Math.cos(a) * 0.62, 1.38 - Math.sin(a) * 0.22, Math.sin(a) * 0.56], [0.075, 0.075, 0.075], false);
+      }
+      function arm(side) {
+        const a = new THREE.Group(); a.position.set(side * 0.72, 1.28, 0); body.add(a);
+        part(a, new THREE.CylinderGeometry(0.2, 0.46, 0.75, 16), robe, [0, -0.36, 0]);
+        part(a, SPH, skin, [0, -0.85, 0], [0.17, 0.28, 0.17]);
+        part(a, SPH, skin, [0, -1.12, 0.02], [0.2, 0.19, 0.19]);
+        return a;
+      }
+      const armR = arm(1), armL = arm(-1);
+      armR.rotation.z = 2.5; armL.rotation.z = -0.55;
+      const jar = buildJar(); jar.position.set(0, -1.32, 0.05); jar.rotation.z = -2.5; armR.add(jar);
+      [-1, 1].forEach(s => part(body, SPH, skin, [s * 0.4, -0.38, 0.22], [0.32, 0.2, 0.45]));
+      return { root, body, armR, armL, jar };
+    }
+
+    function buildPalace() {
+      const p = new THREE.Group();
+      const stone = toon(0xe9d8a6), stoneDark = toon(0xc9b47f), red = toon(0xc1121f), green = toon(0x1f8f3d), gold = toon(0xf2c230);
+      part(p, BOX, stone, [0, 2.5, 0], [4.2, 5, 3]);
+      for (let i = -2; i <= 2; i++) part(p, BOX, stoneDark, [i * 0.85, 5.25, 1.2], [0.5, 0.5, 0.5], false);
+      part(p, BOX, toon(0x5a3a1c), [0, 1.0, 1.52], [1.2, 2, 0.05], false);
+      part(p, BOX, stone, [0, 5.1, 1.9], [3.0, 0.25, 1.4]);
+      part(p, BOX, red, [0, 6.9, 1.4], [3.4, 0.1, 2.2], false, [0.25, 0, 0]);
+      [-1, 1].forEach(s => {
+        part(p, CYL, stone, [s * 2.6, 3.2, 0], [0.8, 6.4, 0.8]);
+        part(p, CONE, s < 0 ? green : red, [s * 2.6, 7.0, 0], [1.0, 1.4, 1.0], 1.06);
+        part(p, SPL, gold, [s * 2.6, 7.8, 0], [0.18, 0.18, 0.18], false);
+      });
+      const king = buildKing(); king.root.scale.setScalar(0.85); king.root.position.set(0, 5.25, 1.9); p.add(king.root);
+      p.userData.king = king;
+      return p;
+    }
+
+    // The boss: the Ginger King in his royal airship
+    function buildAirship() {
+      const a = new THREE.Group();
+      const body = new THREE.Group(); a.add(body);
+      const orange = toon(0xd9822b), green = toon(0x1f8f3d), red = toon(0xc1121f), gold = toon(0xf2c230, { emissive: 0x2a1e00 }), wood = toon(0x7a4a24);
+      // balloon
+      part(body, SPH, orange, [0, 2.1, 0], [2.6, 1.35, 1.35], 1.05);
+      [-1.6, 0, 1.6].forEach((x, i) => part(body, new THREE.TorusGeometry(1, 0.06, 8, 28), i === 1 ? red : green, [x, 2.1, 0], [0.3, 1.18 - Math.abs(x) * 0.2, 1.18 - Math.abs(x) * 0.2], false, [0, Math.PI / 2, 0]));
+      part(body, CONE, red, [2.75, 2.1, 0], [0.4, 0.6, 0.4], 1.1, [0, 0, -Math.PI / 2]);
+      // tail fins
+      part(body, BOX, green, [-2.7, 2.1, 0], [0.7, 1.3, 0.08]);
+      part(body, BOX, green, [-2.7, 2.1, 0], [0.7, 0.08, 1.3]);
+      // ropes + gondola
+      [[-0.9, 0.5], [0.9, 0.5], [-0.9, -0.5], [0.9, -0.5]].forEach(([x, z]) => part(body, BOX, wood, [x, 0.9, z], [0.04, 1.1, 0.04], false));
+      part(body, BOX, wood, [0, 0.15, 0], [2.4, 0.5, 1.3]);
+      part(body, BOX, gold, [0, 0.42, 0], [2.5, 0.08, 1.4], false);
+      // royal flags
+      [-1, 1].forEach(s => {
+        part(body, BOX, wood, [s * 1.1, 0.9, 0.6], [0.04, 1.0, 0.04], false);
+        part(body, BOX, s < 0 ? green : red, [s * 1.1 + 0.22, 1.25, 0.6], [0.42, 0.26, 0.02], false);
+      });
+      // cannons on the gondola
+      [-0.4, 0.4].forEach(z => part(body, CYL, toon(0x333333), [-1.35, 0.2, z], [0.12, 0.5, 0.12], 1.1, [0, 0, Math.PI / 2]));
+      // propeller at the back
+      const prop = new THREE.Group(); prop.position.set(-3.15, 2.1, 0); body.add(prop);
+      part(prop, BOX, wood, [0, 0, 0], [0.06, 1.5, 0.14], 1.15);
+      // the King himself, waving the spice jar
+      const king = buildKing(); king.root.scale.setScalar(0.55); king.root.position.set(0.2, 0.42, 0.25); king.root.rotation.y = Math.PI - 0.6;
+      body.add(king.root);
+      a.userData = { body, prop, king };
+      a.rotation.y = Math.PI; // faces the plane (toward -x)
+      return a;
+    }
+
+    /* ================= The pest army ================= */
+    function caterpillar(parent, x, z, ph) {
+      const c = new THREE.Group(); c.position.set(x, 0, z); parent.add(c);
+      const g = toon(0x6aa84f), spot = toon(0xf59e0b), dark = toon(0x1a1a1a), white = toon(0xffffff);
+      for (let i = 0; i < 5; i++) {
+        part(c, SPH, g, [-i * 0.32, 0.28, 0], [0.24, 0.24, 0.24]);
+        part(c, SPL, spot, [-i * 0.32, 0.45, 0.12], [0.06, 0.06, 0.06], false);
+      }
+      part(c, SPH, g, [0.25, 0.55, 0], [0.28, 0.28, 0.28]);
+      [-1, 1].forEach(s => {
+        part(c, SPL, white, [0.42, 0.62, s * 0.11], [0.08, 0.09, 0.07], false);
+        part(c, SPL, dark, [0.48, 0.62, s * 0.12], [0.045, 0.05, 0.04], false);
+      });
+      part(c, SPH, toon(0x4b5320), [0.25, 0.78, 0], [0.3, 0.14, 0.3]); // army helmet
+      c.rotation.y = -0.5;
+      c.userData.ph = ph;
+      return c;
+    }
+    function buildTrebuchet() {
+      const t = new THREE.Group();
+      const wood = toon(0x8b5a2b), woodD = toon(0x6b4423);
+      part(t, BOX, wood, [0, 0.15, 0], [2.4, 0.3, 1.3]);
+      [-0.55, 0.55].forEach(z => {
+        part(t, BOX, woodD, [-0.4, 1.2, z], [0.16, 2.3, 0.16], false, [0, 0, -0.32]);
+        part(t, BOX, woodD, [0.4, 1.2, z], [0.16, 2.3, 0.16], false, [0, 0, 0.32]);
+      });
+      part(t, CYL, woodD, [0, 2.2, 0], [0.08, 1.3, 0.08], false, [Math.PI / 2, 0, 0]);
+      const arm = new THREE.Group(); arm.position.set(0, 2.2, 0); t.add(arm);
+      part(arm, BOX, wood, [0.7, 0, 0], [2.6, 0.14, 0.14]);
+      part(arm, BOX, toon(0x555555), [-0.75, -0.25, 0], [0.5, 0.5, 0.5]);
+      part(arm, SPL, toon(0x6b5a2a), [2.0, 0, 0], [0.22, 0.22, 0.22], false);
+      arm.rotation.z = -0.7;
+      t.userData.arm = arm;
+      t.userData.crew = [caterpillar(t, 1.4, 0.9, 0), caterpillar(t, -1.0, 0.9, 2)];
+      return t;
+    }
+    function buildGrub() {
+      const g = new THREE.Group();
+      part(g, SPH, toon(0x7a4f2a), [0, -0.05, 0], [0.9, 0.35, 0.8]); // mound
+      const body = new THREE.Group(); g.add(body);
+      const cream = toon(0xf3ead7), ring = toon(0xd8c9a8);
+      for (let i = 0; i < 6; i++) {
+        const a = -0.4 + i * 0.5;
+        const x = Math.cos(a) * 0.45, y = 0.5 + Math.sin(a) * 0.45;
+        part(body, SPH, i % 2 ? ring : cream, [x * 0.9, y, 0], [0.26, 0.26, 0.26]);
+      }
+      part(body, SPH, toon(0x8b4a2b), [-0.35, 1.0, 0.05], [0.24, 0.22, 0.22]);
+      [-1, 1].forEach(s => part(body, SPL, toon(0x111111), [-0.48, 1.05, s * 0.12], [0.045, 0.05, 0.04], false));
+      part(body, BOX, toon(0xc0c0c0), [-0.1, 1.25, 0.25], [0.5, 0.05, 0.08], false, [0, 0, 0.6]);
+      g.userData.body = body;
+      return g;
+    }
+    function buildNematode() {
+      const n = new THREE.Group();
+      const m = toon(0xe8b7c8), segs = [];
+      for (let i = 0; i < 8; i++) segs.push(part(n, SPH, m, [0, 0.2 + i * 0.28, 0], [0.16, 0.18, 0.16], i === 7 ? 1.12 : false));
+      const head = segs[7];
+      [-1, 1].forEach(s => part(head, SPL, toon(0x111111), [0.5, 0.2, s * 0.45], [0.25, 0.25, 0.2], false));
+      part(n, BOX, toon(0xc1121f), [0, 2.15, 0], [0.36, 0.08, 0.36], false); // bandana
+      part(n, SPH, toon(0x7a4f2a), [0, -0.05, 0], [0.5, 0.2, 0.5]);
+      n.userData.segs = segs;
+      return n;
+    }
+    function buildShot(k) {
+      const g = new THREE.Group();
+      if (k === 0) { // rot bomb
+        part(g, SPH, toon(0x6b5a2a), [0, 0, 0], [0.48, 0.48, 0.48]);
+        [[0.3, 0.2, 0.3], [-0.25, 0.1, 0.35], [0.05, -0.3, 0.35], [0.1, 0.35, -0.3]].forEach(p => part(g, SPL, toon(0x3e7a2a), p, [0.12, 0.12, 0.12], false));
+        part(g, CYL, toon(0x3a2a1a), [0, 0.5, 0], [0.05, 0.2, 0.05], false);
+      } else if (k === 1) { // shears
+        const steel = toon(0xd9d9d9), handle = toon(0xc1121f);
+        part(g, BOX, steel, [0.25, 0, 0], [0.9, 0.08, 0.12], 1.12, [0, 0, 0.35]);
+        part(g, BOX, steel, [0.25, 0, 0], [0.9, 0.08, 0.12], 1.12, [0, 0, -0.35]);
+        part(g, new THREE.TorusGeometry(0.14, 0.05, 6, 12), handle, [-0.35, 0.18, 0], null, false);
+        part(g, new THREE.TorusGeometry(0.14, 0.05, 6, 12), handle, [-0.35, -0.18, 0], null, false);
+      } else if (k === 3) { // royal spice bomb from the King's airship
+        part(g, SPH, toon(0xc1121f, { emissive: 0x4a0000 }), [0, 0, 0], [0.42, 0.42, 0.42]);
+        for (let i = 0; i < 5; i++) {
+          const a = i / 5 * Math.PI * 2;
+          part(g, CONE, toon(0xf2c230, { emissive: 0x3a2a00 }), [Math.cos(a) * 0.3, 0.35, Math.sin(a) * 0.3], [0.08, 0.22, 0.08], false);
+        }
+        g.add(glowSprite('rgba(255,90,40,0.7)', 1.6));
+      } else { // sticky net
+        const web = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.85 });
+        g.add(new THREE.Mesh(new THREE.TorusGeometry(0.7, 0.04, 6, 24), web));
+        g.add(new THREE.Mesh(new THREE.TorusGeometry(0.4, 0.03, 6, 20), web));
+        for (let i = 0; i < 4; i++) { const b = new THREE.Mesh(BOX, web); b.scale.set(1.4, 0.04, 0.04); b.rotation.z = i * Math.PI / 4; g.add(b); }
+      }
+      return g;
+    }
+
+    /* ================= World scenery ================= */
+    const ground = new THREE.Mesh(new THREE.PlaneGeometry(400, 160), new THREE.MeshLambertMaterial({ color: 0x74b04f }));
+    ground.rotation.x = -Math.PI / 2; ground.position.z = -40; scene.add(ground);
+    const road = new THREE.Mesh(new THREE.PlaneGeometry(400, 3.5), new THREE.MeshLambertMaterial({ color: 0xc27a43 }));
+    road.rotation.x = -Math.PI / 2; road.position.set(0, 0.01, 0); scene.add(road);
+
+    const scenery = [];
+    function buildStall(colA, colB) {
+      const s = new THREE.Group(); const wood = toon(0x8b5a2b);
+      [[-1.1, -0.8], [1.1, -0.8], [-1.1, 0.8], [1.1, 0.8]].forEach(q => part(s, BOX, wood, [q[0], 1.15, q[1]], [0.12, 2.3, 0.12], false));
+      part(s, BOX, wood, [0, 0.75, 0.1], [2.4, 0.16, 1.7]);
+      part(s, BOX, toon(colB), [0, 2.2, 0], [2.7, 0.22, 2.0], false);
+      part(s, CONE, toon(colA), [0, 2.8, 0], [1.95, 1.0, 1.56], 1.04, [0, Math.PI / 4, 0]);
+      const goods = [0xdba95e, 0xd62828, 0x55a630];
+      [-0.75, 0, 0.75].forEach((bx, i) => {
+        part(s, CYL, toon(0xa66e2c), [bx, 1.0, 0.35], [0.32, 0.3, 0.32]);
+        for (let k = 0; k < 3; k++) part(s, SPL, toon(goods[i]), [bx + (k - 1) * 0.13, 1.2, 0.35], [0.15, 0.13, 0.13], false);
+      });
+      return s;
+    }
+    function buildPalm() {
+      const p = new THREE.Group();
+      part(p, CYL, toon(0x8b6b3d), [0, 2.2, 0], [0.18, 4.4, 0.18], false, [0, 0, 0.08]);
+      for (let i = 0; i < 6; i++) {
+        const a = i / 6 * Math.PI * 2;
+        part(p, SPH, toon(0x2f8f3a), [Math.cos(a) * 0.9 + 0.35, 4.4, Math.sin(a) * 0.9], [1.0, 0.1, 0.32], false, [0, -a, -0.35]);
+      }
+      return p;
+    }
+    const stallCols = [[0xc1121f, 0x1f8f3d], [0x1f8f3d, 0xc1121f], [0xf2c230, 0x1f8f3d]];
+    for (let i = 0; i < 14; i++) {
+      const obj = i % 3 === 2 ? buildPalm() : buildStall(stallCols[i % 3][0], stallCols[i % 3][1]);
+      obj.position.set(-30 + i * 6 + rand(-1, 1), 0, -5 - rand(0, 5));
+      obj.rotation.y = rand(-0.2, 0.2);
+      scene.add(obj); scenery.push({ obj, span: 84 });
+    }
+    // market sign
+    (function () {
+      const cv = document.createElement('canvas'); cv.width = 256; cv.height = 128;
+      const g = cv.getContext('2d');
+      g.fillStyle = '#c1121f'; g.fillRect(0, 0, 256, 128); g.fillStyle = '#fff'; g.fillRect(10, 10, 236, 108);
+      g.fillStyle = '#c1121f'; g.fillRect(16, 16, 224, 96); g.fillStyle = '#fff';
+      g.font = 'bold 40px sans-serif'; g.textAlign = 'center'; g.fillText('NAIJA', 128, 58); g.fillText('MARKET', 128, 100);
+      const sign = new THREE.Group(); sign.position.set(-6, 0, -3);
+      part(sign, BOX, toon(0x8b5a2b), [-0.9, 1.1, 0], [0.12, 2.2, 0.12], false);
+      part(sign, BOX, toon(0x8b5a2b), [0.9, 1.1, 0], [0.12, 2.2, 0.12], false);
+      const board = new THREE.Mesh(new THREE.PlaneGeometry(2.2, 1.1), new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(cv) }));
+      board.position.set(0, 1.9, 0.08); sign.add(board);
+      scene.add(sign);
+    })();
+    const hills = [];
+    for (let i = 0; i < 10; i++) {
+      const h = part(scene, SPH, toon(0x5e9a3c), [-60 + i * 16, -3, -60 - rand(0, 15)], [rand(10, 16), rand(8, 14), 8], false);
+      hills.push(h);
+    }
+    const clouds = [];
+    for (let i = 0; i < 14; i++) {
+      const c = new THREE.Group();
+      const n = 4 + (i % 3);
+      for (let k = 0; k < n; k++) part(c, SPL, toon(0xffffff), [k * 0.9 - n * 0.45, rand(-0.2, 0.4), rand(-0.3, 0.3)], [rand(0.8, 1.3), rand(0.6, 1.0), 0.8], false);
+      c.scale.setScalar(rand(0.9, 1.8));
+      c.position.set(-30 + i * 7, rand(9, 22), rand(-30, -12));
+      scene.add(c); clouds.push(c);
+    }
+
+    /* ================= Particles ================= */
+    const pGeo = new THREE.IcosahedronGeometry(1, 0), pMats = {};
+    const pMat = c => pMats[c] || (pMats[c] = new THREE.MeshBasicMaterial({ color: c }));
+    const pool = [];
+    for (let i = 0; i < 280; i++) {
+      const m = new THREE.Mesh(pGeo, pMat(0xffffff));
+      m.visible = false; m.userData = { v: new THREE.Vector3(), life: 0, max: 1, size: 0.1, grav: 0 };
+      scene.add(m); pool.push(m);
+    }
+    let poolIdx = 0;
+    function emit(x, y, z, vx, vy, vz, color, life, size, grav = 6) {
+      const m = pool[poolIdx]; poolIdx = (poolIdx + 1) % pool.length;
+      m.material = pMat(color); m.visible = true; m.position.set(x, y, z);
+      const u = m.userData; u.v.set(vx, vy, vz); u.life = u.max = life; u.size = size; u.grav = grav;
+    }
+    function burst(x, y, colors, n, speed, z = 0) {
+      for (let i = 0; i < n; i++) {
+        const a = Math.random() * Math.PI * 2, s = rand(speed * 0.4, speed);
+        emit(x, y, z, Math.cos(a) * s, Math.sin(a) * s + 1.5, rand(-1, 1) * s * 0.6, colors[i % colors.length], rand(0.5, 1.1), rand(0.08, 0.22), 9);
+      }
+    }
+    function updateParticles(dt) {
+      for (const m of pool) {
+        if (!m.visible) continue;
+        const u = m.userData; u.life -= dt;
+        if (u.life <= 0) { m.visible = false; continue; }
+        u.v.y -= u.grav * dt; m.position.addScaledVector(u.v, dt);
+        m.scale.setScalar(u.size * (u.life / u.max)); m.rotation.x += dt * 4;
+      }
+    }
+
+    /* ================= Game objects ================= */
+    const P = buildPlane(); scene.add(P.root);
+    const palace = buildPalace(); palace.visible = false; scene.add(palace);
+    const unitMeshes = new Map(), shotMeshes = new Map(), itemMeshes = new Map(), bulletMeshes = new Map();
+    const builders = { 0: buildTrebuchet, 1: buildGrub, 2: buildNematode };
+    const itemBuilders = { 0: buildJar, 1: buildPepper, 2: buildHeart, 3: buildCannonItem };
+    const airship = buildAirship(); airship.visible = false; scene.add(airship);
+    let bossFlash = 0, bossDying = 0, bossDeathX = 0, bossDeathY = 0;
+    const bulletMat = new THREE.MeshBasicMaterial({ color: 0xffb020 });
+    function buildBullet() {
+      const b = new THREE.Group();
+      const core = new THREE.Mesh(SPL, bulletMat); core.scale.set(0.32, 0.16, 0.16); b.add(core);
+      b.add(glowSprite('rgba(255,170,40,0.8)', 0.9));
+      return b;
+    }
+
+    // Menu display: a few pests and the King's palace
+    const demo = new THREE.Group(); scene.add(demo);
+    [[0, 9], [1, 14], [2, 18]].forEach(([k, x]) => { const m = builders[k](); m.position.x = x; if (k === 1) m.userData.body.position.y = 0; demo.add(m); });
+    palace.position.set(13, 0, -6); palace.visible = true;
+
+    /* ================= Input ================= */
+    const keys = {};
+    let pointerActive = false, pointerY = 5, boostQueued = false;
+    window.addEventListener('keydown', e => {
+      if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) return;
+      keys[e.code] = true;
+      if (['Space', 'ArrowUp', 'ArrowDown', 'KeyW', 'KeyS'].includes(e.code)) e.preventDefault();
+      if (e.code === 'KeyP' || e.code === 'Escape') { if (state === 'paused') resumeGame(); else pauseGame(); return; }
+      if (e.code === 'Space') { if (state === 'playing') boostQueued = true; else if (state === 'paused') resumeGame(); else if ((state === 'menu' || state === 'over') && document.getElementById('signin').hidden) startGame(); }
+    });
+    window.addEventListener('keyup', e => { keys[e.code] = false; });
+    const cvs = renderer.domElement;
+    const ray = new THREE.Raycaster(), ndc = new THREE.Vector2(), zPlane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0), hitPt = new THREE.Vector3();
+    function screenToWorldY(cx, cy) {
+      const r = cvs.getBoundingClientRect();
+      ndc.set(((cx - r.left) / r.width) * 2 - 1, -((cy - r.top) / r.height) * 2 + 1);
+      ray.setFromCamera(ndc, camera);
+      return ray.ray.intersectPlane(zPlane, hitPt) ? clamp(hitPt.y, G.FLOOR, G.CEIL) : pointerY;
+    }
+    cvs.addEventListener('pointerdown', e => {
+      if (state !== 'playing') return;
+      pointerActive = true; pointerY = screenToWorldY(e.clientX, e.clientY); boostQueued = true;
+      try { cvs.setPointerCapture(e.pointerId); } catch (err) {}
+    });
+    cvs.addEventListener('pointermove', e => { if (pointerActive) pointerY = screenToWorldY(e.clientX, e.clientY); });
+    const endP = () => { pointerActive = false; };
+    cvs.addEventListener('pointerup', endP); cvs.addEventListener('pointercancel', endP);
+
+    /* ================= UI ================= */
+    const $ = id => document.getElementById(id);
+    const hud = $('hud'), overlay = $('overlay'), goBtn = $('go-btn'), toastEl = $('toast'), flash = $('flash');
+    let best = loadBest(), toastT = 0;
+    function toast(msg, secs = 1.1) { toastEl.textContent = msg; toastEl.classList.add('show'); toastT = secs; }
+    function flashRed() { flash.style.transition = 'none'; flash.style.opacity = 0.35; requestAnimationFrame(() => { flash.style.transition = 'opacity 0.45s'; flash.style.opacity = 0; }); }
+    goBtn.addEventListener('click', () => { if (state === 'menu' || state === 'over') startGame(); });
+
+    /* ================= Server (anti-cheat) ================= */
+    // ---------- Sign-in ----------
+    const authOn = !!(GG_API && SUPABASE_URL && SUPABASE_ANON_KEY && window.supabase);
+    const sbClient = authOn ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+    let account = null; // { signedIn, tag, total, today, dailyCap }
+    async function loginToken() {
+      if (!sbClient) return null;
+      try { const { data } = await sbClient.auth.getSession(); return data.session ? data.session.access_token : null; }
+      catch (e) { return null; }
+    }
+    async function api(path, body, timeoutMs = 8000) {
+      const t = await loginToken();
+      const ctrl = new AbortController(); const to = setTimeout(() => ctrl.abort(), timeoutMs);
+      try {
+        const r = await fetch(GG_API + path, {
+          method: 'POST', signal: ctrl.signal,
+          headers: Object.assign({ 'Content-Type': 'application/json' }, t ? { Authorization: 'Bearer ' + t } : {}),
+          body: JSON.stringify(body || {})
+        });
+        let j = {}; try { j = await r.json(); } catch (e) {}
+        return { ok: r.ok, status: r.status, body: j };
+      } catch (e) { return { ok: false, status: 0, body: { reason: 'no connection' } }; }
+      finally { clearTimeout(to); }
+    }
+    const needsTag = () => !!(authOn && account && account.signedIn && !account.tag);
+    const canSave = () => !GG_API ? false : !authOn ? true : !!(account && account.signedIn && account.tag);
+    async function refreshAccount() {
+      if (authOn && await loginToken()) {
+        const r = await api('/me');
+        account = r.ok ? r.body : null;
+      } else account = null;
+      renderAccount();
+    }
+    function renderAccount() {
+      const el = $('account');
+      if (!authOn) { el.hidden = true; return; }
+      el.hidden = false; el.textContent = '';
+      const btn = (label, fn) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'link-btn'; b.textContent = label; b.addEventListener('click', fn); return b; };
+      if (!account || !account.signedIn) {
+        el.append(t('guest'), btn(t('signIn'), () => openSignin('login')), ' · ', btn(t('signUp'), () => openSignin('email')));
+      } else if (!account.tag) {
+        el.append(t('signedIn'), btn(t('chooseTag'), () => openSignin('tag')));
+      } else {
+        const b = document.createElement('b'); b.textContent = account.tag;
+        el.append(b, t('acct', { total: fmt(account.total), today: account.today || 0, cap: account.dailyCap || 0 }),
+          btn(t('setPw'), () => openSignin('setpw')), ' · ',
+          btn(t('signOut'), async () => { try { await sbClient.auth.signOut(); } catch (e) {} account = null; renderAccount(); toast(t('signedOut'), 1.5); }));
+      }
+    }
+    // Steps: login (tag + password) · email (send link) · code · tag (new player: tag + password) · setpw (new password)
+    let siStep = 'login', siEmail = '';
+    const WANT_PW = 'ggWantPw'; // remembered across the email link so we can ask for a password afterwards
+    function openSignin(step) {
+      siStep = step; $('si-msg').textContent = '';
+      const input = $('si-input'), pass = $('si-pass'), alt = $('si-alt');
+      input.value = ''; pass.value = '';
+      input.hidden = false; pass.hidden = true; alt.hidden = true;
+      const set = (title, text, go) => { $('si-title').textContent = title; $('si-text').textContent = text; $('si-go').textContent = go; };
+      if (step === 'login') {
+        set(t('signIn'), t('loginText'), t('signIn'));
+        input.type = 'text'; input.placeholder = t('phTag'); input.autocomplete = 'username'; input.inputMode = 'text';
+        pass.hidden = false; pass.placeholder = t('phPw'); pass.autocomplete = 'current-password';
+        alt.hidden = false; alt.textContent = t('altEmail');
+        alt.onclick = () => openSignin('email');
+      } else if (step === 'email') {
+        set(t('emailTitle'), t('emailText'), t('sendLink'));
+        input.type = 'email'; input.placeholder = 'you@email.com'; input.autocomplete = 'email'; input.inputMode = 'email';
+        alt.hidden = false; alt.textContent = t('altLogin');
+        alt.onclick = () => openSignin('login');
+      } else if (step === 'code') {
+        set(t('codeTitle'), t('codeText', { email: siEmail }), t('signIn'));
+        input.type = 'text'; input.placeholder = '123456'; input.autocomplete = 'one-time-code'; input.inputMode = 'numeric';
+      } else if (step === 'tag') {
+        set(t('tagTitle'), t('tagText'), t('save'));
+        input.type = 'text'; input.placeholder = 'Sky_Ace'; input.autocomplete = 'username'; input.inputMode = 'text';
+        pass.hidden = false; pass.placeholder = 'New password'; pass.autocomplete = 'new-password';
+      } else { // setpw
+        input.hidden = true;
+        set(t('pwTitle'), t('pwText', { tag: account && account.tag ? account.tag : t('yourTag') }), t('savePw'));
+        pass.hidden = false; pass.placeholder = 'New password'; pass.autocomplete = 'new-password';
+      }
+      $('si-cancel').hidden = step === 'tag'; // a signed-in player must pick a tag before flying
+      $('signin').hidden = false;
+      setTimeout(() => (input.hidden ? pass : input).focus(), 50);
+    }
+    const closeSignin = () => { $('signin').hidden = true; };
+    $('si-cancel').addEventListener('click', closeSignin);
+    const pwProblem = p => p.length < 8 ? t('pwShort') : p.length > 72 ? t('pwLong') : '';
+    async function savePassword(p) {
+      const { error } = await sbClient.auth.updateUser({ password: p });
+      if (error && !/different from the old/i.test(error.message || '')) return t('pwFail');
+      try { localStorage.removeItem(WANT_PW); } catch (e) {}
+      return '';
+    }
+    $('si-form').addEventListener('submit', async e => {
+      e.preventDefault();
+      const v = $('si-input').value.trim(), pw = $('si-pass').value, go = $('si-go'), say = t => { $('si-msg').textContent = t; };
+      go.disabled = true;
+      try {
+        if (siStep === 'login') {
+          if (!/^[A-Za-z0-9_]{3,15}$/.test(v) || !pw) return say(t('enterTagPw'));
+          const r = await api('/login', { tag: v, password: pw });
+          if (!r.ok || !r.body.ok) return say(tr(r.body.reason) || (r.status === 0 ? t('noConn') : tr('Wrong gamer tag or password.')));
+          const { error } = await sbClient.auth.setSession({ access_token: r.body.access_token, refresh_token: r.body.refresh_token });
+          if (error) return say(t('signInFail'));
+          await refreshAccount(); closeSignin();
+          toast(t('welcomeBack', { tag: r.body.tag }), 2);
+        } else if (siStep === 'email') {
+          if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v)) return say(t('badEmail'));
+          const { error } = await sbClient.auth.signInWithOtp({ email: v, options: { shouldCreateUser: true, emailRedirectTo: location.origin + location.pathname } });
+          if (error) return say(LANG === 'en' && error.message ? error.message : t('sendFail'));
+          try { localStorage.setItem(WANT_PW, '1'); } catch (e) {}
+          siEmail = v; openSignin('code');
+        } else if (siStep === 'code') {
+          if (!/^\d{6}$/.test(v)) return say(t('tapLink'));
+          const { error } = await sbClient.auth.verifyOtp({ email: siEmail, token: v, type: 'email' });
+          if (error) return say(t('codeBad'));
+          await refreshAccount();
+          openSignin(needsTag() ? 'tag' : 'setpw');
+        } else if (siStep === 'tag') {
+          if (!/^[A-Za-z0-9_]{3,15}$/.test(v)) return say(t('tagRule'));
+          const bad = pwProblem(pw); if (bad) return say(bad);
+          const r = await api('/profile', { tag: v });
+          if (!r.ok || !r.body.ok) return say(tr(r.body.reason || 'Could not save your gamer tag. Try again.'));
+          const pwErr = await savePassword(pw);
+          await refreshAccount();
+          if (pwErr) { openSignin('setpw'); return say(pwErr); }
+          closeSignin();
+          toast(t('welcome', { tag: v }), 2.5);
+        } else {
+          const bad = pwProblem(pw); if (bad) return say(bad);
+          const pwErr = await savePassword(pw); if (pwErr) return say(pwErr);
+          closeSignin(); toast(t('pwSaved'), 2);
+        }
+      } finally { go.disabled = false; }
+    });
+    if (authOn) {
+      // Returning from the email link: supabase-js reads the login from the address and signs in.
+      sbClient.auth.onAuthStateChange(async event => {
+        await refreshAccount();
+        if (event === 'SIGNED_IN') {
+          if (location.hash.includes('access_token')) history.replaceState(null, '', location.pathname);
+          let wantPw = false; try { wantPw = localStorage.getItem(WANT_PW) === '1'; } catch (e) {}
+          const idle = state === 'menu' || state === 'over'; // mid-flight: asked when the run ends
+          if (needsTag()) { if (idle) openSignin('tag'); }
+          else if (wantPw && siStep !== 'setpw' && siStep !== 'login') { if (idle) openSignin('setpw'); }
+          else if (!$('signin').hidden && siStep !== 'tag' && siStep !== 'setpw') closeSignin();
+        }
+      });
+      refreshAccount();
+    }
+
+    /* ================= Server (anti-cheat) ================= */
+    async function requestSession() {
+      if (!canSave()) return null;
+      const r = await api('/session', {}, 5000);
+      return r.ok && r.body.version === G.VERSION ? r.body : null;
+    }
+    async function submitSession() {
+      if (!session) return { practice: true };
+      const r = await api('/submit', { sessionId: session.sessionId, ticks: sim.tick, score: sim.score, digest: G.digest(sim), log: rec.log }, 15000);
+      return r.status === 0 ? { verified: false, reason: 'no connection' } : r.body;
+    }
+
+    /* ================= Game state ================= */
+    let state = 'menu'; // menu | starting | playing | crashed | over
+    let sim = null, rec = null, session = null, acc = 0, crashT = 0, crashVy = 0, shake = 0, time = 0;
+
+    function clearWorld() {
+      for (const m of [unitMeshes, shotMeshes, itemMeshes, bulletMeshes]) { m.forEach(o => scene.remove(o)); m.clear(); }
+      demo.visible = false; palace.visible = false; airship.visible = false; bossDying = 0;
+      $('bossbar').hidden = true;
+    }
+
+    async function startGame() {
+      if ((state !== 'menu' && state !== 'over') || !$('signin').hidden) return;
+      audioStart();
+      // Coming back from the email link: finish loading the account first, then make sure a tag is chosen.
+      if (authOn && !account && await loginToken()) {
+        goBtn.disabled = true; goBtn.textContent = t('loadingAcct');
+        await refreshAccount();
+        goBtn.disabled = false; goBtn.textContent = state === 'over' ? t('flyAgain') : t('takeOff');
+      }
+      if (needsTag()) { openSignin('tag'); return; }
+      if ((state !== 'menu' && state !== 'over') || !$('signin').hidden) return;
+      state = 'starting'; goBtn.disabled = true;
+      if (GG_API) goBtn.textContent = t('connecting');
+      session = await requestSession();
+      const seed = session ? session.seed : 'practice-' + Date.now() + '-' + Math.floor(Math.random() * 1e9);
+      sim = G.create(seed); rec = G.recorder(); acc = 0;
+      clearWorld();
+      P.root.visible = true; P.root.rotation.set(0, 0, 0);
+      pointerActive = false; boostQueued = false;
+      goBtn.disabled = false; goBtn.textContent = t('takeOff');
+      overlay.classList.add('hidden'); hud.classList.add('on');
+      $('status').textContent = session ? '' : (authOn && !canSave() ? t('stNoSign') : GG_API ? t('stOffline') : t('stPractice'));
+      state = 'playing';
+      burst(sim.x, sim.y, [0xf59e0b, 0xfde047, 0x1f8f3d], 20, 6);
+    }
+
+    async function endGame() {
+      state = 'over';
+      const pts = G.points(sim);
+      const isBest = sim.score > best;
+      if (isBest) { best = sim.score; saveBest(best); }
+      $('ov-title').textContent = isBest ? t('record') : t('wahala');
+      $('bossbar').hidden = true;
+      const kings = sim.bossesBeaten ? t('kings', { n: sim.bossesBeaten }) : '';
+      $('ov-text').textContent = t('summary', { level: sim.level, m: fmt(Math.round(sim.x)), score: fmt(sim.score), kings, best: fmt(best) });
+      $('result').textContent = session ? t('checking', { pts }) : authOn && !canSave() ? t('signToSave', { pts }) : t('practiceRes', { pts });
+      goBtn.textContent = t('flyAgain');
+      overlay.classList.remove('hidden'); hud.classList.remove('on');
+      if (needsTag()) openSignin('tag');
+      else if (account && account.tag) { let w = false; try { w = localStorage.getItem(WANT_PW) === '1'; } catch (e) {} if (w) openSignin('setpw'); }
+      if (session) {
+        const r = await submitSession();
+        if (state !== 'over') return;
+        if (r.verified) {
+          const capped = typeof r.awarded === 'number' && r.awarded < r.points;
+          $('result').textContent = typeof r.total === 'number'
+            ? t('saved', { n: r.awarded, total: fmt(r.total) }) + (capped ? t('capped') : '')
+            : t('verified', { n: r.points });
+          refreshAccount();
+        } else $('result').textContent = t('notSaved', { reason: tr(r.reason || r.error) || t('srvErr') });
+      }
+    }
+
+    /* ================= Events from the simulation ================= */
+    function handleEvents() {
+      for (const e of sim.events) {
+        fx4d(e);
+        if (e.t === 'hit') { burst(sim.x, sim.y, [0xf59e0b, 0x6b5a2a, 0xffffff], 22, 7); shake = 0.5; flashRed(); toast(e.k === 1 ? t('shears') : t('bomb')); }
+        else if (e.t === 'net') { burst(sim.x, sim.y, [0xffffff], 18, 5); toast(t('net')); }
+        else if (e.t === 'block') { burst(sim.x, sim.y, [0xff7a1a, 0xfde047], 16, 6); toast(t('block')); }
+        else if (e.t === 'jar') { burst(e.x, e.y, [0xfde047, 0xf59e0b, 0xffffff], 22, 6); toast(t('jar')); }
+        else if (e.t === 'pepper') { burst(e.x, e.y, [0xd62828, 0xff7a1a], 22, 6); toast(t('pepper')); }
+        else if (e.t === 'heart') { burst(e.x, e.y, [0xff4d6d, 0xdba95e], 22, 6); toast(sim.hp >= G.MAX_HP ? t('heartFull') : t('heart')); }
+        else if (e.t === 'cannon') { burst(e.x, e.y, [0xffb020, 0x333333], 22, 6); toast(t('cannon')); }
+        else if (e.t === 'shotDown') { burst(e.x, e.y, [0xffb020, 0xffffff, 0x6b5a2a], 10, 4); }
+        else if (e.t === 'bossIn') { $('bossbar').hidden = false; toast(t('bossIn', { level: e.level }), 2.2); shake = 0.3; }
+        else if (e.t === 'bossHit') { bossFlash = 0.12; burst(e.x, e.y, [0xffb020, 0xfde047], 5, 3); }
+        else if (e.t === 'bossFire') { shake = Math.max(shake, 0.12); }
+        else if (e.t === 'bossDown') {
+          bossDying = 1.6; bossDeathX = e.x; bossDeathY = e.y; shake = 1;
+          burst(e.x, e.y + 1, [0xd9822b, 0xc1121f, 0x1f8f3d, 0xf2c230, 0xfde047], 70, 12);
+          $('bossbar').hidden = true;
+          toast(t('kingDown', { pts: fmt(1500 * e.level) }), 2);
+        }
+        else if (e.t === 'level') { setTimeout(() => { if (state === 'playing') toast(t('levelUp', { level: e.level }), 2); }, 1600); }
+        else if (e.t === 'crash') { burst(sim.x, sim.y, [0xf59e0b, 0xfde047, 0x1f8f3d, 0xc1121f], 40, 9); shake = 0.9; }
+        else if (e.t === 'boost') { for (let i = 0; i < 14; i++) emit(sim.x - 1.5, sim.y + rand(-0.3, 0.3), rand(-0.4, 0.4), rand(-8, -4), rand(-1, 1), rand(-1, 1), i % 2 ? 0xf59e0b : 0xfde047, rand(0.3, 0.6), rand(0.1, 0.2), 1); }
+        else if (e.t === 'fire') { const m = unitMeshes.get(e.id); if (m) for (let i = 0; i < 6; i++) emit(m.position.x, 0.4, 0.5, rand(-1.5, 1.5), rand(1, 3), rand(-0.5, 0.5), 0xb08a5a, 0.5, 0.15, 4); }
+      }
+      sim.events.length = 0;
+    }
+
+    /* ================= Sync meshes with simulation ================= */
+    function sync(map, list, make, update) {
+      for (const o of list) {
+        let m = map.get(o.id);
+        if (!m) { m = make(o); m.userData.seen = 0; map.set(o.id, m); scene.add(m); }
+        m.userData.seen = time; update(m, o);
+      }
+      map.forEach((m, id) => { if (m.userData.seen !== time) { scene.remove(m); map.delete(id); } });
+    }
+
+    function renderWorld(dt) {
+      const s = sim;
+      sync(unitMeshes, s.units, u => builders[u.k](), (m, u) => {
+        m.position.set(u.x, 0, 0);
+        const since = (s.tick - u.fired) * G.DT;
+        if (u.k === 0) {
+          const a = m.userData.arm;
+          a.rotation.z = since < 0.25 ? lerp(-0.7, 2.2, since / 0.25) : since < 1.2 ? lerp(2.2, -0.7, (since - 0.25) / 0.95) : -0.7;
+          m.userData.crew.forEach(c => { c.position.y = Math.abs(Math.sin(time * 6 + c.userData.ph)) * 0.08; });
+        } else if (u.k === 1) {
+          const b = m.userData.body;
+          b.position.y = -1.3 + u.up * 1.3;
+          b.rotation.z = since < 0.3 ? -0.6 * (1 - since / 0.3) : Math.sin(time * 3 + u.id) * 0.08;
+        } else {
+          m.userData.segs.forEach((sg, i) => { sg.position.x = Math.sin(time * 4 + i * 0.6 + u.id) * 0.12 * (i / 7); });
+        }
+      });
+      sync(shotMeshes, s.shots, sh => buildShot(sh.k), (m, sh) => {
+        m.position.set(sh.x, sh.y, 0);
+        if (sh.k === 0) { m.rotation.z += dt * 4; if (Math.random() < 0.3) emit(sh.x, sh.y, 0, 0, -0.5, 0, 0x3e7a2a, 0.4, 0.1, 1); }
+        else if (sh.k === 1) m.rotation.z += dt * 16;
+        else if (sh.k === 3) { m.rotation.y += dt * 5; if (Math.random() < 0.3) emit(sh.x, sh.y, 0, 0, 0, 0, 0xff5a28, 0.3, 0.12, 0); }
+        else { m.rotation.z += dt * 2; m.rotation.y = 0.6; }
+      });
+      sync(itemMeshes, s.items, it => itemBuilders[it.k](), (m, it) => {
+        m.position.set(it.x, it.y + Math.sin(time * 3 + it.id) * 0.12, 0);
+        m.rotation.y += dt * 2;
+        m.scale.setScalar(it.k === 0 ? 1.4 : it.k === 1 ? 1.1 : 1.5);
+        const g = 1.4 + Math.sin(time * 6) * 0.25; m.userData.glow.scale.set(g, g, 1);
+      });
+      sync(bulletMeshes, s.bullets, () => buildBullet(), (m, bl) => { m.position.set(bl.x, bl.y, 0); });
+
+      // The King's airship
+      const ud = airship.userData;
+      if (s.boss) {
+        airship.visible = true;
+        airship.position.set(G.bossX(s), s.boss.y - 1.6, 0);
+        airship.rotation.z = Math.sin(time * 1.3) * 0.05;
+        ud.prop.rotation.x += dt * 30;
+        const flashOn = bossFlash > 0;
+        ud.body.scale.setScalar(flashOn ? 1.06 : 1);
+        ud.king.armL.rotation.z = -0.55 + Math.sin(time * 6) * 0.5;
+        ud.king.armR.rotation.z = 2.5 + Math.sin(time * 3) * 0.2; ud.king.jar.rotation.z = -ud.king.armR.rotation.z;
+        $('bossfill').style.width = Math.max(0, s.boss.hp / s.boss.maxHp * 100) + '%';
+      } else if (bossDying > 0) {
+        bossDying -= dt;
+        airship.position.x = bossDeathX + (1.6 - bossDying) * 4;
+        airship.position.y -= dt * 7;
+        airship.rotation.z -= dt * 1.5;
+        if (Math.random() < 0.6) emit(airship.position.x + rand(-2, 2), airship.position.y + 2, rand(-1, 1), rand(-2, 2), rand(1, 4), 0, Math.random() < 0.5 ? 0x444444 : 0xff7a1a, 0.9, rand(0.2, 0.45), -1);
+        if (bossDying <= 0 || airship.position.y < -3) { airship.visible = false; bossDying = 0; burst(airship.position.x, 0.5, [0xd9822b, 0x444444, 0xf2c230], 40, 9); }
+      } else airship.visible = false;
+      bossFlash = Math.max(0, bossFlash - dt);
+    }
+
+    /* ================= 4D effects: sound, vibration, camera, sky (phone only, never changes the score) ================= */
+    const pref = (k, d) => { try { const v = localStorage.getItem(k); return v === null ? d : v; } catch (e) { return d; } };
+    const setPref = (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} };
+    const FX = { sound: pref('ggSound', '1') === '1', buzz: pref('ggBuzz', '1') === '1' };
+    function buzz(p) { if (FX.buzz && navigator.vibrate) { try { navigator.vibrate(p); } catch (e) {} } }
+
+    // --- Sound: a tiny synthesiser, no audio files to download ---
+    let ac = null, eng = null, noiseBuf = null;
+    function audioStart() {
+      if (!FX.sound) return;
+      try {
+        if (!ac) {
+          ac = new (window.AudioContext || window.webkitAudioContext)();
+          noiseBuf = ac.createBuffer(1, ac.sampleRate, ac.sampleRate);
+          const d = noiseBuf.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+          const o1 = ac.createOscillator(), o2 = ac.createOscillator(), f = ac.createBiquadFilter(), g = ac.createGain();
+          o1.type = 'sawtooth'; o2.type = 'square'; o1.frequency.value = 70; o2.frequency.value = 35;
+          f.type = 'lowpass'; f.frequency.value = 380; g.gain.value = 0;
+          o1.connect(f); o2.connect(f); f.connect(g); g.connect(ac.destination); o1.start(); o2.start();
+          eng = { o1, o2, f, g };
+        }
+        if (ac.state === 'suspended') ac.resume();
+      } catch (e) { ac = null; }
+    }
+    function tone(freq, dur, type = 'square', vol = 0.12, slideTo = 0, delay = 0) {
+      if (!ac || !FX.sound) return;
+      const t = ac.currentTime + delay, o = ac.createOscillator(), g = ac.createGain();
+      o.type = type; o.frequency.setValueAtTime(freq, t);
+      if (slideTo) o.frequency.exponentialRampToValueAtTime(slideTo, t + dur);
+      g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.001, t + dur);
+      o.connect(g); g.connect(ac.destination); o.start(t); o.stop(t + dur + 0.05);
+    }
+    function noise(dur, vol = 0.4, from = 1200, to = 80, type = 'lowpass') {
+      if (!ac || !FX.sound) return;
+      const t = ac.currentTime, s = ac.createBufferSource(), f = ac.createBiquadFilter(), g = ac.createGain();
+      s.buffer = noiseBuf; s.loop = true; f.type = type;
+      f.frequency.setValueAtTime(from, t); f.frequency.exponentialRampToValueAtTime(to, t + dur);
+      g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.001, t + dur);
+      s.connect(f); f.connect(g); g.connect(ac.destination); s.start(t); s.stop(t + dur + 0.05);
+    }
+    const chime = notes => notes.forEach((n, i) => tone(n, 0.16, 'triangle', 0.12, 0, i * 0.07));
+
+    // --- Wind streaks rushing past, between the plane and your eyes ---
+    const streakMat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.45, depthWrite: false });
+    const streakGeo = new THREE.BoxGeometry(1, 0.035, 0.035);
+    const streaks = [];
+    for (let i = 0; i < 36; i++) { const m = new THREE.Mesh(streakGeo, streakMat); m.visible = false; m.userData.z = rand(2, 11); scene.add(m); streaks.push(m); }
+
+    // --- Shockwave rings ---
+    const rings = [];
+    for (let i = 0; i < 6; i++) {
+      const m = new THREE.Mesh(new THREE.RingGeometry(0.85, 1, 40), new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0, side: THREE.DoubleSide, depthWrite: false }));
+      m.visible = false; m.userData = { life: 0, max: 1, grow: 6 }; scene.add(m); rings.push(m);
+    }
+    let ringIdx = 0;
+    function ring(x, y, color, size = 6, life = 0.5) {
+      const m = rings[ringIdx]; ringIdx = (ringIdx + 1) % rings.length;
+      m.position.set(x, y, 0.3); m.material.color.setHex(color); m.visible = true;
+      m.userData.life = m.userData.max = life; m.userData.grow = size; m.scale.setScalar(0.3);
+    }
+    // Debris that flies out of the screen at you
+    function popOut(x, y, colors, n) {
+      for (let i = 0; i < n; i++) emit(x, y, 0.5, rand(-4, 4), rand(-1, 5), rand(7, 15), colors[i % colors.length], rand(0.6, 1.1), rand(0.12, 0.3), 5);
+    }
+
+    // --- Stars for night levels ---
+    const starGeo = new THREE.BufferGeometry(), starPos = new Float32Array(240 * 3);
+    for (let i = 0; i < 240; i++) { starPos[i * 3] = rand(-90, 90); starPos[i * 3 + 1] = rand(14, 60); starPos[i * 3 + 2] = -85; }
+    starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
+    const stars = new THREE.Points(starGeo, new THREE.PointsMaterial({ color: 0xffffff, size: 0.45, transparent: true, opacity: 0, fog: false, depthWrite: false }));
+    scene.add(stars);
+
+    // --- Sky moods: each level looks different, boss fights bring a storm ---
+    const SKIES = [
+      { sky: 0x8fd3ff, hemi: 0.85, sun: 0.75, sunC: 0xfff1d6, night: 0 },   // level 1: Lagos day
+      { sky: 0xffb46e, hemi: 0.75, sun: 0.8, sunC: 0xffc38a, night: 0 },    // level 2: golden sunset
+      { sky: 0x7a6bd6, hemi: 0.6, sun: 0.55, sunC: 0xd9c2ff, night: 0.4 }, // level 3: dusk
+      { sky: 0x1d2752, hemi: 0.5, sun: 0.45, sunC: 0x9fb4ff, night: 1 }    // level 4+: starry night
+    ];
+    const STORM = { sky: 0x4a3b5c, hemi: 0.55, sun: 0.4, sunC: 0xd6c9ff, night: 0.3 };
+    const hemiLight = scene.children.find(o => o.isHemisphereLight);
+    const skyNow = new THREE.Color(0x8fd3ff), skyWant = new THREE.Color(), sunWant = new THREE.Color(), white = new THREE.Color(0xffffff);
+    let nightNow = 0, lightning = 0, hitStop = 0, roll = 0, fovNow = FOV, camLift = 0, camPull = 0;
+
+    function fx4d(e) {
+      if (e.t === 'hit') { buzz([60, 40, 60]); noise(0.35, 0.5, 900, 60); tone(140, 0.3, 'sawtooth', 0.12, 50); hitStop = 0.07; ring(sim.x, sim.y, 0xffffff, 3.5, 0.3); }
+      else if (e.t === 'net') { buzz(90); tone(300, 0.35, 'sine', 0.12, 120); }
+      else if (e.t === 'block') { buzz(35); tone(520, 0.12, 'square', 0.1, 760); ring(sim.x, sim.y, 0xff7a1a, 3, 0.3); }
+      else if (e.t === 'jar') { buzz(15); chime([880, 1320]); ring(e.x, e.y, 0xfde047, 2.5, 0.35); }
+      else if (e.t === 'pepper' || e.t === 'heart' || e.t === 'cannon') { buzz([20, 30, 20]); chime([660, 880, 1100]); ring(e.x, e.y, e.t === 'heart' ? 0xff4d6d : e.t === 'pepper' ? 0xd62828 : 0xffb020, 3, 0.4); }
+      else if (e.t === 'shotDown') { tone(900, 0.06, 'square', 0.05, 400); }
+      else if (e.t === 'boost') { buzz(25); noise(0.45, 0.25, 400, 2400, 'bandpass'); }
+      else if (e.t === 'bossIn') { buzz([100, 60, 100, 60, 220]); tone(110, 1.3, 'sawtooth', 0.14, 70); noise(1.2, 0.3, 300, 60); lightning = 0.25; }
+      else if (e.t === 'bossFire') { buzz(18); noise(0.18, 0.18, 600, 100); if (Math.random() < 0.25) lightning = 0.18; }
+      else if (e.t === 'bossHit') { tone(260 + Math.random() * 80, 0.05, 'square', 0.05); }
+      else if (e.t === 'bossDown') { buzz([80, 40, 80, 40, 450]); noise(1.4, 0.7, 1500, 40); chime([523, 659, 784, 1047]); ring(e.x, e.y + 1, 0xfde047, 14, 0.9); ring(e.x, e.y + 1, 0xff7a1a, 9, 0.7); popOut(e.x, e.y + 1, [0xd9822b, 0xc1121f, 0xf2c230], 26); hitStop = 0.15; }
+      else if (e.t === 'level') { setTimeout(() => chime([523, 784, 1047, 1568]), 1600); }
+      else if (e.t === 'crash') { buzz([200, 80, 320]); noise(1.0, 0.7, 1200, 40); ring(sim.x, sim.y, 0xff7a1a, 7, 0.6); popOut(sim.x, sim.y, [0xf59e0b, 0xfde047, 0x1f8f3d], 18); }
+    }
+
+    function update4D(dt, camX) {
+      const flying = sim && (state === 'playing' || state === 'crashed');
+      // Engine hum follows your speed
+      if (eng && ac) {
+        const on = FX.sound && sim && state === 'playing';
+        const sp = sim ? sim.speed : 7, b = sim ? sim.boost : 0;
+        eng.g.gain.setTargetAtTime(on ? 0.045 + b * 0.03 : 0, ac.currentTime, 0.15);
+        eng.o1.frequency.setTargetAtTime(55 + sp * 3.2 + b * 45, ac.currentTime, 0.1);
+        eng.o2.frequency.setTargetAtTime(28 + sp * 1.6, ac.currentTime, 0.1);
+        eng.f.frequency.setTargetAtTime(300 + b * 900, ac.currentTime, 0.1);
+      }
+      // Sky mood
+      const mood = sim && sim.boss ? STORM : SKIES[Math.min(SKIES.length - 1, (sim ? sim.level : 1) - 1)];
+      skyWant.setHex(mood.sky);
+      const k = Math.min(1, dt * 0.8);
+      skyNow.lerp(skyWant, k);
+      nightNow = lerp(nightNow, mood.night, k);
+      if (sim && sim.boss && Math.random() < dt * 0.12) { lightning = 0.2; setTimeout(() => noise(1.1, 0.35, 200, 40), 250); }
+      lightning = Math.max(0, lightning - dt);
+      const flashK = lightning > 0 && Math.floor(lightning * 30) % 2 === 0 ? 0.7 : 0;
+      scene.background.copy(skyNow).lerp(white, flashK);
+      scene.fog.color.copy(scene.background);
+      if (hemiLight) hemiLight.intensity = lerp(hemiLight.intensity, mood.hemi, k) + flashK * 0.6;
+      sun.intensity = lerp(sun.intensity, mood.sun, k); sunWant.setHex(mood.sunC); sun.color.lerp(sunWant, k);
+      stars.material.opacity = nightNow * 0.9;
+      stars.position.x = camX * 0.9;
+
+      // Wind streaks
+      const sp = sim ? sim.speed : 0, b = sim ? sim.boost : 0;
+      const show = sim && state === 'playing';
+      const want = show ? Math.min(streaks.length, Math.round(6 + sp * 1.2 + b * 18)) : 0;
+      streakMat.opacity = 0.25 + b * 0.35;
+      streaks.forEach((m, i) => {
+        if (i >= want) { m.visible = false; return; }
+        const z = m.userData.z, near = (camDist - z) / camDist, w = halfW * near + 4;
+        if (!m.visible || m.position.x < camX - w - 3) {
+          m.visible = true;
+          m.position.set(camX + w + rand(0, 14), rand(0.5, halfH * 2 - 1) , z);
+        }
+        m.position.x -= (sp * 1.6 + 6 + b * 30) * dt;
+        m.scale.x = 0.8 + sp * 0.12 + b * 3;
+      });
+
+      // Shockwave rings
+      for (const m of rings) {
+        if (!m.visible) continue;
+        const u = m.userData; u.life -= dt;
+        if (u.life <= 0) { m.visible = false; continue; }
+        const t = 1 - u.life / u.max;
+        m.scale.setScalar(0.3 + t * u.grow); m.material.opacity = 0.8 * (1 - t);
+      }
+      return flying;
+    }
+
+    function placeCamera(dt, camX) {
+      const b = sim && state === 'playing' ? sim.boost : 0;
+      const vy = sim && state === 'playing' ? sim.vy : 0;
+      // tilt as you climb and dive, pull back for a boss fight, widen on boost
+      roll = lerp(roll, -vy * 0.006, Math.min(1, dt * 4));
+      camPull = lerp(camPull, sim && sim.boss ? 1 : 0, Math.min(1, dt * 1.5));
+      camLift = lerp(camLift, sim && state === 'playing' ? (sim.y - 7) * 0.08 : 0, Math.min(1, dt * 2));
+      const fovWant = FOV + b * 7;
+      if (Math.abs(fovWant - fovNow) > 0.01) { fovNow = lerp(fovNow, fovWant, Math.min(1, dt * 6)); camera.fov = fovNow; camera.updateProjectionMatrix(); }
+      const camY = halfH - 1.2 + camLift;
+      const sx = rand(-1, 1) * shake * 0.4, sy = rand(-1, 1) * shake * 0.4;
+      camera.position.set(camX - 2.5 - b * 1.2 - camPull * 1.5 + sx, camY + 1.5 + camPull * 0.6 + sy, camDist * (1 + camPull * 0.08));
+      camera.lookAt(camX - camPull * 0.5, camY, 0);
+      camera.rotateZ(roll + Math.sin(time * 0.7) * 0.004);
+    }
+
+    // Sound and vibration switches
+    function renderFxButtons() {
+      $('fx-sound').textContent = FX.sound ? '🔊' : '🔇';
+      $('fx-buzz').textContent = FX.buzz ? '📳' : '📴';
+      $('fx-sound').setAttribute('aria-label', FX.sound ? t('soundOn') : t('soundOff'));
+      $('fx-buzz').setAttribute('aria-label', FX.buzz ? t('buzzOn') : t('buzzOff'));
+    }
+    $('fx-sound').addEventListener('click', () => { FX.sound = !FX.sound; setPref('ggSound', FX.sound ? '1' : '0'); if (FX.sound) audioStart(); renderFxButtons(); });
+    $('fx-buzz').addEventListener('click', () => { FX.buzz = !FX.buzz; setPref('ggBuzz', FX.buzz ? '1' : '0'); if (FX.buzz) buzz(40); renderFxButtons(); });
+    if (!navigator.vibrate) $('fx-buzz').hidden = true; // iPhones do not allow web vibration
+    renderFxButtons();
+
+    /* ================= Pause ================= */
+    let countT = 0;
+    const pauseBtn = $('fx-pause'), countEl = $('count');
+    function pauseGame() {
+      if (state !== 'playing' && state !== 'countdown') return;
+      state = 'paused'; countEl.hidden = true;
+      pointerActive = false; boostQueued = false; for (const k in keys) keys[k] = false;
+      $('pause-info').textContent = t('pauseInfo', { score: fmt(sim.score), level: sim.level, m: fmt(Math.round(sim.x)) });
+      $('pause').hidden = false;
+      buzz(20);
+    }
+    function resumeGame() {
+      if (state !== 'paused') return;
+      $('pause').hidden = true; audioStart();
+      countT = 3; state = 'countdown';
+    }
+    function quitGame() {
+      if (state !== 'paused') return;
+      $('pause').hidden = true; session = null; state = 'over';
+      $('ov-title').textContent = t('cancelled');
+      $('ov-text').textContent = t('quitText', { level: sim.level, score: fmt(sim.score) });
+      $('result').textContent = t('quitRes');
+      $('bossbar').hidden = true; goBtn.textContent = t('flyAgain');
+      overlay.classList.remove('hidden'); hud.classList.remove('on');
+    }
+    pauseBtn.addEventListener('click', pauseGame);
+    $('resume-btn').addEventListener('click', resumeGame);
+    $('quit-btn').addEventListener('click', quitGame);
+    // Pause by itself when the player leaves: app switch, phone call, screen lock, another window
+    document.addEventListener('visibilitychange', () => { if (document.hidden) pauseGame(); });
+    window.addEventListener('blur', pauseGame);
+    function updatePause(dt) {
+      const show = state === 'playing' || state === 'countdown';
+      if (pauseBtn.hidden === show) pauseBtn.hidden = !show;
+      if (state !== 'countdown') return;
+      countT -= dt;
+      if (countT <= 0) { state = 'playing'; acc = 0; countEl.hidden = true; toast(t('go'), 0.6); return; }
+      const n = String(Math.ceil(countT));
+      if (countEl.textContent !== n) { countEl.textContent = n; countEl.hidden = false; tone(660, 0.12, 'square', 0.08); buzz(15); }
+    }
+
+    /* ================= Main loop ================= */
+    let last = performance.now();
+    function frame(now) {
+      const dt = Math.min((now - last) / 1000, 0.25);
+      last = now; time += dt;
+      if (toastT > 0) { toastT -= dt; if (toastT <= 0) toastEl.classList.remove('show'); }
+
+      updatePause(dt);
+      if (state === 'playing') {
+        acc += hitStop > 0 ? 0 : dt; hitStop = Math.max(0, hitStop - dt);
+        let n = 0;
+        while (acc >= G.DT && n < 15 && sim.alive) {
+          let axis = 0;
+          if (keys.ArrowUp || keys.KeyW) axis += 1;
+          if (keys.ArrowDown || keys.KeyS) axis -= 1;
+          const want = { axis, py: !axis && pointerActive ? pointerY * 100 : null, boost: boostQueued };
+          boostQueued = false;
+          G.step(sim, rec.take(sim, want));
+          acc -= G.DT; n++;
+        }
+        if (n >= 15) acc = 0;
+        handleEvents();
+        if (!sim.alive) { state = 'crashed'; crashT = 0; crashVy = 2; }
+      }
+
+      // Plane
+      let px, py, camX;
+      if (sim && state !== 'menu' && state !== 'starting') {
+        renderWorld(dt);
+        px = sim.x; py = sim.y;
+        if (state === 'crashed') {
+          crashT += dt; crashVy -= 18 * dt;
+          P.root.userData.cy = (P.root.userData.cy ?? sim.y) + crashVy * dt;
+          py = Math.max(0.4, P.root.userData.cy);
+          P.root.rotation.z -= dt * 6; P.root.rotation.x += dt * 4;
+          if (Math.random() < 0.5) emit(px, py, 0, rand(-1, 1), rand(1, 3), 0, 0x444444, 0.8, 0.25, -1);
+          if (crashT > 1.4) { P.root.visible = false; P.root.userData.cy = undefined; endGame(); }
+        } else if (state === 'playing') {
+          P.root.rotation.z = lerp(P.root.rotation.z, sim.vy * 0.05, Math.min(1, dt * 8));
+          P.root.rotation.x = Math.sin(time * 2) * 0.06;
+          P.root.visible = !(sim.inv > 0 && Math.floor(sim.tick / 5) % 2);
+          P.shield.visible = sim.shield > 0 && (sim.shield > 1.5 || Math.floor(sim.tick / 6) % 2 === 0);
+          P.net.visible = sim.slow > 0;
+          if (Math.random() < 0.3 + sim.boost) emit(px - 2.4, py + rand(-0.2, 0.2), rand(-0.3, 0.3), rand(-3, -1), rand(-0.3, 0.3), 0, Math.random() < 0.5 ? 0xf59e0b : 0xfde047, 0.5, rand(0.06, 0.13), 0);
+        }
+        camX = sim.x + halfW * 0.4;
+      } else {
+        px = 0; py = 5 + Math.sin(time * 1.5) * 0.4;
+        P.root.rotation.z = Math.sin(time * 1.5) * 0.06; P.root.rotation.x = 0;
+        camX = halfW * 0.35;
+        const k = palace.userData.king;
+        k.armL.rotation.z = -0.55 + Math.sin(time * 4) * 0.4;
+      }
+      P.root.position.set(px, py, 0);
+      P.prop.rotation.x += dt * 40;
+      P.pilot.userData.scarf.rotation.y = Math.sin(time * 12) * 0.25;
+      if (palace.visible) { const k = palace.userData.king; k.armR.rotation.z = 2.5 + Math.sin(time * 3) * 0.15; k.jar.rotation.z = -k.armR.rotation.z; }
+      if (palace.visible && sim && palace.position.x < camX - halfW - 12) palace.visible = false;
+
+      // Scenery recycling
+      for (const sc of scenery) if (sc.obj.position.x < camX - 40) sc.obj.position.x += sc.span;
+      for (const c of clouds) { c.position.x -= dt * 0.4; if (c.position.x < camX - 55) c.position.x += 98; }
+      for (const h of hills) if (h.position.x < camX - 90) h.position.x += 160;
+      ground.position.x = road.position.x = camX;
+
+      updateParticles(dt);
+
+      // Camera
+      shake = Math.max(0, shake - dt * 1.8);
+      update4D(dt, camX);
+      placeCamera(dt, camX);
+
+      // HUD
+      if (sim && state === 'playing') {
+        $('score').textContent = sim.score;
+        $('dist').textContent = `${Math.round(sim.x)} m`;
+        $('hearts').textContent = '❤️'.repeat(Math.max(0, sim.hp)) + '🤍'.repeat(G.MAX_HP - Math.max(0, sim.hp));
+        $('pts').textContent = t('pts', { n: G.points(sim) });
+        $('level').textContent = sim.boss ? t('levelBoss', { n: sim.level }) : t('level', { n: sim.level });
+        const fx = sim.slow > 0 ? t('slowed') : sim.shield > 0 ? t('shield', { n: Math.ceil(sim.shield) }) : sim.cannon > 0 ? t('cannonT', { n: Math.ceil(sim.cannon) }) : '';
+        $('status').textContent = [fx, session ? '' : (authOn && !canSave() ? t('stSignToSave') : GG_API ? t('stOffline2') : t('stPractice'))].filter(Boolean).join(' · ');
+      }
+
+      renderer.render(scene, camera);
+      requestAnimationFrame(frame);
+    }
+    document.addEventListener('visibilitychange', () => { last = performance.now(); for (const k in keys) keys[k] = false; });
+    requestAnimationFrame(n => { last = n; requestAnimationFrame(frame); });
+  })();
+  </script>
+</body>
+</html>

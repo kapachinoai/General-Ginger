@@ -1,0 +1,5 @@
+{
+  "api": "/api",
+  "supabaseUrl": "https://cfpzeiesbkhmluafuosx.supabase.co",
+  "supabaseAnonKey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNmcHplaWVzYmtobWx1YWZ1b3N4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM0Mjk5MDQsImV4cCI6MjEwOTAwNTkwNH0.FaT_oenSz4Wg2NKrsRy6ac0wjLeMuxOrF8CGNYHmoCA"
+}

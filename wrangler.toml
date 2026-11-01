@@ -1,0 +1,12 @@
+name = "gng-flight-verify"
+main = "worker.js"
+compatibility_date = "2026-10-01"
+
+# Create the KV namespace with:  npx wrangler kv namespace create SESSIONS
+# then paste the id it prints below.
+[[kv_namespaces]]
+binding = "SESSIONS"
+id = "PASTE_YOUR_KV_ID_HERE"
+
+[vars]
+ALLOWED_ORIGIN = "*"   # change to your app's domain before launch

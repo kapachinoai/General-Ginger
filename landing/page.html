@@ -1,0 +1,575 @@
+<title>General Ginger $GNG</title>
+<meta name="description" content="Free 3D arcade games you can play anywhere in the world, on any phone. Overthrow the Ginger King, earn points, and join the $GNG airdrop waitlist.">
+<meta name="theme-color" content="#061510">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;800&family=Instrument+Sans:wght@400;500;600;700&display=swap">
+<style>
+/* Spicelantis mission control: a smoky night sky lit by turmeric gold, with agbada green for anything live
+   and chili red kept for the King alone. One memorable moment: the target lock on the King as the page loads. */
+:root {
+  --night: #061510; --deep: #0b2119; --glass: rgba(18, 48, 36, 0.55); --line: rgba(247, 181, 56, 0.18); --line-soft: rgba(230, 240, 234, 0.08);
+  --gold: #f7b538; --gold-soft: #ffd987; --leaf: #39e29b; --chili: #ff6b4a; --mist: #e6f0ea; --dim: #93ab9e;
+  --display: 'Unbounded', 'Instrument Sans', system-ui, sans-serif; --body: 'Instrument Sans', system-ui, sans-serif;
+  --r-lg: 28px; --r-md: 18px; --r-sm: 12px;
+}
+:lang(ar) { --display: 'IBM Plex Sans Arabic', 'Unbounded', system-ui, sans-serif; --body: 'IBM Plex Sans Arabic', 'Instrument Sans', system-ui, sans-serif; }
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0; color: var(--mist); font: 400 17px/1.6 var(--body); background: var(--night);
+  -webkit-font-smoothing: antialiased; overflow-x: hidden;
+}
+/* spice smoke: two slow light pools behind everything */
+body::before {
+  content: ''; position: fixed; inset: -20vmax; z-index: -2; pointer-events: none;
+  background:
+    radial-gradient(38vmax 30vmax at 78% 12%, rgba(247, 181, 56, 0.20), transparent 70%),
+    radial-gradient(42vmax 34vmax at 12% 48%, rgba(57, 226, 155, 0.11), transparent 70%),
+    radial-gradient(30vmax 26vmax at 60% 92%, rgba(255, 107, 74, 0.08), transparent 70%);
+}
+body::after { /* fine grid, like a radar screen */
+  content: ''; position: fixed; inset: 0; z-index: -1; pointer-events: none; opacity: 0.5;
+  background-image: linear-gradient(var(--line-soft) 1px, transparent 1px), linear-gradient(90deg, var(--line-soft) 1px, transparent 1px);
+  background-size: 56px 56px; mask-image: radial-gradient(ellipse at 50% 20%, #000 20%, transparent 75%);
+}
+a { color: inherit; }
+img { max-width: 100%; display: block; }
+:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; border-radius: 8px; }
+.wrap { width: min(1180px, 100% - 32px); margin-inline: auto; }
+h1, h2, h3 { font-family: var(--display); line-height: 1.08; margin: 0; letter-spacing: -0.01em; }
+h2 { font-size: clamp(1.9rem, 4.2vw, 3rem); font-weight: 700; max-width: 18ch; }
+h3 { font-size: 1.15rem; font-weight: 700; }
+p { margin: 0; }
+section { padding: clamp(64px, 9vw, 120px) 0; }
+.lead { color: var(--dim); font-size: 1.08rem; max-width: 60ch; margin-top: 14px; }
+
+/* buttons */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 52px; padding: 0 26px;
+  border-radius: 999px; font: 600 1rem var(--body); text-decoration: none; cursor: pointer; border: 0; white-space: nowrap;
+  color: #1d1300; background: linear-gradient(180deg, var(--gold-soft), var(--gold));
+  box-shadow: 0 0 0 1px rgba(255, 217, 135, 0.6) inset, 0 10px 40px -10px rgba(247, 181, 56, 0.7);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.btn:hover { transform: translateY(-1px); box-shadow: 0 0 0 1px rgba(255, 217, 135, 0.8) inset, 0 14px 50px -10px rgba(247, 181, 56, 0.9); }
+.btn.ghost { color: var(--mist); background: rgba(230, 240, 234, 0.06); box-shadow: 0 0 0 1px var(--line-soft) inset; }
+.btn.ghost:hover { background: rgba(230, 240, 234, 0.1); }
+.btn:disabled { opacity: 0.6; cursor: wait; }
+
+/* nav */
+nav.top { position: sticky; top: 0; z-index: 20; backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); background: rgba(6, 21, 16, 0.62); border-bottom: 1px solid var(--line-soft); }
+nav.top .wrap { display: flex; align-items: center; gap: 18px; height: 68px; }
+.logo { display: flex; align-items: center; gap: 10px; font: 800 1rem var(--display); text-decoration: none; white-space: nowrap; }
+.logo i { width: 26px; height: 26px; border-radius: 8px; background: conic-gradient(from 200deg, var(--gold), var(--leaf), var(--gold)); box-shadow: 0 0 24px rgba(247, 181, 56, 0.6); }
+.logo b { color: var(--gold); font-weight: 800; }
+.navlinks { display: flex; gap: 22px; margin-inline-start: auto; }
+.navlinks a { color: var(--dim); text-decoration: none; font-weight: 500; font-size: 0.95rem; }
+.navlinks a:hover { color: var(--mist); }
+.navend { display: flex; align-items: center; gap: 10px; }
+nav .btn { min-height: 42px; padding: 0 18px; font-size: 0.92rem; }
+select.lang {
+  appearance: none; -webkit-appearance: none; background: rgba(230, 240, 234, 0.06) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2393ab9e' stroke-width='1.6' fill='none'/%3E%3C/svg%3E") no-repeat right 12px center;
+  color: var(--mist); border: 1px solid var(--line-soft); border-radius: 999px; padding: 10px 32px 10px 14px; font: 500 0.9rem var(--body); cursor: pointer;
+}
+:dir(rtl) select.lang { background-position: left 12px center; padding: 10px 14px 10px 32px; }
+select.lang option { color: #000; }
+
+/* hero */
+.hero { padding: clamp(40px, 7vw, 90px) 0 clamp(56px, 8vw, 100px); }
+.hero .wrap { display: grid; grid-template-columns: 1.15fr 0.85fr; gap: clamp(28px, 5vw, 64px); align-items: center; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 22px; }
+.chip { display: inline-flex; align-items: center; gap: 8px; padding: 7px 14px; border-radius: 999px; font-size: 0.86rem; font-weight: 600; border: 1px solid var(--line-soft); background: rgba(230, 240, 234, 0.04); color: var(--dim); }
+.chip i { width: 8px; height: 8px; border-radius: 50%; background: var(--dim); }
+.chip.live { color: var(--leaf); border-color: rgba(57, 226, 155, 0.3); }
+.chip.live i { background: var(--leaf); box-shadow: 0 0 0 0 rgba(57, 226, 155, 0.7); animation: ping 2.2s infinite; }
+@keyframes ping { 0% { box-shadow: 0 0 0 0 rgba(57, 226, 155, 0.6); } 80%, 100% { box-shadow: 0 0 0 10px rgba(57, 226, 155, 0); } }
+.hero h1 { font-size: clamp(2.6rem, 7.4vw, 5.6rem); font-weight: 800; line-height: 0.98; letter-spacing: -0.03em; max-width: 11ch; }
+:lang(ar) .hero h1 { letter-spacing: 0; line-height: 1.2; }
+.hero h1 .scan { background: linear-gradient(100deg, var(--mist) 0 40%, var(--gold-soft) 50%, var(--mist) 60% 100%); background-size: 260% 100%; background-position: 100% 0; -webkit-background-clip: text; background-clip: text; color: transparent; animation: sweep 1.6s 0.5s cubic-bezier(.2,.7,.2,1) forwards; }
+@keyframes sweep { to { background-position: 0 0; } }
+.hero .lead { font-size: clamp(1.05rem, 1.6vw, 1.22rem); margin-top: 22px; }
+.ctas { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; }
+.telemetry { display: flex; flex-wrap: wrap; gap: 0; margin-top: 40px; border: 1px solid var(--line-soft); border-radius: var(--r-md); background: rgba(230, 240, 234, 0.03); width: fit-content; max-width: 100%; }
+.telemetry div { padding: 14px 22px; }
+.telemetry div + div { border-inline-start: 1px solid var(--line-soft); }
+.telemetry b { display: block; font: 700 1.5rem var(--display); color: var(--mist); font-variant-numeric: tabular-nums; }
+.telemetry span { font-size: 0.85rem; color: var(--dim); }
+.telemetry .pending b { color: var(--dim); }
+
+/* the memorable thing: a target lock on the King */
+.lock { position: relative; aspect-ratio: 1; width: min(100%, 470px); margin-inline: auto; display: grid; place-items: center; }
+.lock .ring { position: absolute; inset: 0; border-radius: 50%; border: 1px solid var(--line); }
+.lock .ring.r2 { inset: 9%; border: 1px dashed rgba(247, 181, 56, 0.35); animation: spin 60s linear infinite; }
+.lock .ring.r3 { inset: 18%; border: 2px solid transparent; border-top-color: var(--chili); border-right-color: rgba(255, 107, 74, 0.35); animation: spin 9s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.lock .portrait { position: relative; width: 64%; aspect-ratio: 1; border-radius: 50%; overflow: hidden; background: radial-gradient(circle at 50% 40%, rgba(247, 181, 56, 0.35), rgba(11, 33, 25, 0.9) 70%); box-shadow: 0 0 80px -10px rgba(247, 181, 56, 0.55), 0 0 0 1px rgba(255, 217, 135, 0.4) inset; }
+.lock .portrait img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 18%; }
+.lock .portrait::after { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(0deg, rgba(6, 21, 16, 0.18) 0 2px, transparent 2px 4px); mix-blend-mode: multiply; }
+.lock .bracket { position: absolute; width: 22%; aspect-ratio: 1; border: 3px solid var(--chili); filter: drop-shadow(0 0 8px rgba(255, 107, 74, 0.7)); }
+.lock .b1 { top: 13%; left: 13%; border-right: 0; border-bottom: 0; border-top-left-radius: 14px; }
+.lock .b2 { top: 13%; right: 13%; border-left: 0; border-bottom: 0; border-top-right-radius: 14px; }
+.lock .b3 { bottom: 13%; left: 13%; border-right: 0; border-top: 0; border-bottom-left-radius: 14px; }
+.lock .b4 { bottom: 13%; right: 13%; border-left: 0; border-top: 0; border-bottom-right-radius: 14px; }
+.lock .crosshair { position: absolute; inset: 0; pointer-events: none; }
+.lock .crosshair::before, .lock .crosshair::after { content: ''; position: absolute; background: rgba(255, 107, 74, 0.5); }
+.lock .crosshair::before { left: 50%; top: 2%; bottom: 2%; width: 1px; }
+.lock .crosshair::after { top: 50%; left: 2%; right: 2%; height: 1px; }
+.lock .readout { position: absolute; inset-inline-start: 0; bottom: 4%; padding: 10px 14px; border-radius: var(--r-sm); background: rgba(6, 21, 16, 0.78); border: 1px solid rgba(255, 107, 74, 0.45); backdrop-filter: blur(8px); max-width: 74%; }
+.lock .readout b { display: block; color: var(--chili); font-size: 0.95rem; }
+.lock .readout span { color: var(--dim); font-size: 0.85rem; }
+/* page-load: the lock closes in on the King, once */
+@media (prefers-reduced-motion: no-preference) {
+  .lock .bracket { animation: lockon 1.1s cubic-bezier(.2,.8,.2,1) both; }
+  .lock .b1 { --dx: -40px; --dy: -40px; } .lock .b2 { --dx: 40px; --dy: -40px; } .lock .b3 { --dx: -40px; --dy: 40px; } .lock .b4 { --dx: 40px; --dy: 40px; }
+  .lock .readout { animation: fadein 0.5s 1s both; }
+}
+@keyframes lockon { 0% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(1.3); } 70% { opacity: 1; } 85% { transform: translate(calc(var(--dx) * -0.06), calc(var(--dy) * -0.06)); } 100% { transform: none; } }
+@keyframes fadein { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .lock .ring, .chip.live i { animation: none !important; } .hero h1 .scan { animation: none; color: var(--mist); background: none; } }
+
+/* arcade bento: sizes follow what matters most */
+.bento { display: grid; grid-template-columns: repeat(6, 1fr); gap: 14px; margin-top: 40px; }
+.tile { position: relative; padding: 26px; border-radius: var(--r-lg); background: var(--glass); border: 1px solid var(--line-soft); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); overflow: hidden; display: flex; flex-direction: column; gap: 10px; }
+.tile p { color: var(--dim); }
+.tile.flight { grid-column: span 4; grid-row: span 2; min-height: 380px; justify-content: flex-end; background: radial-gradient(120% 80% at 80% 0%, rgba(247, 181, 56, 0.22), transparent 60%), var(--glass); border-color: var(--line); }
+.tile.flight h3 { font-size: clamp(1.6rem, 3.2vw, 2.4rem); font-weight: 800; }
+.tile.flight .btn { align-self: flex-start; margin-top: 8px; }
+.flightpath { position: absolute; inset: 0 0 38% 0; width: 100%; height: 62%; }
+.flightpath .trail { fill: none; stroke: url(#trail); stroke-width: 2.5; stroke-dasharray: 2 10; stroke-linecap: round; }
+.tile.board { grid-column: span 2; grid-row: span 2; }
+.tile.check, .tile.langs { grid-column: span 3; }
+.tile.next { grid-column: span 6; flex-direction: row; flex-wrap: wrap; gap: 14px 40px; align-items: flex-start; }
+.tile.next > div { flex: 1 1 260px; }
+.tag { align-self: flex-start; display: inline-flex; align-items: center; gap: 8px; font-size: 0.82rem; font-weight: 600; padding: 5px 12px; border-radius: 999px; background: rgba(57, 226, 155, 0.12); color: var(--leaf); }
+.tag i { width: 7px; height: 7px; border-radius: 50%; background: var(--leaf); }
+.tag.soon { background: rgba(230, 240, 234, 0.07); color: var(--dim); }
+ol.lb { list-style: none; margin: 6px 0 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+ol.lb li { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: var(--r-sm); background: rgba(230, 240, 234, 0.035); font-variant-numeric: tabular-nums; }
+ol.lb li:first-child { background: rgba(247, 181, 56, 0.12); box-shadow: 0 0 0 1px rgba(247, 181, 56, 0.3) inset; }
+ol.lb .pos { width: 1.6em; color: var(--dim); font-weight: 700; }
+ol.lb li:first-child .pos { color: var(--gold); }
+ol.lb .who { flex: 1; font-weight: 600; overflow: hidden; text-overflow: ellipsis; direction: ltr; text-align: start; }
+ol.lb .pts { color: var(--gold-soft); font-weight: 600; white-space: nowrap; }
+.lb-empty { color: var(--dim); font-size: 0.95rem; }
+.replay { display: flex; align-items: flex-end; gap: 3px; height: 46px; margin-top: auto; }
+.replay i { flex: 1; border-radius: 2px; background: linear-gradient(var(--leaf), rgba(57, 226, 155, 0.15)); }
+.langlist { display: flex; flex-wrap: wrap; gap: 8px; margin-top: auto; }
+.langlist button { font: 600 0.95rem var(--body); padding: 8px 14px; border-radius: 999px; border: 1px solid var(--line-soft); background: rgba(230, 240, 234, 0.05); color: var(--mist); cursor: pointer; }
+.langlist button[aria-pressed="true"] { border-color: var(--gold); color: var(--gold-soft); background: rgba(247, 181, 56, 0.1); }
+
+/* cast: hero against villains */
+.cast { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 40px; }
+.cast article { padding: 26px; border-radius: var(--r-md); border: 1px solid var(--line-soft); background: rgba(230, 240, 234, 0.03); display: flex; flex-direction: column; gap: 8px; }
+.cast .role { font-size: 0.85rem; font-weight: 600; color: var(--leaf); }
+.cast .villain .role { color: var(--chili); }
+.cast .villain { border-color: rgba(255, 107, 74, 0.2); }
+.cast p { color: var(--dim); }
+
+/* how: a real sequence, so it is numbered */
+.steps { list-style: none; margin: 40px 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; counter-reset: s; }
+.steps li { counter-increment: s; padding: 26px; border-radius: var(--r-md); border: 1px solid var(--line-soft); background: rgba(230, 240, 234, 0.03); }
+.steps li::before { content: counter(s); display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; margin-bottom: 18px; font: 700 1rem var(--display); color: #1d1300; background: var(--gold); box-shadow: 0 0 24px rgba(247, 181, 56, 0.5); }
+.steps p { color: var(--dim); margin-top: 8px; }
+
+/* tokenomics */
+.toko { display: grid; grid-template-columns: 300px 1fr; gap: 40px; align-items: center; margin-top: 40px; padding: clamp(20px, 4vw, 36px); border-radius: var(--r-lg); background: var(--glass); border: 1px solid var(--line-soft); }
+.donut { position: relative; width: 100%; max-width: 300px; margin-inline: auto; }
+.donut svg { display: block; width: 100%; filter: drop-shadow(0 0 30px rgba(247, 181, 56, 0.25)); }
+.donut .mid { position: absolute; inset: 0; display: grid; place-content: center; text-align: center; }
+.donut .mid b { font: 800 2.4rem var(--display); }
+.donut .mid span { color: var(--dim); font-size: 0.9rem; }
+.tablewrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+th { text-align: start; color: var(--dim); font-weight: 600; padding: 0 12px 12px; border-bottom: 1px solid var(--line-soft); }
+td { padding: 13px 12px; border-bottom: 1px solid var(--line-soft); vertical-align: top; }
+td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.sw { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-inline-end: 10px; }
+.note { color: var(--dim); font-size: 0.9rem; margin-top: 14px; }
+
+/* roadmap */
+.road { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 40px; }
+.road > div { padding: 26px; border-radius: var(--r-md); border: 1px solid var(--line-soft); background: rgba(230, 240, 234, 0.03); }
+.road .now { border-color: rgba(57, 226, 155, 0.35); background: rgba(57, 226, 155, 0.06); }
+.road h3 { display: flex; align-items: center; gap: 10px; }
+.road .now h3::before { content: ''; width: 9px; height: 9px; border-radius: 50%; background: var(--leaf); box-shadow: 0 0 12px var(--leaf); }
+.road ul { margin: 14px 0 0; padding-inline-start: 18px; color: var(--dim); display: flex; flex-direction: column; gap: 6px; }
+
+/* waitlist */
+.join .panel { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(24px, 5vw, 60px); align-items: start; padding: clamp(24px, 5vw, 56px); border-radius: 36px; border: 1px solid var(--line); background: radial-gradient(90% 120% at 0% 0%, rgba(247, 181, 56, 0.16), transparent 60%), var(--glass); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
+.join .safe { margin-top: 18px; color: var(--leaf); font-weight: 600; font-size: 0.95rem; }
+form.wl { display: flex; flex-direction: column; gap: 14px; }
+form.wl label { display: flex; flex-direction: column; gap: 6px; font-size: 0.9rem; font-weight: 600; color: var(--dim); }
+form.wl input[type=text], form.wl select { width: 100%; font: 500 1rem var(--body); color: var(--mist); background: rgba(6, 21, 16, 0.6); border: 1px solid var(--line-soft); border-radius: var(--r-sm); padding: 14px; }
+form.wl select { appearance: none; -webkit-appearance: none; }
+form.wl select option { color: #000; }
+form.wl input:focus, form.wl select:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px rgba(247, 181, 56, 0.2); }
+form.wl .two { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+form.wl .check { flex-direction: row; align-items: flex-start; gap: 10px; font-weight: 500; color: var(--mist); }
+form.wl .check input { width: 20px; height: 20px; margin: 2px 0 0; accent-color: var(--gold); flex: none; }
+form.wl .btn { margin-top: 4px; }
+.fmsg { padding: 12px 14px; border-radius: var(--r-sm); font-weight: 600; font-size: 0.95rem; }
+.fmsg.ok { background: rgba(57, 226, 155, 0.12); color: var(--leaf); }
+.fmsg.err { background: rgba(255, 107, 74, 0.12); color: #ff9a82; }
+
+/* faq */
+.faq { margin-top: 32px; display: flex; flex-direction: column; gap: 10px; max-width: 820px; }
+.faq details { border: 1px solid var(--line-soft); border-radius: var(--r-md); background: rgba(230, 240, 234, 0.03); }
+.faq summary { cursor: pointer; padding: 18px 22px; font-weight: 600; font-size: 1.05rem; list-style: none; display: flex; justify-content: space-between; gap: 16px; }
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::after { content: '+'; color: var(--gold); font: 500 1.4rem/1 var(--display); }
+.faq details[open] summary::after { content: '–'; }
+.faq details p { padding: 0 22px 20px; color: var(--dim); max-width: 70ch; }
+
+footer { padding: 48px 0 64px; border-top: 1px solid var(--line-soft); color: var(--dim); font-size: 0.9rem; }
+footer .wrap { display: flex; flex-direction: column; gap: 12px; }
+footer .warn { color: var(--gold-soft); font-weight: 600; }
+footer p { max-width: 90ch; }
+
+@media (max-width: 960px) {
+  .navlinks { display: none; }
+  .hero .wrap { grid-template-columns: 1fr; }
+  .lock { width: min(82%, 400px); grid-row: 1; }
+  .bento { grid-template-columns: 1fr 1fr; }
+  .tile.flight, .tile.next { grid-column: span 2; }
+  .tile.board { grid-column: span 2; grid-row: auto; }
+  .tile.check, .tile.langs { grid-column: span 1; }
+  .cast, .steps, .road { grid-template-columns: 1fr; }
+  .toko, .join .panel { grid-template-columns: 1fr; }
+}
+@media (max-width: 600px) {
+  body { font-size: 16px; }
+  nav .play { display: none; }
+  .bento { grid-template-columns: 1fr; }
+  .tile.flight, .tile.next, .tile.board, .tile.check, .tile.langs { grid-column: span 1; }
+  .tile.flight { min-height: 340px; }
+  form.wl .two { grid-template-columns: 1fr; }
+  .telemetry div { padding: 12px 16px; }
+  .telemetry b { font-size: 1.25rem; }
+  .logo span.full { display: none; }
+  .lock { margin-bottom: 52px; }
+  .lock .readout { bottom: -30px; inset-inline-start: 50%; transform: translateX(-50%); max-width: none; width: max-content; padding: 8px 12px; text-align: center; }
+  :dir(rtl) .lock .readout { transform: translateX(50%); }
+  .lock .readout b { font-size: 0.88rem; }
+  .lock .readout span { display: none; }
+}
+</style>
+
+<nav class="top" aria-label="Main">
+  <div class="wrap">
+    <a class="logo" href="#top" dir="ltr"><i aria-hidden="true"></i><span><span class="full">General Ginger </span><b>$GNG</b></span></a>
+    <div class="navlinks">
+      <a href="#arcade" data-t="navArcade">The arcade</a>
+      <a href="#how" data-t="navHow">How it works</a>
+      <a href="#tokenomics" data-t="navToken">Tokenomics</a>
+      <a href="#faq" data-t="navFaq">FAQ</a>
+    </div>
+    <div class="navend">
+      <select class="lang" id="lang" aria-label="Language"></select>
+      <a class="btn ghost play" href="play/" data-t="navPlay">Play</a>
+      <a class="btn" href="#join" data-t="navJoin">Join waitlist</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="wrap">
+    <div>
+      <div class="chips">
+        <span class="chip live"><i></i><span data-t="chipWl">Waitlist open</span></span>
+        <span class="chip"><i></i><span data-t="chipToken">Token not launched</span></span>
+      </div>
+      <h1><span class="scan" data-t="h1">Overthrow the Ginger King.</span></h1>
+      <p class="lead" data-t="lede">Free 3D arcade games for players everywhere. They run on any phone, even on slow data. Fly with General Ginger from the streets of Lagos, beat the King's pest army, and earn points that count toward the planned $GNG airdrop.</p>
+      <div class="ctas">
+        <a class="btn" href="#join" data-t="ctaJoin">Join the airdrop waitlist</a>
+        <a class="btn ghost" href="play/" data-t="ctaPlay">Play in your browser</a>
+      </div>
+      <div class="telemetry" id="telemetry" aria-live="polite">
+        <div class="pending"><b id="st-wl">—</b><span data-t="statWl">on the waitlist</span></div>
+        <div class="pending"><b id="st-pl">—</b><span data-t="statPlayers">pilots with accounts</span></div>
+        <div><b>5</b><span data-t="statLangs">languages</span></div>
+      </div>
+    </div>
+    <figure class="lock" aria-labelledby="lock-cap" style="margin:0">
+      <span class="ring"></span><span class="ring r2"></span><span class="ring r3"></span>
+      <span class="crosshair" aria-hidden="true"></span>
+      <div class="portrait"><img src="king.webp" width="576" height="864" alt="The Ginger King, a smiling ginger root in a gold crown and green agbada, holding up a glowing spice jar." data-ta="kingAlt"></div>
+      <span class="bracket b1" aria-hidden="true"></span><span class="bracket b2" aria-hidden="true"></span><span class="bracket b3" aria-hidden="true"></span><span class="bracket b4" aria-hidden="true"></span>
+      <figcaption class="readout" id="lock-cap"><b data-t="lockLabel">Target locked: the Ginger King</b><span data-t="lockCap">Wanted for crimes against spice.</span></figcaption>
+    </figure>
+  </div>
+</header>
+
+<section id="arcade" aria-labelledby="arc-h">
+  <div class="wrap">
+    <h2 id="arc-h" data-t="arcH">Inside the arcade</h2>
+    <p class="lead" data-t="arcP">One game is live today. Two more are on the way, all against the same army.</p>
+    <div class="bento">
+      <article class="tile flight">
+        <svg class="flightpath" viewBox="0 0 600 240" preserveAspectRatio="none" aria-hidden="true">
+          <defs><linearGradient id="trail" x1="0" x2="1"><stop offset="0" stop-color="#f7b538" stop-opacity="0"/><stop offset="1" stop-color="#f7b538"/></linearGradient></defs>
+          <path class="trail" d="M-10 170 C 120 170, 160 70, 280 95 S 470 30, 560 50"/>
+          <circle cx="560" cy="50" r="7" fill="#ffd987"><animate attributeName="r" values="6;9;6" dur="2.4s" repeatCount="indefinite"/></circle>
+          <circle cx="430" cy="110" r="4" fill="#ff6b4a"/><circle cx="170" cy="120" r="4" fill="#ff6b4a"/><circle cx="330" cy="70" r="5" fill="#39e29b"/>
+        </svg>
+        <span class="tag"><i></i><span data-t="flightTag">Playable now</span></span>
+        <h3 data-t="flightH">General Ginger Flight</h3>
+        <p data-t="flightP">A 3D flying game in your browser. Dodge rot bombs, shears and sticky nets, grab power-ups, and shoot down the King's airship to reach the next level.</p>
+        <a class="btn" href="play/" data-t="flightCta">Play now</a>
+      </article>
+      <article class="tile board" aria-labelledby="board-h">
+        <span class="tag"><i></i><span data-t="liveTag">Live</span></span>
+        <h3 id="board-h" data-t="boardH">Top pilots right now</h3>
+        <ol class="lb" id="lb"></ol>
+        <p class="lb-empty" id="lb-empty" data-t="boardEmpty">Loading the leaderboard…</p>
+      </article>
+      <article class="tile check">
+        <h3 data-t="checkH">Every score is replayed</h3>
+        <p data-t="checkP">Our server replays each flight move by move before the points count, so cheaters can't farm the airdrop.</p>
+        <div class="replay" aria-hidden="true" id="replay"></div>
+      </article>
+      <article class="tile langs">
+        <h3 data-t="langH">Play in your language</h3>
+        <p data-t="langP">The game and this page speak English, French, Spanish, Portuguese and Arabic.</p>
+        <div class="langlist" id="langlist"></div>
+      </article>
+      <article class="tile next">
+        <div><span class="tag soon"><span data-t="nextTag">Coming next</span></span><h3 style="margin-top:10px" data-t="castle">Ginger Castle Run</h3><p data-t="castleP">A retro platformer through the King's castle. Collect spice, dodge traps and reach the throne room.</p></div>
+        <div><span class="tag soon"><span data-t="laterTag">Coming later</span></span><h3 style="margin-top:10px" data-t="revenge">Ginger King's Revenge</h3><p data-t="revengeP">A beat-'em-up against pest bosses, with the King himself as the final fight.</p></div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section aria-labelledby="story-h" style="padding-top:0">
+  <div class="wrap">
+    <h2 id="story-h" data-t="storyH">A coup in Spicelantis</h2>
+    <div class="cast">
+      <article><span class="role" data-t="roleHero">Hero</span><h3 data-t="gg">General Ginger</h3><p data-t="ggP">A rogue Air Force general in a patched-up vintage biplane, flying to free the throne of Spicelantis.</p></article>
+      <article class="villain"><span class="role" data-t="roleVillain">Villain</span><h3 data-t="king">The Ginger King</h3><p data-t="kingP">The tyrant on the throne. He rides a royal airship and rains spice bombs on anyone who challenges him.</p></article>
+      <article class="villain"><span class="role" data-t="roleArmy">His army</span><h3 data-t="army">The Pest Battalion</h3><p data-t="armyP">Shoot-borer caterpillars on trebuchets, white grubs throwing shears, and root-knot nematodes spitting sticky nets.</p></article>
+    </div>
+  </div>
+</section>
+
+<section id="how" aria-labelledby="how-h" style="padding-top:0">
+  <div class="wrap">
+    <h2 id="how-h" data-t="howH">Play free. Earn points.</h2>
+    <ol class="steps">
+      <li><h3 data-t="s1H">Sign up with your email</h3><p data-t="s1P">Then sign in any time with your gamer tag and password. No crypto wallet, seed phrase or gas fees.</p></li>
+      <li><h3 data-t="s2H">Play and earn points</h3><p data-t="s2P">Fly further for more points, up to 300 a game and 1,500 a day. Each hit costs you 15%.</p></li>
+      <li><h3 data-t="s3H">Points count toward the airdrop</h3><p data-t="s3P">If and when $GNG launches, verified points decide your share of the airdrop pool.</p></li>
+    </ol>
+  </div>
+</section>
+
+<section id="tokenomics" aria-labelledby="tok-h" style="padding-top:0">
+  <div class="wrap">
+    <h2 id="tok-h" data-t="tokH">Most of it goes to players</h2>
+    <div class="toko">
+      <div class="donut">
+        <svg viewBox="0 0 200 200" role="img" data-ta="tokAria" aria-label="Planned $GNG supply split: 40% play-to-airdrop, 25% liquidity, 15% ecosystem and merch, 10% marketing, 10% team">
+          <g transform="rotate(-90 100 100)" fill="none" stroke-width="22">
+            <circle cx="100" cy="100" r="74" stroke="#f7b538" stroke-dasharray="185.98 464.96" stroke-dashoffset="0"/>
+            <circle cx="100" cy="100" r="74" stroke="#39e29b" stroke-dasharray="116.24 464.96" stroke-dashoffset="-185.98"/>
+            <circle cx="100" cy="100" r="74" stroke="#ff6b4a" stroke-dasharray="69.74 464.96" stroke-dashoffset="-302.22"/>
+            <circle cx="100" cy="100" r="74" stroke="#e6f0ea" stroke-dasharray="46.5 464.96" stroke-dashoffset="-371.96"/>
+            <circle cx="100" cy="100" r="74" stroke="#5c7a6b" stroke-dasharray="46.5 464.96" stroke-dashoffset="-418.46"/>
+          </g>
+        </svg>
+        <div class="mid"><b>1B</b><span data-t="supply">fixed supply</span></div>
+      </div>
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th data-t="thPool">Pool</th><th data-t="thShare">Share</th><th>$GNG</th><th data-t="thRelease">Release</th></tr></thead>
+          <tbody>
+            <tr><td><span class="sw" style="background:#f7b538"></span><span data-t="p1">Play-to-airdrop</span></td><td class="num">40%</td><td class="num">400,000,000</td><td data-t="p1r">Earned by players through verified points</td></tr>
+            <tr><td><span class="sw" style="background:#39e29b"></span><span data-t="p2">Liquidity</span></td><td class="num">25%</td><td class="num">250,000,000</td><td data-t="p2r">Locked in a contract for 24 months</td></tr>
+            <tr><td><span class="sw" style="background:#ff6b4a"></span><span data-t="p3">Ecosystem &amp; merch</span></td><td class="num">15%</td><td class="num">150,000,000</td><td data-t="p3r">Released as merch and partner programmes grow</td></tr>
+            <tr><td><span class="sw" style="background:#e6f0ea"></span><span data-t="p4">Marketing</span></td><td class="num">10%</td><td class="num">100,000,000</td><td data-t="p4r">10% at launch, the rest over 12 months</td></tr>
+            <tr><td><span class="sw" style="background:#5c7a6b"></span><span data-t="p5">Team</span></td><td class="num">10%</td><td class="num">100,000,000</td><td data-t="p5r">6-month cliff, then 18 months of gradual release</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <p class="note" data-t="tokNote">This is the planned split and may change before launch. $GNG has not been created yet.</p>
+  </div>
+</section>
+
+<section aria-labelledby="road-h" style="padding-top:0">
+  <div class="wrap">
+    <h2 id="road-h" data-t="roadH">Where we are</h2>
+    <div class="road">
+      <div class="now"><h3 data-t="now">Now</h3><ul><li data-t="r1">General Ginger Flight playable worldwide</li><li data-t="r2">Player accounts with saved points</li><li data-t="r3">Anti-cheat score checking</li><li data-t="r4">The game in five languages</li><li data-t="r5">Airdrop waitlist open to every country</li></ul></div>
+      <div><h3 data-t="next">Next</h3><ul><li data-t="r6">Global leaderboard page</li><li data-t="r7">Sound &amp; Sip live events, starting in Abuja</li><li data-t="r8">Legal review in Nigeria and our other big player countries</li></ul></div>
+      <div><h3 data-t="later">Later</h3><ul><li data-t="r9">Two more games</li><li data-t="r10">Merch store</li><li data-t="r11">$GNG launch and airdrop, only after regulatory approval</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<section class="join" id="join" aria-labelledby="join-h" style="padding-top:0">
+  <div class="wrap">
+    <div class="panel">
+      <div>
+        <h2 id="join-h" data-t="joinH">Get in early</h2>
+        <p class="lead" data-t="joinP">Join the list and we'll tell you about new games, events and the $GNG launch. It's free.</p>
+        <p class="safe" data-t="joinSafe">We will never ask you to pay or send crypto to join.</p>
+      </div>
+      <form class="wl" id="wl-form" novalidate>
+        <label for="wl-contact"><span data-t="fContact">Email or phone number</span>
+          <input type="text" id="wl-contact" autocomplete="email" placeholder="you@email.com or +1 555 123 4567" data-tp="fContactPh">
+        </label>
+        <div class="two">
+          <label for="wl-tag"><span data-t="fTag">Gamer tag</span>
+            <input type="text" id="wl-tag" maxlength="15" autocomplete="nickname" placeholder="Sky_Ace">
+          </label>
+          <label for="wl-country"><span data-t="fCountry">Country</span>
+            <select id="wl-country" data-codes="AF AX AL DZ AS AD AO AI AQ AG AR AM AW AU AT AZ BS BH BD BB BY BE BZ BJ BM BT BO BQ BA BW BV BR IO BN BG BF BI CV KH CM CA KY CF TD CL CN CX CC CO KM CG CD CK CR CI HR CU CW CY CZ DK DJ DM DO EC EG SV GQ ER EE SZ ET FK FO FJ FI FR GF PF TF GA GM GE DE GH GI GR GL GD GP GU GT GG GN GW GY HT HM VA HN HK HU IS IN ID IR IQ IE IM IL IT JM JP JE JO KZ KE KI KP KR XK KW KG LA LV LB LS LR LY LI LT LU MO MG MW MY MV ML MT MH MQ MR MU YT MX FM MD MC MN ME MS MA MZ MM NA NR NP NL NC NZ NI NE NG NU NF MK MP NO OM PK PW PS PA PG PY PE PH PN PL PT PR QA RE RO RU RW BL SH KN LC MF PM VC WS SM ST SA SN RS SC SL SG SX SK SI SB SO ZA GS SS ES LK SD SR SJ SE CH SY TW TJ TZ TH TL TG TK TO TT TN TR TM TC TV UG UA AE GB US UM UY UZ VU VE VN VG VI WF EH YE ZM ZW">
+              <option value="" data-t="fChoose">Choose your country</option>
+            </select>
+          </label>
+        </div>
+        <label class="check" for="wl-adult"><input type="checkbox" id="wl-adult"><span data-t="fAdult">I'm 18 or older.</span></label>
+        <label class="check" for="wl-consent"><input type="checkbox" id="wl-consent"><span data-t="fConsent">Contact me about General Ginger and the $GNG launch. I can ask to be removed at any time.</span></label>
+        <div class="fmsg" id="wl-msg" role="status" hidden></div>
+        <button class="btn" type="submit" id="wl-btn" data-t="fBtn">Join the waitlist</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<section id="faq" aria-labelledby="faq-h" style="padding-top:0">
+  <div class="wrap">
+    <h2 id="faq-h" data-t="faqH">Questions</h2>
+    <div class="faq">
+      <details><summary data-t="q1">Can I buy $GNG now?</summary><p data-t="a1">No. $GNG has not been created, so anyone selling it now is a scammer. We will never message you asking for money or crypto.</p></details>
+      <details><summary data-t="q2">Do the games cost anything?</summary><p data-t="a2">No. The games are free to play, and you never pay to earn points.</p></details>
+      <details><summary data-t="q3">Are points worth money?</summary><p data-t="a3">No. Points have no cash value. If $GNG launches, verified points decide your share of the airdrop pool, but the token's value is not promised and could be zero.</p></details>
+      <details><summary data-t="q4">When is the airdrop?</summary><p data-t="a4">There is no date yet. Rules for digital assets are different in every country (in Nigeria, for example, they are regulated as securities), so we will only launch after a legal review, and only where the law allows. Joining the waitlist is the best way to hear first.</p></details>
+      <details><summary data-t="q5">Who can join?</summary><p data-t="a5">Anyone 18 or older, anywhere in the world, can play and join the waitlist. Whether you can receive $GNG depends on the law where you live, so some countries may be left out of the airdrop. We can't accept sign-ups from countries under full international sanctions.</p></details>
+      <details><summary data-t="q6">Can I play from my country?</summary><p data-t="a6">Yes. The game is free and works in any country with a web browser. Phone numbers need your country code, like +44 or +1. Daily point limits reset at midnight UTC.</p></details>
+      <details><summary data-t="q7">What do you do with my details?</summary><p data-t="a7">We only use your email or phone number to contact you about General Ginger and the launch. We don't sell it, and you can ask us for a copy or to delete it at any time, wherever you live.</p></details>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <a class="logo" href="#top" dir="ltr"><i aria-hidden="true"></i><span>General Ginger <b>$GNG</b></span></a>
+    <p class="warn" data-t="warn">We will never DM you to buy $GNG or ask for your wallet's secret phrase.</p>
+    <p data-t="legal">$GNG has not been issued. Nothing on this page is an offer to sell, or a request to buy, securities or digital assets, and nothing here is financial advice. Any airdrop, including who qualifies, how much and when, depends on regulatory approval and may change or not happen.</p>
+  </div>
+</footer>
+
+<script>
+(() => {
+  // const WAITLIST_API = 'https://gng-flight-verify.yourname.workers.dev';
+  const WAITLIST_API = '';
+  /*I18N*/
+  const $ = id => document.getElementById(id);
+
+  // ---------- language ----------
+  const LANGS = { en: 'English', fr: 'Français', es: 'Español', pt: 'Português', ar: 'العربية' };
+  const pick = () => {
+    let saved = null; try { saved = localStorage.getItem('ggLang'); } catch (e) {}
+    if (saved && LANGS[saved]) return saved;
+    const q = new URLSearchParams(location.search).get('lang'); if (q && LANGS[q]) return q;
+    return (navigator.languages || [navigator.language || 'en']).map(l => String(l).slice(0, 2).toLowerCase()).find(l => LANGS[l]) || 'en';
+  };
+  let LANG = pick();
+  const t = (k, v) => { let s = (L[LANG] && L[LANG][k]) || L.en[k] || ''; if (v) for (const x in v) s = s.split('{' + x + '}').join(v[x]); return LANG === 'ar' ? s.split('$GNG').join('\u2066$GNG\u2069') : s; };
+  const fmt = n => Number(n || 0).toLocaleString(LANG === 'ar' ? 'en' : LANG);
+  function apply() {
+    document.documentElement.lang = LANG;
+    document.documentElement.dir = LANG === 'ar' ? 'rtl' : 'ltr';
+    if (LANG === 'ar' && !document.getElementById('ar-font')) {
+      const l = document.createElement('link'); l.id = 'ar-font'; l.rel = 'stylesheet';
+      l.href = 'https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;600;700&display=swap'; document.head.appendChild(l);
+    }
+    document.querySelectorAll('[data-t]').forEach(el => { const s = t(el.dataset.t); if (s) el.textContent = s; });
+    document.querySelectorAll('[data-ta]').forEach(el => { const s = t(el.dataset.ta); if (s) el.setAttribute(el.tagName === 'IMG' ? 'alt' : 'aria-label', s); });
+    document.querySelectorAll('[data-tp]').forEach(el => { const s = t(el.dataset.tp); if (s) el.placeholder = s; });
+    document.title = 'General Ginger $GNG';
+    const m = document.querySelector('meta[name=description]'); if (m && t('meta')) m.content = t('meta');
+    $('lang').value = LANG; $('lang').setAttribute('aria-label', t('language'));
+    document.querySelectorAll('#langlist button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.l === LANG)));
+    fillCountries(); renderBoard();
+  }
+  function setLang(l) { LANG = l; try { localStorage.setItem('ggLang', l); } catch (e) {} apply(); }
+  for (const k in LANGS) {
+    $('lang').add(new Option(LANGS[k], k));
+    const b = document.createElement('button'); b.type = 'button'; b.dataset.l = k; b.lang = k; b.textContent = LANGS[k];
+    b.addEventListener('click', () => setLang(k)); $('langlist').appendChild(b);
+  }
+  $('lang').addEventListener('change', e => setLang(e.target.value));
+
+  // ---------- countries, named in the reader's language ----------
+  const sel = $('wl-country'), codes = sel.dataset.codes.split(' ');
+  const guess = (navigator.languages || [navigator.language || '']).map(l => (String(l).split('-')[1] || '').toUpperCase()).find(r => codes.includes(r)) || '';
+  function fillCountries() {
+    const keep = sel.value || guess;
+    let names = null; try { names = new Intl.DisplayNames([LANG, 'en'], { type: 'region' }); } catch (e) {}
+    const name = c => { try { return (names && names.of(c)) || c; } catch (e) { return c; } };
+    while (sel.options.length > 1) sel.remove(1);
+    codes.map(c => [c, name(c)]).sort((a, b) => a[1].localeCompare(b[1], LANG)).forEach(([c, n]) => sel.add(new Option(n, c)));
+    sel.value = keep;
+  }
+
+  // ---------- live numbers and leaderboard ----------
+  let top = null;
+  function renderBoard() {
+    const ol = $('lb'), empty = $('lb-empty');
+    if (top === null) return;
+    ol.textContent = '';
+    top.forEach((r, i) => {
+      const li = document.createElement('li');
+      const pos = document.createElement('span'); pos.className = 'pos'; pos.textContent = i + 1;
+      const who = document.createElement('span'); who.className = 'who'; who.textContent = r.tag;
+      const pts = document.createElement('span'); pts.className = 'pts'; pts.textContent = t('ptsN', { n: fmt(r.points) });
+      li.append(pos, who, pts); ol.appendChild(li);
+    });
+    empty.hidden = top.length > 0;
+    empty.textContent = t(top.length ? 'boardEmpty' : 'boardNone');
+  }
+  (async () => {
+    if (!WAITLIST_API) { top = []; renderBoard(); return; }
+    try {
+      const r = await fetch(WAITLIST_API + '/stats', { method: 'POST' });
+      const s = await r.json();
+      const set = (id, v) => { if (typeof v === 'number') { $(id).textContent = fmt(v); $(id).parentElement.classList.remove('pending'); } };
+      set('st-wl', s.waitlist); set('st-pl', s.players);
+      top = Array.isArray(s.top) ? s.top : []; renderBoard();
+    } catch (e) { top = []; renderBoard(); }
+  })();
+  // a flight being replayed, drawn as bars
+  const rp = $('replay'); for (let i = 0; i < 48; i++) { const b = document.createElement('i'); b.style.height = (18 + Math.round(Math.abs(Math.sin(i * 0.7) * 60 + Math.sin(i * 0.23) * 22))) + '%'; rp.appendChild(b); }
+
+  // ---------- waitlist ----------
+  const form = $('wl-form'), msg = $('wl-msg'), btn = $('wl-btn');
+  const say = (text, kind) => { msg.hidden = false; msg.className = 'fmsg ' + kind; msg.textContent = text; };
+  const reason = r => { const k = SRVMAP[r]; return k ? t(k) : r; };
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+    const body = { contact: $('wl-contact').value.trim(), tag: $('wl-tag').value.trim(), country: sel.value, adult: $('wl-adult').checked, consent: $('wl-consent').checked };
+    if (!body.contact) return say(t('eContact'), 'err');
+    if (!body.country) return say(t('eCountry'), 'err');
+    if (!/^[A-Za-z0-9_]{3,15}$/.test(body.tag)) return say(t('eTag'), 'err');
+    if (!body.adult) return say(t('eAdult'), 'err');
+    if (!body.consent) return say(t('eConsent'), 'err');
+    if (!WAITLIST_API) return say('Preview: the waitlist is not connected to a server, so nothing was saved.', 'err');
+    btn.disabled = true; btn.textContent = t('fJoining');
+    try {
+      const res = await fetch(WAITLIST_API + '/waitlist', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+      const j = await res.json();
+      if (j.ok) {
+        say(t(j.already ? 'okAlready' : 'okNew', { n: fmt(j.position) }), 'ok');
+        form.querySelectorAll('input').forEach(i => { if (i.type === 'checkbox') i.checked = false; else i.value = ''; });
+      } else say(reason(j.reason) || t('eGeneric'), 'err');
+    } catch (err) { say(t('eNet'), 'err'); }
+    finally { btn.disabled = false; btn.textContent = t('fBtn'); }
+  });
+
+  apply();
+})();
+</script>

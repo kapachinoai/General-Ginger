@@ -64,6 +64,7 @@
     #tg-btn[hidden] { display: none; }
     #tg-btn:active { transform: translateY(2px); }
     #hint { margin-top: 12px; font-size: 0.78rem; color: #cbd5e1; line-height: 1.7; }
+    #credit { margin-top: 4px; padding: 0 84px; font-size: 0.7rem; color: #94a3b8; }
     #hint span { background: rgba(30,41,59,0.85); padding: 2px 7px; border-radius: 4px; color: #fff; }
     #rotate { font-size: 0.78rem; color: #fde047; margin-top: 6px; display: none; }
     #account { pointer-events: auto; margin: -4px 0 14px; font-size: 0.9rem; color: #f1f5f9; text-shadow: 0 2px 6px rgba(0,0,0,0.8); }
@@ -154,6 +155,7 @@
       <span>↑ ↓</span> / <span>W S</span> fly up and down • <span>Space</span> spice boost<br>
       Phone: drag up and down to fly • tap to boost
     </div>
+    <div id="credit">♪ “Bali” (sped up) · KliensMan</div>
     <div id="rotate" data-t="rotate">Tip: turn your phone sideways for a wider view</div>
   </div>
   <div id="bossbar" hidden><span data-t="boss">THE GINGER KING</span><div class="bb"><i id="bossfill"></i></div></div>
@@ -1699,7 +1701,7 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
     function buzz(p) { if (FX.buzz && navigator.vibrate) { try { navigator.vibrate(p); } catch (e) {} } }
 
     // --- Sound: a tiny synthesiser, plus one music track ---
-    // Music: "Bali (sped up)", used with the artist's permission. It downloads (about 1.5 MB)
+    // Music: "Bali" (sped up) by KliensMan, used with the artist's permission. It downloads (about 1.5 MB)
     // only after the player's first tap with sound on, then loops quietly under the effects.
     let ac = null, eng = null, noiseBuf = null, musicGain = null, musicAsked = false;
     function musicLoad() {

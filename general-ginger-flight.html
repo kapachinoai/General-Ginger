@@ -1698,8 +1698,22 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
     const FX = { sound: pref('ggSound', '1') === '1', buzz: pref('ggBuzz', '1') === '1' };
     function buzz(p) { if (FX.buzz && navigator.vibrate) { try { navigator.vibrate(p); } catch (e) {} } }
 
-    // --- Sound: a tiny synthesiser, no audio files to download ---
-    let ac = null, eng = null, noiseBuf = null;
+    // --- Sound: a tiny synthesiser, plus one music track ---
+    // Music: "Bali (sped up)", used with the artist's permission. It downloads (about 1.5 MB)
+    // only after the player's first tap with sound on, then loops quietly under the effects.
+    let ac = null, eng = null, noiseBuf = null, musicGain = null, musicAsked = false;
+    function musicLoad() {
+      if (musicAsked || !ac || !GG_API) return;
+      musicAsked = true;
+      fetch(GG_API + '/music')
+        .then(r => (r.ok ? r.arrayBuffer() : Promise.reject(new Error('music ' + r.status))))
+        .then(data => new Promise((res, rej) => ac.decodeAudioData(data, res, rej)))
+        .then(buf => {
+          musicGain = ac.createGain(); musicGain.gain.value = 0; musicGain.connect(ac.destination);
+          const src = ac.createBufferSource(); src.buffer = buf; src.loop = true; src.connect(musicGain); src.start();
+        })
+        .catch(() => { musicGain = null; });
+    }
     function audioStart() {
       if (!FX.sound) return;
       try {
@@ -1714,6 +1728,7 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
           eng = { o1, o2, f, g };
         }
         if (ac.state === 'suspended') ac.resume();
+        musicLoad();
       } catch (e) { ac = null; }
     }
     function tone(freq, dur, type = 'square', vol = 0.12, slideTo = 0, delay = 0) {
@@ -1802,6 +1817,11 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
         eng.o1.frequency.setTargetAtTime(55 + sp * 3.2 + b * 45, ac.currentTime, 0.1);
         eng.o2.frequency.setTargetAtTime(28 + sp * 1.6, ac.currentTime, 0.1);
         eng.f.frequency.setTargetAtTime(300 + b * 900, ac.currentTime, 0.1);
+      }
+      // Music: full volume while flying, softer on menus, silent when paused or muted
+      if (musicGain && ac) {
+        const mv = !FX.sound ? 0 : (state === 'playing' || state === 'countdown') ? 0.32 : state === 'paused' ? 0 : 0.14;
+        musicGain.gain.setTargetAtTime(mv, ac.currentTime, 0.3);
       }
       // Sky mood
       const mood = sim && sim.boss ? STORM : SKIES[Math.min(SKIES.length - 1, (sim ? sim.level : 1) - 1)];

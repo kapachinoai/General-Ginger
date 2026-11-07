@@ -12,6 +12,7 @@
  *   POST /profile  -> { ok, tag }  body: { tag }                  (needs sign-in)
  *   POST /login    -> { ok, access_token, refresh_token }  body: { tag, password }
  *   POST /waitlist -> see below (no sign-in)
+ *   GET  /music    -> the game's soundtrack MP3 (KV key asset:music)
  *
  * Needs a KV namespace bound as SESSIONS (see wrangler.toml).
  * Sign-in and saved points use Supabase. Set these in the Worker's settings:
@@ -40,6 +41,12 @@ export default {
     const json = (body, status = 200) =>
       new Response(JSON.stringify(body), { status, headers: { ...cors, 'Content-Type': 'application/json' } });
 
+    // GET /music -> the game's soundtrack (stored in KV as "asset:music")
+    if (request.method === 'GET' && new URL(request.url).pathname === '/music') {
+      const audio = await env.SESSIONS.get('asset:music', 'arrayBuffer');
+      if (!audio) return json({ error: 'no music' }, 404);
+      return new Response(audio, { headers: { ...cors, 'Content-Type': 'audio/mpeg', 'Cache-Control': 'public, max-age=604800' } });
+    }
     if (request.method !== 'POST') return json({ error: 'POST only' }, 405);
     const path = new URL(request.url).pathname;
 

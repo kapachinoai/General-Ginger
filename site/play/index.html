@@ -1703,7 +1703,7 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
     // --- Sound: one music track (the synthesised effects below are switched off with SFX) ---
     // Music: "Bali" (sped up) by KliensMan, used with the artist's permission. It downloads (about 1.5 MB)
     // only after the player's first tap with sound on, then loops quietly under the effects.
-    let ac = null, eng = null, noiseBuf = null, musicGain = null, musicAsked = false;
+    let ac = null, eng = null, noiseBuf = null, musicGain = null, musicBuf = null, musicSrc = null, musicAsked = false;
     function musicLoad() {
       if (musicAsked || !ac || !GG_API) return;
       musicAsked = true;
@@ -1712,7 +1712,7 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
         .then(data => new Promise((res, rej) => ac.decodeAudioData(data, res, rej)))
         .then(buf => {
           musicGain = ac.createGain(); musicGain.gain.value = 0; musicGain.connect(ac.destination);
-          const src = ac.createBufferSource(); src.buffer = buf; src.loop = true; src.connect(musicGain); src.start();
+          musicBuf = buf; // played from the start of each flight by update4D
         })
         .catch(() => { musicGain = null; });
     }
@@ -1823,10 +1823,19 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
         eng.o2.frequency.setTargetAtTime(28 + sp * 1.6, ac.currentTime, 0.1);
         eng.f.frequency.setTargetAtTime(300 + b * 900, ac.currentTime, 0.1);
       }
-      // Music: full volume while flying, softer on menus, silent when paused or muted
-      if (musicGain && ac) {
-        const mv = !FX.sound ? 0 : (state === 'playing' || state === 'countdown') ? 0.55 : state === 'paused' ? 0 : 0.3;
-        musicGain.gain.setTargetAtTime(mv, ac.currentTime, 0.3);
+      // Music: starts from the top each flight, holds while paused, stops when the plane goes down
+      if (musicGain && musicBuf && ac) {
+        const flight = state === 'playing' || state === 'countdown' || state === 'starting';
+        if (musicSrc && !flight && state !== 'paused') {
+          musicGain.gain.cancelScheduledValues(ac.currentTime); musicGain.gain.setTargetAtTime(0, ac.currentTime, 0.08);
+          try { musicSrc.stop(ac.currentTime + 0.4); } catch (e) {}
+          musicSrc = null;
+        } else if (!musicSrc && flight && FX.sound) {
+          musicSrc = ac.createBufferSource(); musicSrc.buffer = musicBuf; musicSrc.loop = true; musicSrc.connect(musicGain);
+          musicGain.gain.cancelScheduledValues(ac.currentTime); musicGain.gain.setValueAtTime(0, ac.currentTime);
+          musicSrc.start();
+        }
+        if (musicSrc) musicGain.gain.setTargetAtTime(FX.sound && flight ? 0.55 : 0, ac.currentTime, 0.25);
       }
       // Sky mood
       const mood = sim && sim.boss ? STORM : SKIES[Math.min(SKIES.length - 1, (sim ? sim.level : 1) - 1)];

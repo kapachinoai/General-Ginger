@@ -59,6 +59,8 @@
     #go-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #14532d; }
     #go-btn:disabled { opacity: 0.7; }
     #hangar-btn { pointer-events: auto; margin-top: 12px; padding: 10px 22px; border-radius: 999px; border: 2px solid #fff; background: rgba(0,0,0,0.55); color: #fff; font: inherit; font-weight: 800; font-size: 1rem; cursor: pointer; }
+    #hangar-btn.pulse { border-color: #fde047; box-shadow: 0 0 0 0 rgba(253,224,71,0.8); animation: hgpulse 1.4s infinite; }
+    @keyframes hgpulse { 70% { box-shadow: 0 0 0 14px rgba(253,224,71,0); } 100% { box-shadow: 0 0 0 0 rgba(253,224,71,0); } }
     #hangar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; max-height: 50vh; overflow: auto; background: rgba(8,20,14,0.96); border-top: 3px solid #fde047; border-radius: 20px 20px 0 0; padding: 14px 16px 18px; color: #fff; }
     #hangar[hidden] { display: none; }
     #hangar .hg-head { display: flex; align-items: center; justify-content: space-between; }
@@ -620,7 +622,7 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
       en: {
         loading: 'Loading General Ginger…', loadFail: 'Could not load the 3D engine. Check your connection and refresh.',
         intro: "The Ginger King's pest army is firing from the ground. Dodge rot bombs, shears and sticky nets, grab power-ups, and shoot down the King's airship to reach the next level!",
-        takeOff: 'Oya, Take Off!', flyAgain: 'Fly Again', shareX: '𝕏 Challenge friends', joinTG: 'Join the Ginger Army on Telegram', hangar: '🛩️ Hangar', hgPlane: 'Planes', hgPaint: 'Paint', hgTrail: 'Trails', hgPilot: 'Pilot', hgNote: 'Skins only change how you look. Every pilot flies the same.', hgEquipped: '✓ Equipped', hgTap: 'Tap to equip', hgBest: 'Unlock: best score {n}', hgSoon: '{n} · shop opening soon', hgBuy: '{n} · tap to buy', hgSignIn: 'Sign in first so your skin is saved to your account.', hgOpening: 'Opening secure checkout…', hgChecking: 'Checking your payment…', hgUnlocked: 'Skin unlocked! It\'s yours forever 🎉', hgPayFail: 'We couldn\'t confirm the payment yet. If you paid, the skin unlocks automatically within a few minutes.', shareText: 'I scored {score} and reached level {level} in General Ginger 🛩️\n\nCan you beat me? Overthrow the Ginger King 👑', loadingAcct: 'Loading your account…', connecting: 'Connecting…',
+        takeOff: 'Oya, Take Off!', flyAgain: 'Fly Again', shareX: '𝕏 Challenge friends', joinTG: 'Join the Ginger Army on Telegram', hangar: '🛩️ Hangar', hgPlane: 'Planes', hgPaint: 'Paint', hgTrail: 'Trails', hgPilot: 'Pilot', hgNote: 'Skins only change how you look. Every pilot flies the same.', hgEquipped: '✓ Equipped', hgTap: 'Tap to equip', hgBest: 'Unlock: best score {n}', hgSoon: '{n} · shop opening soon', hgBuy: '{n} · tap to buy', hgSignIn: 'Sign in first so your skin is saved to your account.', hgOpening: 'Opening secure checkout…', hgChecking: 'Checking your payment…', hgUnlocked: 'Skin unlocked! It\'s yours forever 🎉', hgPayFail: 'We couldn\'t confirm the payment yet. If you paid, the skin unlocks automatically within a few minutes.', hgNew: 'New skin unlocked: {name}! Open the Hangar 🛩️', shareText: 'I scored {score} and reached level {level} in General Ginger 🛩️\n\nCan you beat me? Overthrow the Ginger King 👑', loadingAcct: 'Loading your account…', connecting: 'Connecting…',
         hint: '<span>↑ ↓</span> / <span>W S</span> fly up and down • <span>Space</span> spice boost<br>Phone: drag up and down to fly • tap to boost',
         rotate: 'Tip: turn your phone sideways for a wider view', boss: 'THE GINGER KING', cancel: 'Cancel',
         paused: '⏸ Paused', resume: '▶ Resume', quit: 'Quit flight (points not saved)', pauseTip: 'Tip: press P or Esc to pause on a keyboard.', pause: 'Pause',
@@ -651,7 +653,7 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
       fr: {
         loading: 'Chargement de General Ginger…', loadFail: 'Impossible de charger le moteur 3D. Vérifie ta connexion et recharge la page.',
         intro: "L'armée de nuisibles du Roi Gingembre tire depuis le sol. Esquive les bombes pourries, les cisailles et les filets collants, attrape les bonus et abats le dirigeable du Roi pour passer au niveau suivant !",
-        takeOff: 'Oya, décollage !', flyAgain: 'Rejouer', shareX: '𝕏 Défie tes amis', joinTG: 'Rejoins la Ginger Army sur Telegram', shareText: 'J\'ai fait {score} points et atteint le niveau {level} dans General Ginger 🛩️\n\nTu peux me battre ? Renverse le Roi Gingembre 👑', loadingAcct: 'Chargement de ton compte…', connecting: 'Connexion…',
+        takeOff: 'Oya, décollage !', flyAgain: 'Rejouer', shareX: '𝕏 Défie tes amis', joinTG: 'Rejoins la Ginger Army sur Telegram', hangar: '🛩️ Hangar', hgPlane: 'Avions', hgPaint: 'Peinture', hgTrail: 'Traînées', hgPilot: 'Pilote', hgNote: 'Les skins changent seulement ton look. Tout le monde vole pareil.', hgEquipped: '✓ Équipé', hgTap: 'Touche pour équiper', hgBest: 'Débloqué avec un record de {n}', hgSoon: '{n} · boutique bientôt ouverte', hgBuy: '{n} · touche pour acheter', hgSignIn: 'Connecte-toi d\'abord pour garder ton skin sur ton compte.', hgOpening: 'Ouverture du paiement sécurisé…', hgChecking: 'Vérification du paiement…', hgUnlocked: 'Skin débloqué ! Il est à toi pour toujours 🎉', hgPayFail: 'Paiement pas encore confirmé. Si tu as payé, le skin se débloque tout seul dans quelques minutes.', hgNew: 'Nouveau skin débloqué : {name} ! Va au Hangar 🛩️', shareText: 'J\'ai fait {score} points et atteint le niveau {level} dans General Ginger 🛩️\n\nTu peux me battre ? Renverse le Roi Gingembre 👑', loadingAcct: 'Chargement de ton compte…', connecting: 'Connexion…',
         hint: '<span>↑ ↓</span> / <span>W S</span> monter et descendre • <span>Espace</span> turbo épicé<br>Téléphone : glisse vers le haut ou le bas pour voler • touche pour le turbo',
         rotate: 'Astuce : tourne ton téléphone pour une vue plus large', boss: 'LE ROI GINGEMBRE', cancel: 'Annuler',
         paused: '⏸ Pause', resume: '▶ Reprendre', quit: 'Quitter le vol (points non enregistrés)', pauseTip: 'Astuce : appuie sur P ou Échap pour mettre en pause au clavier.', pause: 'Pause',
@@ -682,7 +684,7 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
       es: {
         loading: 'Cargando General Ginger…', loadFail: 'No se pudo cargar el motor 3D. Revisa tu conexión y recarga.',
         intro: '¡El ejército de plagas del Rey Jengibre dispara desde el suelo! Esquiva bombas podridas, tijeras y redes pegajosas, recoge mejoras y derriba el dirigible del Rey para pasar de nivel.',
-        takeOff: '¡Oya, a despegar!', flyAgain: 'Volar otra vez', shareX: '𝕏 Reta a tus amigos', joinTG: 'Únete a la Ginger Army en Telegram', shareText: 'Hice {score} puntos y llegué al nivel {level} en General Ginger 🛩️\n\n¿Me superas? Derroca al Rey Jengibre 👑', loadingAcct: 'Cargando tu cuenta…', connecting: 'Conectando…',
+        takeOff: '¡Oya, a despegar!', flyAgain: 'Volar otra vez', shareX: '𝕏 Reta a tus amigos', joinTG: 'Únete a la Ginger Army en Telegram', hangar: '🛩️ Hangar', hgPlane: 'Aviones', hgPaint: 'Pintura', hgTrail: 'Estelas', hgPilot: 'Piloto', hgNote: 'Los skins solo cambian tu aspecto. Todos vuelan igual.', hgEquipped: '✓ Equipado', hgTap: 'Toca para equipar', hgBest: 'Se desbloquea con un récord de {n}', hgSoon: '{n} · tienda abre pronto', hgBuy: '{n} · toca para comprar', hgSignIn: 'Inicia sesión primero para guardar tu skin en tu cuenta.', hgOpening: 'Abriendo pago seguro…', hgChecking: 'Comprobando tu pago…', hgUnlocked: '¡Skin desbloqueado! Es tuyo para siempre 🎉', hgPayFail: 'Aún no confirmamos el pago. Si pagaste, el skin se desbloquea solo en unos minutos.', hgNew: '¡Nuevo skin desbloqueado: {name}! Abre el Hangar 🛩️', shareText: 'Hice {score} puntos y llegué al nivel {level} en General Ginger 🛩️\n\n¿Me superas? Derroca al Rey Jengibre 👑', loadingAcct: 'Cargando tu cuenta…', connecting: 'Conectando…',
         hint: '<span>↑ ↓</span> / <span>W S</span> subir y bajar • <span>Espacio</span> turbo picante<br>Móvil: arrastra arriba y abajo para volar • toca para el turbo',
         rotate: 'Consejo: gira el móvil para ver más', boss: 'EL REY JENGIBRE', cancel: 'Cancelar',
         paused: '⏸ En pausa', resume: '▶ Continuar', quit: 'Abandonar el vuelo (no se guardan los puntos)', pauseTip: 'Consejo: pulsa P o Esc para pausar con teclado.', pause: 'Pausa',
@@ -713,7 +715,7 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
       pt: {
         loading: 'Carregando General Ginger…', loadFail: 'Não foi possível carregar o motor 3D. Verifique sua conexão e recarregue.',
         intro: 'O exército de pragas do Rei Gengibre está atirando do chão! Desvie de bombas podres, tesouras e redes grudentas, pegue power-ups e derrube o dirigível do Rei para passar de nível.',
-        takeOff: 'Oya, decolar!', flyAgain: 'Voar de novo', shareX: '𝕏 Desafie amigos', joinTG: 'Entre na Ginger Army no Telegram', shareText: 'Fiz {score} pontos e cheguei ao nível {level} no General Ginger 🛩️\n\nConsegue me vencer? Derrube o Rei Gengibre 👑', loadingAcct: 'Carregando sua conta…', connecting: 'Conectando…',
+        takeOff: 'Oya, decolar!', flyAgain: 'Voar de novo', shareX: '𝕏 Desafie amigos', joinTG: 'Entre na Ginger Army no Telegram', hangar: '🛩️ Hangar', hgPlane: 'Aviões', hgPaint: 'Pintura', hgTrail: 'Rastros', hgPilot: 'Piloto', hgNote: 'Skins só mudam o visual. Todo mundo voa igual.', hgEquipped: '✓ Equipado', hgTap: 'Toque para equipar', hgBest: 'Desbloqueia com recorde de {n}', hgSoon: '{n} · loja abre em breve', hgBuy: '{n} · toque para comprar', hgSignIn: 'Entre primeiro para salvar sua skin na sua conta.', hgOpening: 'Abrindo pagamento seguro…', hgChecking: 'Verificando seu pagamento…', hgUnlocked: 'Skin desbloqueada! É sua para sempre 🎉', hgPayFail: 'Ainda não confirmamos o pagamento. Se você pagou, a skin desbloqueia sozinha em alguns minutos.', hgNew: 'Nova skin desbloqueada: {name}! Abra o Hangar 🛩️', shareText: 'Fiz {score} pontos e cheguei ao nível {level} no General Ginger 🛩️\n\nConsegue me vencer? Derrube o Rei Gengibre 👑', loadingAcct: 'Carregando sua conta…', connecting: 'Conectando…',
         hint: '<span>↑ ↓</span> / <span>W S</span> subir e descer • <span>Espaço</span> turbo apimentado<br>Celular: arraste para cima e para baixo para voar • toque para o turbo',
         rotate: 'Dica: vire o celular para ver mais', boss: 'O REI GENGIBRE', cancel: 'Cancelar',
         paused: '⏸ Pausado', resume: '▶ Continuar', quit: 'Sair do voo (pontos não são salvos)', pauseTip: 'Dica: aperte P ou Esc para pausar no teclado.', pause: 'Pausar',
@@ -744,7 +746,7 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
       ar: {
         loading: 'جارٍ تحميل General Ginger…', loadFail: 'تعذّر تحميل محرك الرسوم ثلاثية الأبعاد. تحقّق من اتصالك وأعد تحميل الصفحة.',
         intro: 'جيش آفات ملك الزنجبيل يطلق النار من الأرض! تفادَ القنابل الفاسدة والمقصّات والشِّباك اللزجة، واجمع المكافآت، وأسقط منطاد الملك لتنتقل إلى المستوى التالي!',
-        takeOff: 'هيّا، أقلِع!', flyAgain: 'طِر مجددًا', shareX: '𝕏 تحدَّ أصدقاءك', joinTG: 'انضم إلى جيش الزنجبيل على تيليجرام', shareText: 'سجّلت {score} نقطة ووصلت إلى المستوى {level} في General Ginger 🛩️\n\nهل تستطيع التفوق عليّ؟ أطِح بملك الزنجبيل 👑', loadingAcct: 'جارٍ تحميل حسابك…', connecting: 'جارٍ الاتصال…',
+        takeOff: 'هيّا، أقلِع!', flyAgain: 'طِر مجددًا', shareX: '𝕏 تحدَّ أصدقاءك', joinTG: 'انضم إلى جيش الزنجبيل على تيليجرام', hangar: '🛩️ الحظيرة', hgPlane: 'الطائرات', hgPaint: 'الطلاء', hgTrail: 'الأثر', hgPilot: 'الطيار', hgNote: 'الأشكال تغيّر المظهر فقط. الجميع يطير بالطريقة نفسها.', hgEquipped: '✓ مُجهَّز', hgTap: 'اضغط للتجهيز', hgBest: 'يُفتح عند أفضل نتيجة {n}', hgSoon: '{n} · المتجر يفتح قريبًا', hgBuy: '{n} · اضغط للشراء', hgSignIn: 'سجّل الدخول أولًا ليُحفظ الشكل في حسابك.', hgOpening: 'جارٍ فتح الدفع الآمن…', hgChecking: 'جارٍ التحقق من الدفع…', hgUnlocked: 'تم فتح الشكل! إنه لك إلى الأبد 🎉', hgPayFail: 'لم نؤكد الدفع بعد. إذا دفعت، سيُفتح الشكل تلقائيًا خلال دقائق.', hgNew: 'شكل جديد مفتوح: {name}! افتح الحظيرة 🛩️', shareText: 'سجّلت {score} نقطة ووصلت إلى المستوى {level} في General Ginger 🛩️\n\nهل تستطيع التفوق عليّ؟ أطِح بملك الزنجبيل 👑', loadingAcct: 'جارٍ تحميل حسابك…', connecting: 'جارٍ الاتصال…',
         hint: '<span>↑ ↓</span> / <span>W S</span> للصعود والنزول • <span>Space</span> دفعة التوابل<br>على الهاتف: اسحب للأعلى والأسفل للطيران • انقر للدفعة',
         rotate: 'نصيحة: أدِر هاتفك أفقيًا لرؤية أوسع', boss: 'ملك الزنجبيل', cancel: 'إلغاء',
         paused: '⏸ متوقف مؤقتًا', resume: '▶ استئناف', quit: 'إنهاء الرحلة (لن تُحفظ النقاط)', pauseTip: 'نصيحة: اضغط P أو Esc للإيقاف المؤقت من لوحة المفاتيح.', pause: 'إيقاف مؤقت',
@@ -1341,7 +1343,7 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
       const g = cv.getContext('2d');
       g.fillStyle = '#c1121f'; g.fillRect(0, 0, 256, 128); g.fillStyle = '#fff'; g.fillRect(10, 10, 236, 108);
       g.fillStyle = '#c1121f'; g.fillRect(16, 16, 224, 96); g.fillStyle = '#fff';
-      g.font = 'bold 40px sans-serif'; g.textAlign = 'center'; g.fillText('NAIJA', 128, 58); g.fillText('MARKET', 128, 100);
+      g.font = 'bold 40px sans-serif'; g.textAlign = 'center'; g.fillText('GINGER', 128, 58); g.fillText('MARKET', 128, 100);
       const sign = new THREE.Group(); sign.position.set(-6, 0, -3);
       part(sign, BOX, toon(0x8b5a2b), [-0.9, 1.1, 0], [0.12, 2.2, 0.12], false);
       part(sign, BOX, toon(0x8b5a2b), [0.9, 1.1, 0], [0.12, 2.2, 0.12], false);
@@ -1740,7 +1742,7 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
       const r = await api('/shop/checkout', { item: kind + ':' + it.id, region: inNigeria ? 'ng' : 'intl' }, 12000);
       buying = false;
       if (r.ok && r.body.url) { location.href = r.body.url; return; }
-      toast(r.status === 503 ? t('hgSoon', { n: priceOf(it.unlock) }) : tr(r.body.reason) || t('hgPayFail'), 2.2);
+      toast(r.status === 503 || r.status === 404 || r.status === 0 ? t('hgSoon', { n: priceOf(it.unlock) }) : tr(r.body.reason) || t('hgSoon', { n: priceOf(it.unlock) }), 2.2);
     }
     async function syncOwned() {
       if (!GG_API || !(account && account.signedIn)) return;
@@ -1763,7 +1765,7 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
     })();
     function openHangar() {
       if (state !== 'menu' && state !== 'over') return;
-      $('hangar').hidden = false; overlay.classList.add('hidden'); P.root.visible = true; renderHangar(); syncOwned();
+      $('hangar-btn').classList.remove('pulse'); $('hangar').hidden = false; overlay.classList.add('hidden'); P.root.visible = true; renderHangar(); syncOwned();
     }
     function closeHangar() { $('hangar').hidden = true; overlay.classList.remove('hidden'); }
     $('hangar-btn').addEventListener('click', openHangar);
@@ -1782,7 +1784,12 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
       state = 'over';
       const pts = G.points(sim);
       const isBest = sim.score > best;
-      if (isBest) { best = sim.score; saveBest(best); }
+      const newSkins = [];
+      if (isBest) {
+        for (const k in SKINS) for (const it of SKINS[k]) if (it.unlock.best && best < it.unlock.best && sim.score >= it.unlock.best) newSkins.push(it.name);
+        best = sim.score; saveBest(best);
+      }
+      if (newSkins.length) setTimeout(() => { toast(t('hgNew', { name: newSkins.join(', ') }), 4); $('hangar-btn').classList.add('pulse'); }, 1600);
       $('ov-title').textContent = isBest ? t('record') : t('wahala');
       $('bossbar').hidden = true;
       const kings = sim.bossesBeaten ? t('kings', { n: sim.bossesBeaten }) : '';

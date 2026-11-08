@@ -58,6 +58,23 @@
     }
     #go-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #14532d; }
     #go-btn:disabled { opacity: 0.7; }
+    #hangar-btn { pointer-events: auto; margin-top: 12px; padding: 10px 22px; border-radius: 999px; border: 2px solid #fff; background: rgba(0,0,0,0.55); color: #fff; font: inherit; font-weight: 800; font-size: 1rem; cursor: pointer; }
+    #hangar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; max-height: 50vh; overflow: auto; background: rgba(8,20,14,0.96); border-top: 3px solid #fde047; border-radius: 20px 20px 0 0; padding: 14px 16px 18px; color: #fff; }
+    #hangar[hidden] { display: none; }
+    #hangar .hg-head { display: flex; align-items: center; justify-content: space-between; }
+    #hangar h2 { margin: 0; font-size: 1.3rem; }
+    #hg-close { background: none; border: 0; color: #fff; font-size: 1.4rem; cursor: pointer; padding: 4px 8px; }
+    #hangar .hg-tabs { display: flex; gap: 6px; margin: 10px 0; flex-wrap: wrap; }
+    #hangar .hg-tabs button { flex: 1; min-width: 70px; padding: 8px 10px; border-radius: 999px; border: 1.5px solid rgba(255,255,255,0.3); background: transparent; color: #fff; font: inherit; font-weight: 700; cursor: pointer; }
+    #hangar .hg-tabs button[aria-selected="true"] { background: #fde047; color: #1d1300; border-color: #fde047; }
+    #hg-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px; }
+    .hg-item { text-align: left; padding: 10px 12px; border-radius: 14px; border: 1.5px solid rgba(255,255,255,0.18); background: rgba(255,255,255,0.05); color: #fff; font: inherit; cursor: pointer; }
+    .hg-item b { display: block; font-size: 0.95rem; }
+    .hg-item small { display: block; margin-top: 4px; font-size: 0.78rem; color: #cbd5e1; }
+    .hg-item.on { border-color: #fde047; background: rgba(253,224,71,0.15); }
+    .hg-item.locked { opacity: 0.75; }
+    .hg-item .sw { display: inline-block; width: 14px; height: 14px; border-radius: 50%; margin-right: 6px; vertical-align: -2px; border: 1px solid rgba(255,255,255,0.5); }
+    .hg-note { margin: 10px 0 0; font-size: 0.78rem; color: #94a3b8; }
     #share-btn { pointer-events: auto; margin-top: 12px; padding: 10px 22px; border-radius: 999px; border: 2px solid #fde047; background: #000; color: #fff; font: inherit; font-weight: 800; font-size: 1rem; cursor: pointer; }
     #share-btn:active { transform: translateY(2px); }
     #tg-btn { pointer-events: auto; display: inline-block; margin-top: 10px; padding: 10px 22px; border-radius: 999px; background: #229ed9; color: #fff; font-weight: 800; font-size: 1rem; text-decoration: none; }
@@ -149,6 +166,7 @@
     <div id="result"></div>
     <div id="account" hidden></div>
     <button id="go-btn" data-t="takeOff">Oya, Take Off!</button>
+    <button id="hangar-btn" type="button" data-t="hangar">🛩️ Hangar</button>
     <button id="share-btn" type="button" hidden data-t="shareX">𝕏 Challenge friends</button>
     <a id="tg-btn" href="https://t.me/Thegingerarmy" target="_blank" rel="noopener" hidden data-t="joinTG">Join the Ginger Army on Telegram</a>
     <div id="hint" data-th="hint">
@@ -157,6 +175,17 @@
     </div>
     <div id="credit">♪ “Bali” (sped up) · KliensMan</div>
     <div id="rotate" data-t="rotate">Tip: turn your phone sideways for a wider view</div>
+  </div>
+  <div id="hangar" hidden role="dialog" aria-modal="true" aria-labelledby="hg-title">
+    <div class="hg-head"><h2 id="hg-title" data-t="hangar">🛩️ Hangar</h2><button id="hg-close" type="button" aria-label="Close">✕</button></div>
+    <div class="hg-tabs" role="tablist">
+      <button type="button" role="tab" data-kind="plane" data-t="hgPlane">Planes</button>
+      <button type="button" role="tab" data-kind="paint" data-t="hgPaint">Paint</button>
+      <button type="button" role="tab" data-kind="trail" data-t="hgTrail">Trails</button>
+      <button type="button" role="tab" data-kind="pilot" data-t="hgPilot">Pilot</button>
+    </div>
+    <div id="hg-grid"></div>
+    <p class="hg-note" data-t="hgNote">Skins only change how you look. Every pilot flies the same.</p>
   </div>
   <div id="bossbar" hidden><span data-t="boss">THE GINGER KING</span><div class="bb"><i id="bossfill"></i></div></div>
   <div id="signin" hidden role="dialog" aria-modal="true" aria-labelledby="si-title">
@@ -591,7 +620,7 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
       en: {
         loading: 'Loading General Ginger…', loadFail: 'Could not load the 3D engine. Check your connection and refresh.',
         intro: "The Ginger King's pest army is firing from the ground. Dodge rot bombs, shears and sticky nets, grab power-ups, and shoot down the King's airship to reach the next level!",
-        takeOff: 'Oya, Take Off!', flyAgain: 'Fly Again', shareX: '𝕏 Challenge friends', joinTG: 'Join the Ginger Army on Telegram', shareText: 'I scored {score} and reached level {level} in General Ginger 🛩️\n\nCan you beat me? Overthrow the Ginger King 👑', loadingAcct: 'Loading your account…', connecting: 'Connecting…',
+        takeOff: 'Oya, Take Off!', flyAgain: 'Fly Again', shareX: '𝕏 Challenge friends', joinTG: 'Join the Ginger Army on Telegram', hangar: '🛩️ Hangar', hgPlane: 'Planes', hgPaint: 'Paint', hgTrail: 'Trails', hgPilot: 'Pilot', hgNote: 'Skins only change how you look. Every pilot flies the same.', hgEquipped: '✓ Equipped', hgTap: 'Tap to equip', hgBest: 'Unlock: best score {n}', hgSoon: '₦{n} · shop opening soon', shareText: 'I scored {score} and reached level {level} in General Ginger 🛩️\n\nCan you beat me? Overthrow the Ginger King 👑', loadingAcct: 'Loading your account…', connecting: 'Connecting…',
         hint: '<span>↑ ↓</span> / <span>W S</span> fly up and down • <span>Space</span> spice boost<br>Phone: drag up and down to fly • tap to boost',
         rotate: 'Tip: turn your phone sideways for a wider view', boss: 'THE GINGER KING', cancel: 'Cancel',
         paused: '⏸ Paused', resume: '▶ Resume', quit: 'Quit flight (points not saved)', pauseTip: 'Tip: press P or Esc to pause on a keyboard.', pause: 'Pause',
@@ -921,10 +950,11 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
     }
 
     /* ================= General Ginger (the hero) ================= */
-    function buildGeneral() {
+    function buildGeneral(outfit = 'cap') {
       const g = new THREE.Group();
       const skin = toon(0xdba95e), skinDark = toon(0xbd8a44);
-      const blue = toon(0x3d5a80), blueDark = toon(0x293d5a), gold = toon(0xf2c230, { emissive: 0x2a1e00 });
+      const agbada = outfit === 'agbada';
+      const blue = toon(agbada ? 0xf5f0e1 : 0x3d5a80), blueDark = toon(agbada ? 0x1f8f3d : 0x293d5a), gold = toon(0xf2c230, { emissive: 0x2a1e00 });
       const white = toon(0xffffff), dark = toon(0x2a180c);
       // uniform
       part(g, CYL, blue, [0, 0.55, 0], [0.75, 1.1, 0.7]);
@@ -950,8 +980,25 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
       // proud moustache + grin
       [-1, 1].forEach(s => part(g, SPH, dark, [s * 0.16, 1.74, 0.6], [0.17, 0.06, 0.06], false, [0, 0, -s * 0.25]));
       part(g, SPH, toon(0x6e1414), [0, 1.6, 0.56], [0.2, 0.09, 0.08], false);
+      if (outfit === 'shades') {
+        // cool sunglasses over the eyes
+        [-1, 1].forEach(s => part(g, BOX, toon(0x111111), [s * 0.23, 2.05, 0.66], [0.3, 0.17, 0.05], false));
+        part(g, BOX, toon(0x111111), [0, 2.08, 0.66], [0.2, 0.04, 0.04], false);
+      }
+      if (outfit === 'crown') {
+        // a gold crown, like the King he came to overthrow
+        const cr = new THREE.Group(); cr.position.y = 2.62; g.add(cr);
+        part(cr, CYL, gold, [0, 0.12, 0], [0.55, 0.3, 0.55]);
+        for (let i = 0; i < 6; i++) { const a = (i / 6) * Math.PI * 2; part(cr, CONE, gold, [Math.sin(a) * 0.5, 0.42, Math.cos(a) * 0.5], [0.1, 0.3, 0.1], false); }
+        part(cr, SPL, toon(0xc1121f), [0, 0.15, 0.56], [0.09, 0.09, 0.05], false);
+      } else if (agbada) {
+        // fila cap with agbada
+        const fila = part(g, CYL, toon(0x1f8f3d), [0.08, 2.78, 0], [0.62, 0.42, 0.62]);
+        fila.rotation.z = -0.25;
+        [-1, 1].forEach(s => part(g, SPL, gold, [s * 0.25, 0.75, 0.7], [0.08, 0.08, 0.04], false));
+      }
       // Air Force peaked cap
-      const cap = new THREE.Group(); cap.position.y = 2.66; g.add(cap);
+      const cap = new THREE.Group(); cap.position.y = 2.66; if (outfit !== 'crown' && !agbada) g.add(cap);
       part(cap, CYL, blue, [0, 0.02, 0], [0.62, 0.22, 0.62]);
       part(cap, CYL, blueDark, [0, 0.22, 0], [0.72, 0.18, 0.72]);
       part(cap, CYL, dark, [0, -0.08, 0.36], [0.5, 0.05, 0.36], 1.1);
@@ -968,10 +1015,66 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
     }
 
     /* ================= The biplane ================= */
-    function buildPlane() {
+    function buildPlane(L = {}) {
       const root = new THREE.Group();
       const body = new THREE.Group(); root.add(body);
-      const green = toon(0x1f8f3d), white = toon(0xffffff), canvasM = toon(0xeedfb4), wood = toon(0x8b5a2b), dark = toon(0x2b2b2b), red = toon(0xc1121f);
+      const pal = (SKINS.paint.find(x => x.id === L.paint) || SKINS.paint[0]).c;
+      const green = toon(pal.body, pal.glow ? { emissive: pal.glow } : undefined), white = toon(pal.stripe), canvasM = toon(pal.wing), wood = toon(0x8b5a2b), dark = toon(0x2b2b2b), red = toon(pal.accent);
+      const finish = (prop) => {
+        // pilot
+        const pilot = buildGeneral(L.pilot);
+        pilot.scale.setScalar(0.42); pilot.position.set(-0.35, 0.05, 0); pilot.rotation.y = 0.85;
+        body.add(pilot);
+        // pepper shield + sticky net
+        const shield = new THREE.Mesh(SPH, new THREE.MeshBasicMaterial({ color: 0xff7a1a, transparent: true, opacity: 0.25, depthWrite: false }));
+        shield.scale.set(3.2, 2.1, 2.8); shield.visible = false; root.add(shield);
+        const net = new THREE.Mesh(SPH, new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true, transparent: true, opacity: 0.6 }));
+        net.scale.set(1.9, 1.2, 1.4); net.visible = false; root.add(net);
+        return { root, body, prop, pilot, shield, net };
+      };
+      if (L.plane === 'jet') {
+        // Spice Jet: sleek fuselage, swept wings, glowing exhaust
+        part(body, CYL, green, [0, 0, 0], [0.42, 3.6, 0.42], 1.06, [0, 0, Math.PI / 2]);
+        part(body, CONE, green, [2.15, 0, 0], [0.42, 0.8, 0.42], 1.08, [0, 0, -Math.PI / 2]);
+        part(body, SPH, toon(0x9fd8ff, { emissive: 0x113344 }), [0.55, 0.32, 0], [0.75, 0.32, 0.36]);
+        part(body, BOX, canvasM, [-0.1, -0.1, 0], [1.4, 0.08, 4.2], 1.08, [0, 0, 0]);
+        [-1, 1].forEach(sd => part(body, BOX, red, [-0.45, -0.08, sd * 2.0], [0.6, 0.1, 0.25], false));
+        part(body, BOX, red, [-1.75, 0.55, 0], [0.7, 0.9, 0.08], 1.1, [0, 0, -0.35]);
+        part(body, BOX, canvasM, [-1.75, 0.05, 0], [0.6, 0.06, 1.6]);
+        const prop = new THREE.Group(); prop.position.set(-1.95, 0, 0); body.add(prop);
+        part(prop, CYL, toon(0xff7a1a, { emissive: 0xff4400 }), [0, 0, 0], [0.3, 0.25, 0.3], false, [0, 0, Math.PI / 2]);
+        return finish(prop);
+      }
+      if (L.plane === 'heli') {
+        // Chopper: round cabin, tail boom, big rotor on top
+        part(body, SPH, green, [0.2, 0.05, 0], [1.35, 0.85, 0.85]);
+        part(body, SPH, toon(0x9fd8ff, { emissive: 0x113344 }), [0.85, 0.2, 0], [0.6, 0.55, 0.7], false);
+        part(body, BOX, green, [-1.6, 0.25, 0], [2.0, 0.22, 0.22]);
+        part(body, BOX, red, [-2.55, 0.55, 0], [0.4, 0.6, 0.06]);
+        part(body, BOX, dark, [0.2, 0.95, 0], [0.12, 0.3, 0.12], false);
+        [-0.55, 0.55].forEach(z => part(body, BOX, dark, [0.2, -0.95, z], [2.0, 0.07, 0.07], false));
+        const mount = new THREE.Group(); mount.position.set(0.2, 1.12, 0); mount.rotation.z = Math.PI / 2; body.add(mount);
+        const prop = new THREE.Group(); mount.add(prop);
+        part(prop, BOX, dark, [0, 0, 0], [0.05, 4.6, 0.22], false);
+        part(prop, BOX, dark, [0, 0, 0], [0.05, 0.22, 4.6], false);
+        return finish(prop);
+      }
+      if (L.plane === 'danfo') {
+        // Flying Danfo: Lagos yellow bus with wings
+        const bus = toon(L.paint && L.paint !== 'classic' ? pal.body : 0xf5c518);
+        part(body, BOX, bus, [0, 0.15, 0], [3.0, 1.0, 1.0]);
+        part(body, BOX, dark, [0, 0.0, 0], [3.02, 0.12, 1.02], false);
+        [-0.9, -0.2, 0.5].forEach(x => [-1, 1].forEach(sd => part(body, BOX, toon(0x9fd8ff, { emissive: 0x113344 }), [x, 0.4, sd * 0.51], [0.5, 0.32, 0.02], false)));
+        part(body, BOX, toon(0x9fd8ff, { emissive: 0x113344 }), [1.51, 0.4, 0], [0.02, 0.35, 0.8], false);
+        [-0.9, 0.9].forEach(x => [-0.5, 0.5].forEach(z => part(body, CYL, dark, [x, -0.38, z], [0.24, 0.12, 0.24], 1.1, [Math.PI / 2, 0, 0])));
+        part(body, BOX, canvasM, [0.1, 0.72, 0], [1.1, 0.08, 4.6]);
+        [-1, 1].forEach(sd => part(body, BOX, red, [0.1, 0.78, sd * 2.1], [1.1, 0.02, 0.4], false));
+        part(body, BOX, red, [-1.5, 0.95, 0], [0.4, 0.55, 0.06]);
+        part(body, CYL, dark, [1.6, 0.15, 0], [0.25, 0.2, 0.25], 1.1, [0, 0, Math.PI / 2]);
+        const prop = new THREE.Group(); prop.position.set(1.75, 0.15, 0); body.add(prop);
+        part(prop, BOX, wood, [0, 0, 0], [0.06, 1.5, 0.16], 1.15);
+        const f = finish(prop); f.pilot.position.set(0.6, 0.62, 0); f.pilot.scale.setScalar(0.32); return f;
+      }
       // fuselage
       part(body, BOX, green, [0, 0, 0], [3.0, 0.62, 0.72]);
       part(body, BOX, white, [0.05, 0, 0], [0.5, 0.64, 0.74], false);
@@ -997,16 +1100,7 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
         part(body, BOX, dark, [0.6, -0.55, z], [0.05, 0.5, 0.05], false);
         part(body, CYL, dark, [0.6, -0.82, z], [0.26, 0.1, 0.26], 1.1, [Math.PI / 2, 0, 0]);
       });
-      // pilot
-      const pilot = buildGeneral();
-      pilot.scale.setScalar(0.42); pilot.position.set(-0.35, 0.05, 0); pilot.rotation.y = 0.85;
-      body.add(pilot);
-      // pepper shield + sticky net
-      const shield = new THREE.Mesh(SPH, new THREE.MeshBasicMaterial({ color: 0xff7a1a, transparent: true, opacity: 0.25, depthWrite: false }));
-      shield.scale.set(3.2, 2.1, 2.8); shield.visible = false; root.add(shield);
-      const net = new THREE.Mesh(SPH, new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true, transparent: true, opacity: 0.6 }));
-      net.scale.set(1.9, 1.2, 1.4); net.visible = false; root.add(net);
-      return { root, body, prop, pilot, shield, net };
+      return finish(prop);
     }
 
     /* ================= The Ginger King (the boss) ================= */
@@ -1301,8 +1395,51 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
       }
     }
 
+    /* ================= Hangar: skins (looks only, never change how the plane flies) ================= */
+    // unlock: 'free' | { best: n } (reach this best score) | { ngn: price } (paid, coming with the shop)
+    const SKINS = {
+      plane: [
+        { id: 'biplane', name: 'Classic Biplane', unlock: 'free' },
+        { id: 'heli', name: 'Chopper', unlock: { best: 15000 } },
+        { id: 'jet', name: 'Spice Jet', unlock: { ngn: 1500 } },
+        { id: 'danfo', name: 'Flying Danfo', unlock: { ngn: 2000 } }
+      ],
+      paint: [
+        { id: 'classic', name: 'Air Force Green', unlock: 'free', c: { body: 0x1f8f3d, stripe: 0xffffff, wing: 0xeedfb4, accent: 0xc1121f } },
+        { id: 'naija', name: 'Naija Green-White', unlock: { best: 5000 }, c: { body: 0x0a8f3c, stripe: 0xffffff, wing: 0xffffff, accent: 0x0a8f3c } },
+        { id: 'camo', name: 'Camo', unlock: { best: 25000 }, c: { body: 0x556b2f, stripe: 0x3b4a22, wing: 0x8f9a5b, accent: 0x3b4a22 } },
+        { id: 'neon', name: 'Neon Lagos', unlock: { ngn: 700 }, c: { body: 0xff2bd6, stripe: 0x00f0ff, wing: 0x1a1a2e, accent: 0x00f0ff, glow: 0x330022 } },
+        { id: 'gold', name: 'Royal Gold', unlock: { ngn: 1000 }, c: { body: 0xf2c230, stripe: 0x8a5a12, wing: 0xffe7a0, accent: 0x8a5a12, glow: 0x2a1e00 } }
+      ],
+      trail: [
+        { id: 'spice', name: 'Spice Dust', unlock: 'free', c: [0xf59e0b, 0xfde047] },
+        { id: 'naija', name: 'Green-White', unlock: { best: 5000 }, c: [0x1f8f3d, 0xffffff] },
+        { id: 'fire', name: 'Fire', unlock: { best: 40000 }, c: [0xff3b1f, 0xff9a1f, 0xffe14a] },
+        { id: 'rainbow', name: 'Rainbow', unlock: { ngn: 700 }, c: [0xff3b30, 0xff9500, 0xffcc00, 0x34c759, 0x007aff, 0xaf52de] }
+      ],
+      pilot: [
+        { id: 'cap', name: 'Air Force Cap', unlock: 'free' },
+        { id: 'shades', name: 'Cool Shades', unlock: { best: 10000 } },
+        { id: 'agbada', name: 'Agbada & Fila', unlock: { ngn: 1000 } },
+        { id: 'crown', name: 'Gold Crown', unlock: { ngn: 1500 } }
+      ]
+    };
+    const SKIN_KEY = 'ggLoadout', OWN_KEY = 'ggOwned';
+    let owned = []; try { owned = JSON.parse(localStorage.getItem(OWN_KEY) || '[]'); } catch (e) {}
+    const isOpen = (kind, it) => it.unlock === 'free' || (it.unlock.best && loadBest() >= it.unlock.best) || owned.includes(kind + ':' + it.id);
+    let loadout = { plane: 'biplane', paint: 'classic', trail: 'spice', pilot: 'cap' };
+    try { Object.assign(loadout, JSON.parse(localStorage.getItem(SKIN_KEY) || '{}')); } catch (e) {}
+    for (const k in SKINS) { const it = SKINS[k].find(x => x.id === loadout[k]); if (!it || !isOpen(k, it)) loadout[k] = SKINS[k][0].id; }
+    const trailColors = () => (SKINS.trail.find(x => x.id === loadout.trail) || SKINS.trail[0]).c;
+
     /* ================= Game objects ================= */
-    const P = buildPlane(); scene.add(P.root);
+    let P = buildPlane(loadout); scene.add(P.root);
+    function applyLoadout() {
+      const old = P; P = buildPlane(loadout);
+      P.root.position.copy(old.root.position); P.root.rotation.copy(old.root.rotation); P.root.visible = old.root.visible;
+      scene.remove(old.root); scene.add(P.root);
+      try { localStorage.setItem(SKIN_KEY, JSON.stringify(loadout)); } catch (e) {}
+    }
     const palace = buildPalace(); palace.visible = false; scene.add(palace);
     const unitMeshes = new Map(), shotMeshes = new Map(), itemMeshes = new Map(), bulletMeshes = new Map();
     const builders = { 0: buildTrebuchet, 1: buildGrub, 2: buildNematode };
@@ -1324,11 +1461,13 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
 
     /* ================= Input ================= */
     const keys = {};
+    const $hg = () => document.getElementById('hangar');
     let pointerActive = false, pointerY = 5, boostQueued = false;
     window.addEventListener('keydown', e => {
       if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) return;
       keys[e.code] = true;
       if (['Space', 'ArrowUp', 'ArrowDown', 'KeyW', 'KeyS'].includes(e.code)) e.preventDefault();
+      if (e.code === 'Escape' && !$hg().hidden) { $hg().hidden = true; document.getElementById('overlay').classList.remove('hidden'); return; }
       if (e.code === 'KeyP' || e.code === 'Escape') { if (state === 'paused') resumeGame(); else pauseGame(); return; }
       if (e.code === 'Space') { if (state === 'playing') boostQueued = true; else if (state === 'paused') resumeGame(); else if ((state === 'menu' || state === 'over') && document.getElementById('signin').hidden) startGame(); }
     });
@@ -1539,7 +1678,7 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
     }
 
     async function startGame() {
-      if ((state !== 'menu' && state !== 'over') || !$('signin').hidden) return;
+      if ((state !== 'menu' && state !== 'over') || !$('signin').hidden || !$('hangar').hidden) return;
       audioStart();
       // Coming back from the email link: finish loading the account first, then make sure a tag is chosen.
       if (authOn && !account && await loginToken()) {
@@ -1548,7 +1687,7 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
         goBtn.disabled = false; goBtn.textContent = state === 'over' ? t('flyAgain') : t('takeOff');
       }
       if (needsTag()) { openSignin('tag'); return; }
-      if ((state !== 'menu' && state !== 'over') || !$('signin').hidden) return;
+      if ((state !== 'menu' && state !== 'over') || !$('signin').hidden || !$('hangar').hidden) return;
       state = 'starting'; goBtn.disabled = true;
       if (GG_API) goBtn.textContent = t('connecting');
       session = await requestSession();
@@ -1563,6 +1702,39 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
       state = 'playing';
       burst(sim.x, sim.y, [0xf59e0b, 0xfde047, 0x1f8f3d], 20, 6);
     }
+
+    // --- Hangar: pick a plane, paint, trail and pilot look ---
+    let hgKind = 'plane';
+    const hexCss = n => '#' + n.toString(16).padStart(6, '0');
+    function renderHangar() {
+      document.querySelectorAll('#hangar .hg-tabs button').forEach(b => b.setAttribute('aria-selected', String(b.dataset.kind === hgKind)));
+      const grid = $('hg-grid'); grid.textContent = '';
+      for (const it of SKINS[hgKind]) {
+        const open = isOpen(hgKind, it), on = loadout[hgKind] === it.id;
+        const b = document.createElement('button'); b.type = 'button';
+        b.className = 'hg-item' + (on ? ' on' : '') + (open ? '' : ' locked');
+        const name = document.createElement('b');
+        const sw = hgKind === 'paint' ? [it.c.body, it.c.accent] : hgKind === 'trail' ? it.c.slice(0, 3) : [];
+        for (const c of sw) { const i = document.createElement('i'); i.className = 'sw'; i.style.background = hexCss(c); name.appendChild(i); }
+        name.appendChild(document.createTextNode((open ? '' : '🔒 ') + it.name));
+        const sub = document.createElement('small');
+        sub.textContent = on ? t('hgEquipped') : open ? t('hgTap') : it.unlock.best ? t('hgBest', { n: fmt(it.unlock.best) }) : t('hgSoon', { n: fmt(it.unlock.ngn) });
+        b.append(name, sub);
+        b.addEventListener('click', () => {
+          if (!open) { toast(it.unlock.best ? t('hgBest', { n: fmt(it.unlock.best) }) : t('hgSoon', { n: fmt(it.unlock.ngn) }), 1.8); return; }
+          loadout[hgKind] = it.id; applyLoadout(); P.root.visible = true; renderHangar();
+        });
+        grid.appendChild(b);
+      }
+    }
+    function openHangar() {
+      if (state !== 'menu' && state !== 'over') return;
+      $('hangar').hidden = false; overlay.classList.add('hidden'); P.root.visible = true; renderHangar();
+    }
+    function closeHangar() { $('hangar').hidden = true; overlay.classList.remove('hidden'); }
+    $('hangar-btn').addEventListener('click', openHangar);
+    $('hg-close').addEventListener('click', closeHangar);
+    document.querySelectorAll('#hangar .hg-tabs button').forEach(b => b.addEventListener('click', () => { hgKind = b.dataset.kind; renderHangar(); }));
 
     let lastRun = null;
     $('share-btn').addEventListener('click', () => {
@@ -1992,12 +2164,13 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
           P.root.visible = !(sim.inv > 0 && Math.floor(sim.tick / 5) % 2);
           P.shield.visible = sim.shield > 0 && (sim.shield > 1.5 || Math.floor(sim.tick / 6) % 2 === 0);
           P.net.visible = sim.slow > 0;
-          if (Math.random() < 0.3 + sim.boost) emit(px - 2.4, py + rand(-0.2, 0.2), rand(-0.3, 0.3), rand(-3, -1), rand(-0.3, 0.3), 0, Math.random() < 0.5 ? 0xf59e0b : 0xfde047, 0.5, rand(0.06, 0.13), 0);
+          if (Math.random() < 0.3 + sim.boost) emit(px - 2.4, py + rand(-0.2, 0.2), rand(-0.3, 0.3), rand(-3, -1), rand(-0.3, 0.3), 0, (tc => tc[Math.floor(Math.random() * tc.length)])(trailColors()), 0.5, rand(0.06, 0.13), 0);
         }
         camX = sim.x + halfW * 0.4;
       } else {
-        px = 0; py = 5 + Math.sin(time * 1.5) * 0.4;
+        px = 0; py = ($('hangar').hidden ? 5 : 9) + Math.sin(time * 1.5) * 0.4;
         P.root.rotation.z = Math.sin(time * 1.5) * 0.06; P.root.rotation.x = 0;
+        if (!$('hangar').hidden && Math.random() < 0.6) emit(px - 2.4, py + rand(-0.2, 0.2), rand(-0.3, 0.3), rand(-3, -1), rand(-0.3, 0.3), 0, (tc => tc[Math.floor(Math.random() * tc.length)])(trailColors()), 0.5, rand(0.06, 0.13), 0);
         camX = halfW * 0.35;
         const k = palace.userData.king;
         k.armL.rotation.z = -0.55 + Math.sin(time * 4) * 0.4;

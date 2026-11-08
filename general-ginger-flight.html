@@ -16,7 +16,7 @@
       -webkit-tap-highlight-color: transparent;
     }
     #stage { position: fixed; inset: 0; }
-    canvas { display: block; width: 100%; height: 100%; touch-action: none; filter: contrast(1.12) saturate(0.9); }
+    canvas { display: block; width: 100%; height: 100%; touch-action: none; }
     /* cinematic vignette + faint film grain over the battlefield */
     #stage::after { content: ''; position: absolute; inset: 0; pointer-events: none;
       background: radial-gradient(ellipse at 50% 45%, rgba(0,0,0,0) 55%, rgba(0,0,0,0.55) 100%),
@@ -847,7 +847,7 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
     /* ================= Renderer, scene, camera ================= */
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
-    renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.15;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.2;
     document.getElementById('stage').appendChild(renderer.domElement);
 
     const scene = new THREE.Scene();
@@ -883,13 +883,13 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
     })();
     const mats = {};
     // War-zone look: real shading, muted gritty colours (was bright cartoon toon shading)
-    const grit = c => { const col = new THREE.Color(c); col.offsetHSL(0, -0.28, -0.06); return col; };
+    const grit = c => { const col = new THREE.Color(c); col.offsetHSL(0, -0.32, -0.08); return col; };
     const toon = (c, extra) => {
       const k = c + JSON.stringify(extra || {});
       if (mats[k]) return mats[k];
-      const o = Object.assign({ roughness: 0.78, metalness: 0.08 }, extra || {});
+      const o = Object.assign({}, extra || {});
       delete o.gradientMap;
-      return (mats[k] = new THREE.MeshStandardMaterial(Object.assign(o, { color: grit(c) })));
+      return (mats[k] = new THREE.MeshLambertMaterial(Object.assign(o, { color: grit(c) })));
     };
     const outlineMat = new THREE.MeshBasicMaterial({ color: 0x0a0806, side: THREE.BackSide, transparent: true, opacity: 0.35 });
     const geos = {};
@@ -1316,9 +1316,9 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
     }
 
     /* ================= World scenery ================= */
-    const ground = new THREE.Mesh(new THREE.PlaneGeometry(400, 160), new THREE.MeshStandardMaterial({ color: 0x3f3d26, roughness: 1 }));
+    const ground = new THREE.Mesh(new THREE.PlaneGeometry(400, 160), new THREE.MeshLambertMaterial({ color: 0x3f3d26 }));
     ground.rotation.x = -Math.PI / 2; ground.position.z = -40; scene.add(ground);
-    const road = new THREE.Mesh(new THREE.PlaneGeometry(400, 3.5), new THREE.MeshStandardMaterial({ color: 0x4e3524, roughness: 1 }));
+    const road = new THREE.Mesh(new THREE.PlaneGeometry(400, 3.5), new THREE.MeshLambertMaterial({ color: 0x4e3524 }));
     road.rotation.x = -Math.PI / 2; road.position.set(0, 0.01, 0); scene.add(road);
 
     const scenery = [];
@@ -1371,7 +1371,7 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
       hills.push(h);
     }
     const clouds = [];
-    const smokeCloudMat = new THREE.MeshStandardMaterial({ color: 0x4a423c, roughness: 1, transparent: true, opacity: 0.82 });
+    const smokeCloudMat = new THREE.MeshLambertMaterial({ color: 0x4a423c, transparent: true, opacity: 0.82 });
     for (let i = 0; i < 14; i++) {
       const c = new THREE.Group();
       const n = 4 + (i % 3);
@@ -1403,8 +1403,8 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
       }
     }
     // --- War-zone smoke: soft dark puffs that rise, grow and fade ---
-    const smokeGeo = new THREE.IcosahedronGeometry(1, 2), smokePool = [];
-    for (let i = 0; i < 140; i++) {
+    const smokeGeo = new THREE.IcosahedronGeometry(1, 1), smokePool = [];
+    for (let i = 0; i < 90; i++) {
       const m = new THREE.Mesh(smokeGeo, new THREE.MeshBasicMaterial({ color: 0x2a2522, transparent: true, opacity: 0, depthWrite: false }));
       m.visible = false; m.userData = { v: new THREE.Vector3(), life: 0, max: 1, size: 1, grow: 1, op: 0.5 };
       scene.add(m); smokePool.push(m);

@@ -719,12 +719,16 @@ async function shopCheckout(request, env, json, user) {
   const email = u && u.email ? u.email : (user + '@players.general-ginger.app'); // phone sign-ins have no email
   const usd = env.PAYSTACK_USD === '1' && body.region !== 'ng';
   const reference = 'gg_' + crypto.randomUUID().replace(/-/g, '').slice(0, 20);
+  // Send the player back to the same site they paid from (their sign-in lives there). Only our own addresses.
+  const SITES = ['https://generalgingergame.com', 'https://www.generalgingergame.com', 'https://general-ginger.pages.dev'];
+  const ret = String(body.ret || '');
+  const back = env.SHOP_RETURN_URL || (SITES.some(o => ret === o + '/play/' || ret === o + '/play-beta/') ? ret : 'https://generalgingergame.com/play/');
   const r = await paystack(env, 'POST', '/transaction/initialize', {
     email, reference,
     amount: usd ? Math.round(price.usd * 100) : price.ngn * 100,
     currency: usd ? 'USD' : 'NGN',
-    callback_url: env.SHOP_RETURN_URL || 'https://general-ginger.pages.dev/play/',
-    metadata: { user, item, cancel_action: env.SHOP_RETURN_URL || 'https://general-ginger.pages.dev/play/' }
+    callback_url: back,
+    metadata: { user, item, cancel_action: back }
   });
   const j = await r.json().catch(() => ({}));
   if (!r.ok || !j.status || !j.data) return json({ ok: false, reason: 'Could not start the payment. Try again.' }, 502);

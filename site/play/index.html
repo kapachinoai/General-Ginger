@@ -1739,7 +1739,7 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
       if (!GG_API) { toast(t('hgSoon', { n: priceOf(it.unlock) }), 1.8); return; }
       if (authOn && !(account && account.signedIn)) { toast(t('hgSignIn'), 2); closeHangar(); openSignin('login'); return; }
       buying = true; toast(t('hgOpening'), 3);
-      const r = await api('/shop/checkout', { item: kind + ':' + it.id, region: inNigeria ? 'ng' : 'intl' }, 12000);
+      const r = await api('/shop/checkout', { item: kind + ':' + it.id, region: inNigeria ? 'ng' : 'intl', ret: location.origin + location.pathname }, 12000);
       buying = false;
       if (r.ok && r.body.url) { location.href = r.body.url; return; }
       toast(r.status === 503 || r.status === 404 || r.status === 0 ? t('hgSoon', { n: priceOf(it.unlock) }) : tr(r.body.reason) || t('hgSoon', { n: priceOf(it.unlock) }), 2.2);
@@ -1776,7 +1776,7 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
     $('share-btn').addEventListener('click', () => {
       if (!lastRun) return;
       const text = t('shareText', { score: fmt(lastRun.score), level: lastRun.level });
-      const url = 'https://x.com/intent/post?text=' + encodeURIComponent(text) + '&url=' + encodeURIComponent('https://general-ginger.pages.dev/play/') + '&via=GINGERKINGX';
+      const url = 'https://x.com/intent/post?text=' + encodeURIComponent(text) + '&url=' + encodeURIComponent('https://generalgingergame.com/play/') + '&via=GINGERKINGX';
       window.open(url, '_blank', 'noopener');
     });
 

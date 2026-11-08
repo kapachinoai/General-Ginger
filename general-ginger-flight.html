@@ -620,7 +620,7 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
       en: {
         loading: 'Loading General Ginger…', loadFail: 'Could not load the 3D engine. Check your connection and refresh.',
         intro: "The Ginger King's pest army is firing from the ground. Dodge rot bombs, shears and sticky nets, grab power-ups, and shoot down the King's airship to reach the next level!",
-        takeOff: 'Oya, Take Off!', flyAgain: 'Fly Again', shareX: '𝕏 Challenge friends', joinTG: 'Join the Ginger Army on Telegram', hangar: '🛩️ Hangar', hgPlane: 'Planes', hgPaint: 'Paint', hgTrail: 'Trails', hgPilot: 'Pilot', hgNote: 'Skins only change how you look. Every pilot flies the same.', hgEquipped: '✓ Equipped', hgTap: 'Tap to equip', hgBest: 'Unlock: best score {n}', hgSoon: '{n} · shop opening soon', shareText: 'I scored {score} and reached level {level} in General Ginger 🛩️\n\nCan you beat me? Overthrow the Ginger King 👑', loadingAcct: 'Loading your account…', connecting: 'Connecting…',
+        takeOff: 'Oya, Take Off!', flyAgain: 'Fly Again', shareX: '𝕏 Challenge friends', joinTG: 'Join the Ginger Army on Telegram', hangar: '🛩️ Hangar', hgPlane: 'Planes', hgPaint: 'Paint', hgTrail: 'Trails', hgPilot: 'Pilot', hgNote: 'Skins only change how you look. Every pilot flies the same.', hgEquipped: '✓ Equipped', hgTap: 'Tap to equip', hgBest: 'Unlock: best score {n}', hgSoon: '{n} · shop opening soon', hgBuy: '{n} · tap to buy', hgSignIn: 'Sign in first so your skin is saved to your account.', hgOpening: 'Opening secure checkout…', hgChecking: 'Checking your payment…', hgUnlocked: 'Skin unlocked! It\'s yours forever 🎉', hgPayFail: 'We couldn\'t confirm the payment yet. If you paid, the skin unlocks automatically within a few minutes.', shareText: 'I scored {score} and reached level {level} in General Ginger 🛩️\n\nCan you beat me? Overthrow the Ginger King 👑', loadingAcct: 'Loading your account…', connecting: 'Connecting…',
         hint: '<span>↑ ↓</span> / <span>W S</span> fly up and down • <span>Space</span> spice boost<br>Phone: drag up and down to fly • tap to boost',
         rotate: 'Tip: turn your phone sideways for a wider view', boss: 'THE GINGER KING', cancel: 'Cancel',
         paused: '⏸ Paused', resume: '▶ Resume', quit: 'Quit flight (points not saved)', pauseTip: 'Tip: press P or Esc to pause on a keyboard.', pause: 'Pause',
@@ -1720,18 +1720,50 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
         for (const c of sw) { const i = document.createElement('i'); i.className = 'sw'; i.style.background = hexCss(c); name.appendChild(i); }
         name.appendChild(document.createTextNode((open ? '' : '🔒 ') + it.name));
         const sub = document.createElement('small');
-        sub.textContent = on ? t('hgEquipped') : open ? t('hgTap') : it.unlock.best ? t('hgBest', { n: fmt(it.unlock.best) }) : t('hgSoon', { n: priceOf(it.unlock) });
+        sub.textContent = on ? t('hgEquipped') : open ? t('hgTap') : it.unlock.best ? t('hgBest', { n: fmt(it.unlock.best) }) : t(shopLive ? 'hgBuy' : 'hgSoon', { n: priceOf(it.unlock) });
         b.append(name, sub);
         b.addEventListener('click', () => {
-          if (!open) { toast(it.unlock.best ? t('hgBest', { n: fmt(it.unlock.best) }) : t('hgSoon', { n: priceOf(it.unlock) }), 1.8); return; }
+          if (!open && it.unlock.ngn) { buySkin(hgKind, it); return; }
+          if (!open) { toast(t('hgBest', { n: fmt(it.unlock.best) }), 1.8); return; }
           loadout[hgKind] = it.id; applyLoadout(); P.root.visible = true; renderHangar();
         });
         grid.appendChild(b);
       }
     }
+    // Paid skins: Paystack checkout. The server sets the price and confirms the payment.
+    let buying = false, shopLive = false;
+    async function buySkin(kind, it) {
+      if (buying) return;
+      if (!GG_API) { toast(t('hgSoon', { n: priceOf(it.unlock) }), 1.8); return; }
+      if (authOn && !(account && account.signedIn)) { toast(t('hgSignIn'), 2); closeHangar(); openSignin('login'); return; }
+      buying = true; toast(t('hgOpening'), 3);
+      const r = await api('/shop/checkout', { item: kind + ':' + it.id, region: inNigeria ? 'ng' : 'intl' }, 12000);
+      buying = false;
+      if (r.ok && r.body.url) { location.href = r.body.url; return; }
+      toast(r.status === 503 ? t('hgSoon', { n: priceOf(it.unlock) }) : tr(r.body.reason) || t('hgPayFail'), 2.2);
+    }
+    async function syncOwned() {
+      if (!GG_API || !(account && account.signedIn)) return;
+      const r = await api('/shop/owned');
+      if (r.ok && Array.isArray(r.body.owned)) { shopLive = !!r.body.shop; owned = r.body.owned; try { localStorage.setItem(OWN_KEY, JSON.stringify(owned)); } catch (e) {} if (!$('hangar').hidden) renderHangar(); }
+    }
+    // Back from Paystack: confirm the payment, unlock and equip the skin.
+    (async () => {
+      const q = new URLSearchParams(location.search), ref = q.get('reference') || q.get('trxref');
+      if (!ref || !GG_API) return;
+      history.replaceState(null, '', location.pathname);
+      toast(t('hgChecking'), 4);
+      for (let i = 0; authOn && i < 6 && !(await loginToken()); i++) await new Promise(r => setTimeout(r, 1000));
+      const r = await api('/shop/verify', { reference: ref }, 15000);
+      if (r.ok && r.body.ok && r.body.item) {
+        owned = r.body.owned || owned; try { localStorage.setItem(OWN_KEY, JSON.stringify(owned)); } catch (e) {}
+        const [k, id] = r.body.item.split(':'); if (SKINS[k]) { loadout[k] = id; applyLoadout(); }
+        toast(t('hgUnlocked'), 3); hgKind = k || hgKind; openHangar();
+      } else toast(tr(r.body && r.body.reason) || t('hgPayFail'), 3);
+    })();
     function openHangar() {
       if (state !== 'menu' && state !== 'over') return;
-      $('hangar').hidden = false; overlay.classList.add('hidden'); P.root.visible = true; renderHangar();
+      $('hangar').hidden = false; overlay.classList.add('hidden'); P.root.visible = true; renderHangar(); syncOwned();
     }
     function closeHangar() { $('hangar').hidden = true; overlay.classList.remove('hidden'); }
     $('hangar-btn').addEventListener('click', openHangar);

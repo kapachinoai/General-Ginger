@@ -13,6 +13,7 @@
  *   POST /login    -> { ok, access_token, refresh_token }  body: { tag, password }
  *   POST /waitlist -> see below (no sign-in)
  *   GET  /music    -> the game's soundtrack MP3 (KV key asset:music)
+ *   POST /shop/checkout, /shop/verify, /shop/owned, /shop/webhook -> skin shop (Paystack), see below
  *
  * Needs a KV namespace bound as SESSIONS (see wrangler.toml).
  * Sign-in and saved points use Supabase. Set these in the Worker's settings:
@@ -50,12 +51,17 @@ export default {
     if (request.method !== 'POST') return json({ error: 'POST only' }, 405);
     const path = new URL(request.url).pathname;
 
+    if (path === '/shop/webhook') return shopWebhook(request, env, json);
     if (path === '/waitlist') return waitlist(request, env, json);
     if (path === '/login') return login(request, env, json);
     if (path === '/stats') return stats(env, json);
 
     try {
       const user = await requireUser(request, env);
+
+      if (path === '/shop/owned') return json({ owned: await ownedItems(env, user), shop: shopOn(env) });
+      if (path === '/shop/checkout') return shopCheckout(request, env, json, user);
+      if (path === '/shop/verify') return shopVerify(request, env, json, user);
 
       if (path === '/me') {
         if (!supabaseOn(env)) return json({ signedIn: false });
@@ -269,6 +275,95 @@ function serviceHeaders(env, extra) {
   if (k.startsWith('eyJ')) h.Authorization = 'Bearer ' + k;
   return h;
 }
+/* ================= Skin shop (Paystack) =================
+ * Prices live here, on the server, so a player can't change them in the browser.
+ * Purchases are kept in KV: "owned:<user id>" = list of items, "pay:<reference>" = one payment.
+ * Secrets (set in Cloudflare, never in code): PAYSTACK_SECRET_KEY.
+ * Optional settings: PAYSTACK_USD = "1" if the Paystack account can charge US dollars,
+ * SHOP_RETURN_URL = where Paystack sends the player back (default: the game page).
+ */
+const SHOP = {
+  'plane:jet': { ngn: 1000, usd: 0.99 },
+  'plane:danfo': { ngn: 1500, usd: 1.49 },
+  'paint:neon': { ngn: 500, usd: 0.49 },
+  'paint:gold': { ngn: 700, usd: 0.79 },
+  'trail:rainbow': { ngn: 500, usd: 0.49 },
+  'pilot:agbada': { ngn: 700, usd: 0.79 },
+  'pilot:crown': { ngn: 1000, usd: 0.99 }
+};
+const shopOn = env => !!String(env.PAYSTACK_SECRET_KEY || '').trim();
+const paystack = (env, method, path, body) => fetch('https://api.paystack.co' + path, {
+  method,
+  headers: { Authorization: 'Bearer ' + String(env.PAYSTACK_SECRET_KEY || '').trim(), 'Content-Type': 'application/json' },
+  body: body ? JSON.stringify(body) : undefined
+});
+async function ownedItems(env, user) {
+  try { return JSON.parse((await env.SESSIONS.get('owned:' + user)) || '[]'); } catch (e) { return []; }
+}
+// Gives the item once a payment is confirmed. Safe to call twice for the same payment.
+async function grantPayment(env, tx) {
+  const ref = String(tx.reference || ''), md = tx.metadata || {};
+  const item = String(md.item || ''), user = String(md.user || ''), price = SHOP[item];
+  if (!ref || !user || !price || tx.status !== 'success') return false;
+  const cur = String(tx.currency || '').toUpperCase();
+  const want = cur === 'USD' ? Math.round(price.usd * 100) : cur === 'NGN' ? price.ngn * 100 : -1;
+  if (Number(tx.amount) < want || want < 0) return false; // paid less than the price: don't unlock
+  const rec = JSON.parse((await env.SESSIONS.get('pay:' + ref)) || 'null');
+  if (rec && rec.user && rec.user !== user) return false;
+  const owned = await ownedItems(env, user);
+  if (!owned.includes(item)) { owned.push(item); await env.SESSIONS.put('owned:' + user, JSON.stringify(owned)); }
+  await env.SESSIONS.put('pay:' + ref, JSON.stringify({ user, item, amount: tx.amount, currency: cur, status: 'paid', at: new Date().toISOString() }));
+  return true;
+}
+async function shopCheckout(request, env, json, user) {
+  if (!shopOn(env)) return json({ ok: false, reason: 'The shop opens soon.' }, 503);
+  if (user === 'guest') return json({ ok: false, reason: 'Sign in to buy skins.' }, 401);
+  const body = await request.json().catch(() => ({}));
+  const item = String(body.item || ''), price = SHOP[item];
+  if (!price) return json({ ok: false, reason: 'Unknown item.' }, 400);
+  if ((await ownedItems(env, user)).includes(item)) return json({ ok: false, reason: 'You already own this.' }, 409);
+  const u = await fetch(env.SUPABASE_URL.replace(/\/+$/, '') + '/auth/v1/user', {
+    headers: { apikey: String(env.SUPABASE_ANON_KEY || '').trim(), Authorization: request.headers.get('Authorization') || '' }
+  }).then(r => r.json()).catch(() => ({}));
+  const email = u && u.email ? u.email : (user + '@players.general-ginger.app'); // phone sign-ins have no email
+  const usd = env.PAYSTACK_USD === '1' && body.region !== 'ng';
+  const reference = 'gg_' + crypto.randomUUID().replace(/-/g, '').slice(0, 20);
+  const r = await paystack(env, 'POST', '/transaction/initialize', {
+    email, reference,
+    amount: usd ? Math.round(price.usd * 100) : price.ngn * 100,
+    currency: usd ? 'USD' : 'NGN',
+    callback_url: env.SHOP_RETURN_URL || 'https://general-ginger.pages.dev/play/',
+    metadata: { user, item, cancel_action: env.SHOP_RETURN_URL || 'https://general-ginger.pages.dev/play/' }
+  });
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok || !j.status || !j.data) return json({ ok: false, reason: 'Could not start the payment. Try again.' }, 502);
+  await env.SESSIONS.put('pay:' + reference, JSON.stringify({ user, item, status: 'pending', at: new Date().toISOString() }), { expirationTtl: 60 * 60 * 24 * 30 });
+  return json({ ok: true, url: j.data.authorization_url, reference });
+}
+async function shopVerify(request, env, json, user) {
+  if (!shopOn(env)) return json({ ok: false, reason: 'The shop opens soon.' }, 503);
+  const body = await request.json().catch(() => ({}));
+  const ref = String(body.reference || '');
+  if (!/^gg_[a-f0-9]{20}$/.test(ref)) return json({ ok: false, reason: 'Unknown payment.' }, 400);
+  const r = await paystack(env, 'GET', '/transaction/verify/' + encodeURIComponent(ref));
+  const j = await r.json().catch(() => ({}));
+  const tx = j && j.data;
+  if (!tx || !tx.metadata || tx.metadata.user !== user) return json({ ok: false, reason: 'Payment not found.' }, 404);
+  const ok = await grantPayment(env, tx);
+  return json({ ok, item: tx.metadata.item, owned: await ownedItems(env, user), reason: ok ? undefined : 'Payment not completed.' });
+}
+// Paystack calls this after each payment. Checked with the secret key so nobody can fake it.
+async function shopWebhook(request, env, json) {
+  if (!shopOn(env)) return json({ ok: false }, 503);
+  const raw = await request.text();
+  const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(String(env.PAYSTACK_SECRET_KEY).trim()), { name: 'HMAC', hash: 'SHA-512' }, false, ['sign']);
+  const sig = [...new Uint8Array(await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(raw)))].map(b => b.toString(16).padStart(2, '0')).join('');
+  if (sig !== String(request.headers.get('x-paystack-signature') || '').toLowerCase()) return json({ ok: false }, 401);
+  let ev = {}; try { ev = JSON.parse(raw); } catch (e) {}
+  if (ev.event === 'charge.success' && ev.data) await grantPayment(env, ev.data);
+  return json({ ok: true });
+}
+
 async function sb(env, method, path, body, extraHeaders = {}) {
   return fetch(env.SUPABASE_URL.replace(/\/+$/, '') + path, {
     method,

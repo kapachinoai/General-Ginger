@@ -4,17 +4,23 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <title>General Ginger Flight</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" /><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Oswald:wght@500;700&display=swap" rel="stylesheet" />
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html, body { height: 100%; }
     body {
       background: #0a0e1a; color: #fff;
-      font-family: 'Segoe UI', system-ui, sans-serif;
+      font-family: 'Oswald', 'Segoe UI', system-ui, sans-serif; letter-spacing: 0.02em;
       overflow: hidden; user-select: none; -webkit-user-select: none;
       -webkit-tap-highlight-color: transparent;
     }
     #stage { position: fixed; inset: 0; }
-    canvas { display: block; width: 100%; height: 100%; touch-action: none; }
+    canvas { display: block; width: 100%; height: 100%; touch-action: none; filter: contrast(1.12) saturate(0.9); }
+    /* cinematic vignette + faint film grain over the battlefield */
+    #stage::after { content: ''; position: absolute; inset: 0; pointer-events: none;
+      background: radial-gradient(ellipse at 50% 45%, rgba(0,0,0,0) 55%, rgba(0,0,0,0.55) 100%),
+        repeating-linear-gradient(0deg, rgba(255,255,255,0.025) 0 1px, rgba(0,0,0,0) 1px 3px); }
 
     #hud {
       position: fixed; top: 0; left: 0; right: 0;
@@ -25,98 +31,100 @@
       opacity: 0; transition: opacity 0.3s;
     }
     #hud.on { opacity: 1; }
-    #score { font-size: 1.6rem; color: #fde047; }
+    #score { font-size: 1.7rem; color: #ffb547; font-family: 'Black Ops One', 'Oswald', sans-serif; letter-spacing: 0.04em; }
     #dist { font-size: 0.85rem; color: #f1f5f9; }
     #right { text-align: right; }
     #hearts { font-size: 1.15rem; letter-spacing: 2px; }
     #pts { font-size: 0.85rem; color: #fef3c7; margin-top: 2px; }
-    #status { font-size: 0.8rem; color: #fde047; margin-top: 2px; min-height: 1em; }
+    #status { font-size: 0.8rem; color: #ffb547; margin-top: 2px; min-height: 1em; }
 
     #overlay {
       position: fixed; inset: 0;
       display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
       padding: 0 20px calc(36px + env(safe-area-inset-bottom));
       text-align: center; pointer-events: none;
-      background: linear-gradient(180deg, rgba(10,14,26,0) 40%, rgba(10,14,26,0.7) 100%);
+      background: linear-gradient(180deg, rgba(8,6,4,0) 35%, rgba(8,6,4,0.82) 100%);
       transition: opacity 0.3s;
     }
     #overlay.hidden { opacity: 0; }
     #overlay.hidden * { pointer-events: none !important; }
     #overlay h1 {
       font-size: clamp(1.7rem, 6.5vw, 2.7rem); line-height: 1.05; margin-bottom: 6px;
-      color: #fde047; text-shadow: 0 3px 0 #b45309, 0 6px 18px rgba(0,0,0,0.6);
+      font-family: 'Black Ops One', 'Oswald', sans-serif; font-weight: 400; letter-spacing: 0.04em; text-transform: uppercase;
+      color: #ffb547; text-shadow: 0 2px 0 #3a1e05, 0 0 24px rgba(255,120,30,0.45), 0 6px 18px rgba(0,0,0,0.8);
     }
     #overlay p { color: #f1f5f9; font-size: 1rem; margin-bottom: 14px; max-width: 520px; text-shadow: 0 2px 6px rgba(0,0,0,0.8); line-height: 1.4; }
     #result { font-size: 0.95rem; color: #fef3c7; margin: -6px 0 14px; min-height: 1.2em; }
     #go-btn {
       pointer-events: auto;
-      background: linear-gradient(135deg, #16a34a, #15803d);
-      border: 3px solid #fde047; color: #fff;
-      font-size: 1.2rem; font-weight: 800;
-      padding: 13px 36px; border-radius: 999px; cursor: pointer;
-      box-shadow: 0 6px 0 #14532d, 0 10px 24px rgba(0,0,0,0.4);
+      background: linear-gradient(180deg, #c2410c, #7c2d12);
+      border: 2px solid #ffb547; color: #fff7ed;
+      font-family: 'Black Ops One', 'Oswald', sans-serif; font-size: 1.25rem; font-weight: 400; letter-spacing: 0.08em; text-transform: uppercase;
+      padding: 13px 38px; border-radius: 4px; cursor: pointer;
+      clip-path: polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
+      box-shadow: 0 6px 0 #431407, 0 10px 24px rgba(0,0,0,0.5);
     }
-    #go-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #14532d; }
+    #go-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #431407; }
     #go-btn:disabled { opacity: 0.7; }
-    #hangar-btn { pointer-events: auto; margin-top: 12px; padding: 10px 22px; border-radius: 999px; border: 2px solid #fff; background: rgba(0,0,0,0.55); color: #fff; font: inherit; font-weight: 800; font-size: 1rem; cursor: pointer; }
-    #hangar-btn.pulse { border-color: #fde047; box-shadow: 0 0 0 0 rgba(253,224,71,0.8); animation: hgpulse 1.4s infinite; }
-    @keyframes hgpulse { 70% { box-shadow: 0 0 0 14px rgba(253,224,71,0); } 100% { box-shadow: 0 0 0 0 rgba(253,224,71,0); } }
-    #hangar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; max-height: 50vh; overflow: auto; background: rgba(8,20,14,0.96); border-top: 3px solid #fde047; border-radius: 20px 20px 0 0; padding: 14px 16px 18px; color: #fff; }
+    #hangar-btn { pointer-events: auto; margin-top: 12px; padding: 10px 22px; border-radius: 4px; border: 1.5px solid #a8a29e; background: rgba(20,16,12,0.75); text-transform: uppercase; letter-spacing: 0.06em; color: #fff; font: inherit; font-weight: 800; font-size: 1rem; cursor: pointer; }
+    #hangar-btn.pulse { border-color: #ffb547; box-shadow: 0 0 0 0 rgba(255,181,71,0.8); animation: hgpulse 1.4s infinite; }
+    @keyframes hgpulse { 70% { box-shadow: 0 0 0 14px rgba(255,181,71,0); } 100% { box-shadow: 0 0 0 0 rgba(255,181,71,0); } }
+    #hangar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; max-height: 50vh; overflow: auto; background: rgba(14,12,10,0.96); border-top: 2px solid #ffb547; border-radius: 0; padding: 14px 16px 18px; color: #fff; }
     #hangar[hidden] { display: none; }
     #hangar .hg-head { display: flex; align-items: center; justify-content: space-between; }
-    #hangar h2 { margin: 0; font-size: 1.3rem; }
+    #hangar h2 { margin: 0; font-size: 1.3rem; font-family: 'Black Ops One', 'Oswald', sans-serif; font-weight: 400; letter-spacing: 0.06em; color: #ffb547; }
     #hg-close { background: none; border: 0; color: #fff; font-size: 1.4rem; cursor: pointer; padding: 4px 8px; }
     #hangar .hg-tabs { display: flex; gap: 6px; margin: 10px 0; flex-wrap: wrap; }
-    #hangar .hg-tabs button { flex: 1; min-width: 70px; padding: 8px 10px; border-radius: 999px; border: 1.5px solid rgba(255,255,255,0.3); background: transparent; color: #fff; font: inherit; font-weight: 700; cursor: pointer; }
-    #hangar .hg-tabs button[aria-selected="true"] { background: #fde047; color: #1d1300; border-color: #fde047; }
+    #hangar .hg-tabs button { flex: 1; min-width: 70px; padding: 8px 10px; border-radius: 3px; text-transform: uppercase; letter-spacing: 0.05em; border: 1.5px solid rgba(255,255,255,0.3); background: transparent; color: #fff; font: inherit; font-weight: 700; cursor: pointer; }
+    #hangar .hg-tabs button[aria-selected="true"] { background: #c2410c; color: #fff7ed; border-color: #ffb547; }
     #hg-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px; }
-    .hg-item { text-align: left; padding: 10px 12px; border-radius: 14px; border: 1.5px solid rgba(255,255,255,0.18); background: rgba(255,255,255,0.05); color: #fff; font: inherit; cursor: pointer; }
+    .hg-item { text-align: left; padding: 10px 12px; border-radius: 4px; border: 1.5px solid rgba(255,255,255,0.18); background: rgba(255,255,255,0.05); color: #fff; font: inherit; cursor: pointer; }
     .hg-item b { display: block; font-size: 0.95rem; }
     .hg-item small { display: block; margin-top: 4px; font-size: 0.78rem; color: #cbd5e1; }
-    .hg-item.on { border-color: #fde047; background: rgba(253,224,71,0.15); }
+    .hg-item.on { border-color: #ffb547; background: rgba(194,65,12,0.22); }
     .hg-item.locked { opacity: 0.75; }
     .hg-item .sw { display: inline-block; width: 14px; height: 14px; border-radius: 50%; margin-right: 6px; vertical-align: -2px; border: 1px solid rgba(255,255,255,0.5); }
     .hg-note { margin: 10px 0 0; font-size: 0.78rem; color: #94a3b8; }
-    #share-btn { pointer-events: auto; margin-top: 12px; padding: 10px 22px; border-radius: 999px; border: 2px solid #fde047; background: #000; color: #fff; font: inherit; font-weight: 800; font-size: 1rem; cursor: pointer; }
+    #share-btn { pointer-events: auto; margin-top: 12px; padding: 10px 22px; border-radius: 4px; border: 1.5px solid #ffb547; background: #0c0a09; text-transform: uppercase; letter-spacing: 0.06em; color: #fff; font: inherit; font-weight: 800; font-size: 1rem; cursor: pointer; }
     #share-btn:active { transform: translateY(2px); }
-    #tg-btn { pointer-events: auto; display: inline-block; margin-top: 10px; padding: 10px 22px; border-radius: 999px; background: #229ed9; color: #fff; font-weight: 800; font-size: 1rem; text-decoration: none; }
+    #tg-btn { pointer-events: auto; display: inline-block; margin-top: 10px; padding: 10px 22px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.06em; background: #229ed9; color: #fff; font-weight: 800; font-size: 1rem; text-decoration: none; }
     #tg-btn[hidden] { display: none; }
     #tg-btn:active { transform: translateY(2px); }
     #hint { margin-top: 12px; font-size: 0.78rem; color: #cbd5e1; line-height: 1.7; }
     #credit { margin-top: 4px; padding: 0 84px; font-size: 0.7rem; color: #94a3b8; }
     #hint span { background: rgba(30,41,59,0.85); padding: 2px 7px; border-radius: 4px; color: #fff; }
-    #rotate { font-size: 0.78rem; color: #fde047; margin-top: 6px; display: none; }
+    #rotate { font-size: 0.78rem; color: #ffb547; margin-top: 6px; display: none; }
     #account { pointer-events: auto; margin: -4px 0 14px; font-size: 0.9rem; color: #f1f5f9; text-shadow: 0 2px 6px rgba(0,0,0,0.8); }
-    #account b { color: #fde047; }
-    .link-btn { pointer-events: auto; background: none; border: 0; color: #fde047; font: inherit; font-weight: 700; text-decoration: underline; cursor: pointer; padding: 4px; }
+    #account b { color: #ffb547; }
+    .link-btn { pointer-events: auto; background: none; border: 0; color: #ffb547; font: inherit; font-weight: 700; text-decoration: underline; cursor: pointer; padding: 4px; }
     #signin {
       position: fixed; inset: 0; z-index: 20; display: flex; align-items: center; justify-content: center;
       background: rgba(10,14,26,0.75); padding: 20px;
     }
     #signin[hidden] { display: none; }
     #signin .card {
-      width: min(380px, 100%); background: #0f3d2a; border: 3px solid #fde047; border-radius: 18px;
+      width: min(380px, 100%); background: #1c1712; border: 3px solid #ffb547; border-radius: 6px;
       padding: 22px; display: flex; flex-direction: column; gap: 12px; text-align: left;
     }
-    #signin h2 { margin: 0; color: #fde047; font-size: 1.3rem; }
+    #signin h2 { margin: 0; color: #ffb547; font-size: 1.3rem; }
     #signin p { margin: 0; color: #dbe7dd; font-size: 0.92rem; line-height: 1.4; }
     #signin input[hidden] { display: none; }
     #signin #si-alt { font-size: 0.85rem; align-self: center; }
     #signin input {
       font: inherit; font-size: 1.05rem; padding: 12px 14px; border-radius: 12px; border: 1px solid #2b6046;
-      background: #12482f; color: #fff; width: 100%;
+      background: #29211a; color: #fff; width: 100%;
     }
     #signin .row { display: flex; gap: 10px; justify-content: space-between; align-items: center; }
-    #signin .go { margin-left: auto; background: #fde047; color: #1b1404; border: 0; border-radius: 999px; padding: 12px 20px; font-weight: 800; font-size: 1rem; cursor: pointer; }
+    #signin .go { margin-left: auto; background: #ffb547; color: #1b1404; border: 0; border-radius: 999px; padding: 12px 20px; font-weight: 800; font-size: 1rem; cursor: pointer; }
     #signin .go:disabled { opacity: 0.6; }
     #si-msg { color: #ffd2c8; font-size: 0.88rem; min-height: 1.1em; }
 
-    #loading { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; color: #fde047; font-weight: 700; padding: 20px; text-align: center; }
+    #loading { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; color: #ffb547; font-weight: 700; padding: 20px; text-align: center; }
     #flash { position: fixed; inset: 0; background: #ef4444; opacity: 0; pointer-events: none; }
     #toast {
       position: fixed; top: 24%; left: 50%; transform: translateX(-50%);
-      font-weight: 900; font-size: clamp(1.1rem, 4.5vw, 1.6rem); color: #fde047; pointer-events: none;
-      text-shadow: 0 3px 0 #b45309, 0 4px 12px rgba(0,0,0,0.6);
+      font-weight: 900; font-size: clamp(1.1rem, 4.5vw, 1.6rem); color: #ffb547; pointer-events: none;
+      text-shadow: 0 3px 0 #3a1e05, 0 4px 12px rgba(0,0,0,0.6);
       opacity: 0; transition: opacity 0.25s, transform 0.25s; white-space: nowrap;
     }
     #toast.show { opacity: 1; transform: translateX(-50%) translateY(-8px); }
@@ -125,22 +133,22 @@
       position: fixed; left: 50%; transform: translateX(-50%);
       top: calc(64px + env(safe-area-inset-top)); width: min(360px, 70vw);
       pointer-events: none; text-align: center; font-weight: 900; font-size: 0.75rem;
-      letter-spacing: 0.12em; color: #fde047; text-shadow: 0 2px 4px rgba(0,0,0,0.7);
+      letter-spacing: 0.12em; color: #ffb547; text-shadow: 0 2px 4px rgba(0,0,0,0.7);
     }
-    #bossbar .bb { margin-top: 4px; height: 10px; border-radius: 6px; background: rgba(15,23,42,0.7); border: 2px solid #fde047; overflow: hidden; }
+    #bossbar .bb { margin-top: 4px; height: 10px; border-radius: 6px; background: rgba(15,23,42,0.7); border: 2px solid #ffb547; overflow: hidden; }
     #bossbar i { display: block; height: 100%; width: 100%; background: linear-gradient(90deg, #dc2626, #f59e0b); transition: width 0.15s; }
     #fx { position: fixed; right: calc(10px + env(safe-area-inset-right)); bottom: calc(10px + env(safe-area-inset-bottom)); display: flex; gap: 8px; z-index: 30; }
-    #fx button { width: 40px; height: 40px; border-radius: 50%; border: 2px solid rgba(253,224,71,0.7); background: rgba(15,23,42,0.55); font-size: 1.1rem; cursor: pointer; pointer-events: auto; }
+    #fx button { width: 40px; height: 40px; border-radius: 50%; border: 2px solid rgba(255,181,71,0.7); background: rgba(15,23,42,0.55); font-size: 1.1rem; cursor: pointer; pointer-events: auto; }
     #fx button[hidden] { display: none; }
-    #lang { position: absolute; top: calc(12px + env(safe-area-inset-top)); inset-inline-end: 12px; background: rgba(15,23,42,0.6); color: #fde047; border: 2px solid rgba(253,224,71,0.6); border-radius: 999px; padding: 6px 12px; font: inherit; font-weight: 700; font-size: 0.85rem; pointer-events: auto; }
-    #pause { position: fixed; inset: 0; z-index: 25; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(5,20,12,0.6); }
+    #lang { position: absolute; top: calc(12px + env(safe-area-inset-top)); inset-inline-end: 12px; background: rgba(15,23,42,0.6); color: #ffb547; border: 2px solid rgba(255,181,71,0.6); border-radius: 999px; padding: 6px 12px; font: inherit; font-weight: 700; font-size: 0.85rem; pointer-events: auto; }
+    #pause { position: fixed; inset: 0; z-index: 25; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(8,6,4,0.72); }
     #pause[hidden] { display: none; }
-    #pause .card { width: min(340px, 100%); background: #0f3d2a; border: 3px solid #fde047; border-radius: 18px; padding: 22px; display: flex; flex-direction: column; gap: 12px; text-align: center; }
-    #pause h2 { margin: 0; color: #fde047; font-size: 1.5rem; }
+    #pause .card { width: min(340px, 100%); background: #1c1712; border: 3px solid #ffb547; border-radius: 6px; padding: 22px; display: flex; flex-direction: column; gap: 12px; text-align: center; }
+    #pause h2 { margin: 0; color: #ffb547; font-size: 1.5rem; }
     #pause p { margin: 0; color: #dbe7dd; }
-    #pause .go { background: #fde047; color: #1b1404; border: 0; border-radius: 999px; padding: 14px 20px; font-weight: 900; font-size: 1.15rem; cursor: pointer; }
+    #pause .go { background: #ffb547; color: #1b1404; border: 0; border-radius: 999px; padding: 14px 20px; font-weight: 900; font-size: 1.15rem; cursor: pointer; }
     #pause .tip { font-size: 0.8rem; opacity: 0.75; }
-    #count { position: fixed; inset: 0; z-index: 24; display: flex; align-items: center; justify-content: center; pointer-events: none; font-size: 7rem; font-weight: 900; color: #fde047; text-shadow: 0 6px 18px rgba(0,0,0,0.6); }
+    #count { position: fixed; inset: 0; z-index: 24; display: flex; align-items: center; justify-content: center; pointer-events: none; font-size: 7rem; font-weight: 900; color: #ffb547; text-shadow: 0 6px 18px rgba(0,0,0,0.6); }
     #count[hidden] { display: none; }
   </style>
 </head>
@@ -839,11 +847,12 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
     /* ================= Renderer, scene, camera ================= */
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.15;
     document.getElementById('stage').appendChild(renderer.domElement);
 
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x8fd3ff);
-    scene.fog = new THREE.Fog(0x8fd3ff, 40, 110);
+    scene.background = new THREE.Color(0x8a6a55);
+    scene.fog = new THREE.Fog(0x8a6a55, 26, 95);
 
     const FOV = 45, NEED_W = 10.5, NEED_H = 8.2;
     const camera = new THREE.PerspectiveCamera(FOV, 1, 0.1, 300);
@@ -861,8 +870,8 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
     window.addEventListener('resize', resize);
     resize();
 
-    scene.add(new THREE.HemisphereLight(0xffffff, 0x6b8e4e, 0.85));
-    const sun = new THREE.DirectionalLight(0xfff1d6, 0.75);
+    scene.add(new THREE.HemisphereLight(0xffe2c4, 0x2b2418, 1.0));
+    const sun = new THREE.DirectionalLight(0xffb070, 1.1);
     sun.position.set(-6, 12, 10);
     scene.add(sun);
 
@@ -873,11 +882,16 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
       return t;
     })();
     const mats = {};
+    // War-zone look: real shading, muted gritty colours (was bright cartoon toon shading)
+    const grit = c => { const col = new THREE.Color(c); col.offsetHSL(0, -0.28, -0.06); return col; };
     const toon = (c, extra) => {
       const k = c + JSON.stringify(extra || {});
-      return mats[k] || (mats[k] = new THREE.MeshToonMaterial(Object.assign({ color: c, gradientMap: gradTex }, extra || {})));
+      if (mats[k]) return mats[k];
+      const o = Object.assign({ roughness: 0.78, metalness: 0.08 }, extra || {});
+      delete o.gradientMap;
+      return (mats[k] = new THREE.MeshStandardMaterial(Object.assign(o, { color: grit(c) })));
     };
-    const outlineMat = new THREE.MeshBasicMaterial({ color: 0x24150a, side: THREE.BackSide });
+    const outlineMat = new THREE.MeshBasicMaterial({ color: 0x0a0806, side: THREE.BackSide, transparent: true, opacity: 0.35 });
     const geos = {};
     const GEO = (k, f) => geos[k] || (geos[k] = f());
     const SPH = GEO('sph', () => new THREE.SphereGeometry(1, 20, 14));
@@ -1302,9 +1316,9 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
     }
 
     /* ================= World scenery ================= */
-    const ground = new THREE.Mesh(new THREE.PlaneGeometry(400, 160), new THREE.MeshLambertMaterial({ color: 0x74b04f }));
+    const ground = new THREE.Mesh(new THREE.PlaneGeometry(400, 160), new THREE.MeshStandardMaterial({ color: 0x3f3d26, roughness: 1 }));
     ground.rotation.x = -Math.PI / 2; ground.position.z = -40; scene.add(ground);
-    const road = new THREE.Mesh(new THREE.PlaneGeometry(400, 3.5), new THREE.MeshLambertMaterial({ color: 0xc27a43 }));
+    const road = new THREE.Mesh(new THREE.PlaneGeometry(400, 3.5), new THREE.MeshStandardMaterial({ color: 0x4e3524, roughness: 1 }));
     road.rotation.x = -Math.PI / 2; road.position.set(0, 0.01, 0); scene.add(road);
 
     const scenery = [];
@@ -1353,14 +1367,15 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
     })();
     const hills = [];
     for (let i = 0; i < 10; i++) {
-      const h = part(scene, SPH, toon(0x5e9a3c), [-60 + i * 16, -3, -60 - rand(0, 15)], [rand(10, 16), rand(8, 14), 8], false);
+      const h = part(scene, SPH, toon(0x3a3324), [-60 + i * 16, -3, -60 - rand(0, 15)], [rand(10, 16), rand(8, 14), 8], false);
       hills.push(h);
     }
     const clouds = [];
+    const smokeCloudMat = new THREE.MeshStandardMaterial({ color: 0x4a423c, roughness: 1, transparent: true, opacity: 0.82 });
     for (let i = 0; i < 14; i++) {
       const c = new THREE.Group();
       const n = 4 + (i % 3);
-      for (let k = 0; k < n; k++) part(c, SPL, toon(0xffffff), [k * 0.9 - n * 0.45, rand(-0.2, 0.4), rand(-0.3, 0.3)], [rand(0.8, 1.3), rand(0.6, 1.0), 0.8], false);
+      for (let k = 0; k < n; k++) part(c, SPL, smokeCloudMat, [k * 0.9 - n * 0.45, rand(-0.2, 0.4), rand(-0.3, 0.3)], [rand(0.8, 1.3), rand(0.6, 1.0), 0.8], false);
       c.scale.setScalar(rand(0.9, 1.8));
       c.position.set(-30 + i * 7, rand(9, 22), rand(-30, -12));
       scene.add(c); clouds.push(c);
@@ -1387,7 +1402,54 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
         emit(x, y, z, Math.cos(a) * s, Math.sin(a) * s + 1.5, rand(-1, 1) * s * 0.6, colors[i % colors.length], rand(0.5, 1.1), rand(0.08, 0.22), 9);
       }
     }
+    // --- War-zone smoke: soft dark puffs that rise, grow and fade ---
+    const smokeGeo = new THREE.IcosahedronGeometry(1, 2), smokePool = [];
+    for (let i = 0; i < 140; i++) {
+      const m = new THREE.Mesh(smokeGeo, new THREE.MeshBasicMaterial({ color: 0x2a2522, transparent: true, opacity: 0, depthWrite: false }));
+      m.visible = false; m.userData = { v: new THREE.Vector3(), life: 0, max: 1, size: 1, grow: 1, op: 0.5 };
+      scene.add(m); smokePool.push(m);
+    }
+    let smokeIdx = 0;
+    function smoke(x, y, z, n = 4, size = 0.6, dark = 0x2a2522) {
+      for (let i = 0; i < n; i++) {
+        const m = smokePool[smokeIdx]; smokeIdx = (smokeIdx + 1) % smokePool.length;
+        m.material.color.setHex(dark); m.visible = true; m.position.set(x + rand(-0.4, 0.4), y + rand(-0.3, 0.3), z + rand(-0.3, 0.3));
+        const u = m.userData; u.v.set(rand(-0.6, 0.6), rand(0.8, 1.8), rand(-0.3, 0.3)); u.life = u.max = rand(1.4, 2.4); u.size = size * rand(0.7, 1.2); u.grow = rand(1.2, 2.2); u.op = rand(0.22, 0.42);
+      }
+    }
+    // Burning wrecks in the background: flickering fire with a column of smoke
+    const fireMat = new THREE.MeshBasicMaterial({ color: 0xff6a1a }), fireMat2 = new THREE.MeshBasicMaterial({ color: 0xffc04a });
+    const fires = [];
+    for (let i = 0; i < 6; i++) {
+      const f = new THREE.Group();
+      part(f, BOX, toon(0x2b2622), [0, 0.35, 0], [1.6, 0.7, 1.1], false, [0, rand(-0.5, 0.5), rand(-0.15, 0.15)]);
+      const fl1 = new THREE.Mesh(CONE, fireMat); fl1.scale.set(0.6, 1.4, 0.6); fl1.position.y = 1.2; f.add(fl1);
+      const fl2 = new THREE.Mesh(CONE, fireMat2); fl2.scale.set(0.35, 0.9, 0.35); fl2.position.set(0.25, 1.0, 0.1); f.add(fl2);
+      f.position.set(-25 + i * 14 + rand(-3, 3), 0, -14 - rand(0, 14));
+      f.userData = { fl1, fl2, t: rand(0, 10) };
+      scene.add(f); fires.push(f);
+    }
+    function updateFires(dt) {
+      const cx = camera.position.x;
+      for (const f of fires) {
+        const u = f.userData; u.t += dt;
+        if (f.position.x < cx - 45) f.position.x += 84;
+        const k = 1 + Math.sin(u.t * 17) * 0.12 + Math.sin(u.t * 7.3) * 0.1;
+        u.fl1.scale.set(0.6 * k, 1.4 * k, 0.6 * k); u.fl2.scale.set(0.35 / k, 0.9 * k, 0.35 / k);
+        if (Math.random() < dt * 5) smoke(f.position.x + rand(-0.3, 0.3), 2.2, f.position.z, 1, 0.9, 0x3d3632);
+      }
+    }
     function updateParticles(dt) {
+      updateFires(dt);
+      for (const m of smokePool) {
+        if (!m.visible) continue;
+        const u = m.userData; u.life -= dt;
+        if (u.life <= 0) { m.visible = false; continue; }
+        const a = 1 - u.life / u.max;
+        m.position.addScaledVector(u.v, dt); u.v.multiplyScalar(1 - dt * 0.4);
+        m.scale.setScalar(u.size * (1 + a * u.grow * 2));
+        m.material.opacity = u.op * Math.min(1, a * 6) * (1 - a);
+      }
       for (const m of pool) {
         if (!m.visible) continue;
         const u = m.userData; u.life -= dt;
@@ -1817,25 +1879,25 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
     function handleEvents() {
       for (const e of sim.events) {
         fx4d(e);
-        if (e.t === 'hit') { burst(sim.x, sim.y, [0xf59e0b, 0x6b5a2a, 0xffffff], 22, 7); shake = 0.5; flashRed(); toast(e.k === 1 ? t('shears') : t('bomb')); }
+        if (e.t === 'hit') { smoke(sim.x, sim.y, 0, 7, 0.55, 0x1c1916); burst(sim.x, sim.y, [0xf59e0b, 0x6b5a2a, 0xffffff], 22, 7); shake = 0.5; flashRed(); toast(e.k === 1 ? t('shears') : t('bomb')); }
         else if (e.t === 'net') { burst(sim.x, sim.y, [0xffffff], 18, 5); toast(t('net')); }
         else if (e.t === 'block') { burst(sim.x, sim.y, [0xff7a1a, 0xfde047], 16, 6); toast(t('block')); }
         else if (e.t === 'jar') { burst(e.x, e.y, [0xfde047, 0xf59e0b, 0xffffff], 22, 6); toast(t('jar')); }
         else if (e.t === 'pepper') { burst(e.x, e.y, [0xd62828, 0xff7a1a], 22, 6); toast(t('pepper')); }
         else if (e.t === 'heart') { burst(e.x, e.y, [0xff4d6d, 0xdba95e], 22, 6); toast(sim.hp >= G.MAX_HP ? t('heartFull') : t('heart')); }
         else if (e.t === 'cannon') { burst(e.x, e.y, [0xffb020, 0x333333], 22, 6); toast(t('cannon')); }
-        else if (e.t === 'shotDown') { burst(e.x, e.y, [0xffb020, 0xffffff, 0x6b5a2a], 10, 4); }
+        else if (e.t === 'shotDown') { burst(e.x, e.y, [0xffb020, 0xffffff, 0x6b5a2a], 10, 4); smoke(e.x, e.y, 0, 3, 0.45); }
         else if (e.t === 'bossIn') { $('bossbar').hidden = false; toast(t('bossIn', { level: e.level }), 2.2); shake = 0.3; }
         else if (e.t === 'bossHit') { bossFlash = 0.12; burst(e.x, e.y, [0xffb020, 0xfde047], 5, 3); }
         else if (e.t === 'bossFire') { shake = Math.max(shake, 0.12); }
-        else if (e.t === 'bossDown') {
+        else if (e.t === 'bossDown') { smoke(e.x, e.y + 1, 0, 26, 1.2, 0x15120f);
           bossDying = 1.6; bossDeathX = e.x; bossDeathY = e.y; shake = 1;
           burst(e.x, e.y + 1, [0xd9822b, 0xc1121f, 0x1f8f3d, 0xf2c230, 0xfde047], 70, 12);
           $('bossbar').hidden = true;
           toast(t('kingDown', { pts: fmt(1500 * e.level) }), 2);
         }
         else if (e.t === 'level') { setTimeout(() => { if (state === 'playing') toast(t('levelUp', { level: e.level }), 2); }, 1600); }
-        else if (e.t === 'crash') { burst(sim.x, sim.y, [0xf59e0b, 0xfde047, 0x1f8f3d, 0xc1121f], 40, 9); shake = 0.9; }
+        else if (e.t === 'crash') { smoke(sim.x, sim.y, 0, 18, 0.9, 0x15120f); burst(sim.x, sim.y, [0xf59e0b, 0xfde047, 0x1f8f3d, 0xc1121f], 40, 9); shake = 0.9; }
         else if (e.t === 'boost') { for (let i = 0; i < 14; i++) emit(sim.x - 1.5, sim.y + rand(-0.3, 0.3), rand(-0.4, 0.4), rand(-8, -4), rand(-1, 1), rand(-1, 1), i % 2 ? 0xf59e0b : 0xfde047, rand(0.3, 0.6), rand(0.1, 0.2), 1); }
         else if (e.t === 'fire') { const m = unitMeshes.get(e.id); if (m) for (let i = 0; i < 6; i++) emit(m.position.x, 0.4, 0.5, rand(-1.5, 1.5), rand(1, 3), rand(-0.5, 0.5), 0xb08a5a, 0.5, 0.15, 4); }
       }
@@ -1999,14 +2061,14 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
 
     // --- Sky moods: each level looks different, boss fights bring a storm ---
     const SKIES = [
-      { sky: 0x8fd3ff, hemi: 0.85, sun: 0.75, sunC: 0xfff1d6, night: 0 },   // level 1: Lagos day
-      { sky: 0xffb46e, hemi: 0.75, sun: 0.8, sunC: 0xffc38a, night: 0 },    // level 2: golden sunset
-      { sky: 0x7a6bd6, hemi: 0.6, sun: 0.55, sunC: 0xd9c2ff, night: 0.4 }, // level 3: dusk
-      { sky: 0x1d2752, hemi: 0.5, sun: 0.45, sunC: 0x9fb4ff, night: 1 }    // level 4+: starry night
+      { sky: 0x8a6a55, hemi: 1.0, sun: 1.1, sunC: 0xffb070, night: 0 },     // level 1: smoky dusk over the market
+      { sky: 0x6e3326, hemi: 0.9, sun: 1.05, sunC: 0xff7a45, night: 0 },    // level 2: burning red sunset
+      { sky: 0x3a3442, hemi: 0.8, sun: 0.8, sunC: 0xc9a0ff, night: 0.4 },   // level 3: ash and twilight
+      { sky: 0x14161f, hemi: 0.65, sun: 0.6, sunC: 0x9fb4ff, night: 1 }     // level 4+: night raid
     ];
-    const STORM = { sky: 0x4a3b5c, hemi: 0.55, sun: 0.4, sunC: 0xd6c9ff, night: 0.3 };
+    const STORM = { sky: 0x2a2228, hemi: 0.75, sun: 0.7, sunC: 0xff6a3a, night: 0.35 };
     const hemiLight = scene.children.find(o => o.isHemisphereLight);
-    const skyNow = new THREE.Color(0x8fd3ff), skyWant = new THREE.Color(), sunWant = new THREE.Color(), white = new THREE.Color(0xffffff);
+    const skyNow = new THREE.Color(0x8a6a55), skyWant = new THREE.Color(), sunWant = new THREE.Color(), white = new THREE.Color(0xffffff);
     let nightNow = 0, lightning = 0, hitStop = 0, roll = 0, fovNow = FOV, camLift = 0, camPull = 0;
 
     function fx4d(e) {
@@ -2205,6 +2267,7 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
           P.root.visible = !(sim.inv > 0 && Math.floor(sim.tick / 5) % 2);
           P.shield.visible = sim.shield > 0 && (sim.shield > 1.5 || Math.floor(sim.tick / 6) % 2 === 0);
           P.net.visible = sim.slow > 0;
+          if (sim.hp <= 2 && Math.random() < (sim.hp <= 1 ? 0.7 : 0.35)) smoke(px - 1.2, py + 0.2, 0, 1, 0.28, 0x1a1715);
           if (Math.random() < 0.3 + sim.boost) emit(px - 2.4, py + rand(-0.2, 0.2), rand(-0.3, 0.3), rand(-3, -1), rand(-0.3, 0.3), 0, (tc => tc[Math.floor(Math.random() * tc.length)])(trailColors()), 0.5, rand(0.06, 0.13), 0);
         }
         camX = sim.x + halfW * 0.4;

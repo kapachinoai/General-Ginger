@@ -620,7 +620,7 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
       en: {
         loading: 'Loading General Ginger…', loadFail: 'Could not load the 3D engine. Check your connection and refresh.',
         intro: "The Ginger King's pest army is firing from the ground. Dodge rot bombs, shears and sticky nets, grab power-ups, and shoot down the King's airship to reach the next level!",
-        takeOff: 'Oya, Take Off!', flyAgain: 'Fly Again', shareX: '𝕏 Challenge friends', joinTG: 'Join the Ginger Army on Telegram', hangar: '🛩️ Hangar', hgPlane: 'Planes', hgPaint: 'Paint', hgTrail: 'Trails', hgPilot: 'Pilot', hgNote: 'Skins only change how you look. Every pilot flies the same.', hgEquipped: '✓ Equipped', hgTap: 'Tap to equip', hgBest: 'Unlock: best score {n}', hgSoon: '₦{n} · shop opening soon', shareText: 'I scored {score} and reached level {level} in General Ginger 🛩️\n\nCan you beat me? Overthrow the Ginger King 👑', loadingAcct: 'Loading your account…', connecting: 'Connecting…',
+        takeOff: 'Oya, Take Off!', flyAgain: 'Fly Again', shareX: '𝕏 Challenge friends', joinTG: 'Join the Ginger Army on Telegram', hangar: '🛩️ Hangar', hgPlane: 'Planes', hgPaint: 'Paint', hgTrail: 'Trails', hgPilot: 'Pilot', hgNote: 'Skins only change how you look. Every pilot flies the same.', hgEquipped: '✓ Equipped', hgTap: 'Tap to equip', hgBest: 'Unlock: best score {n}', hgSoon: '{n} · shop opening soon', shareText: 'I scored {score} and reached level {level} in General Ginger 🛩️\n\nCan you beat me? Overthrow the Ginger King 👑', loadingAcct: 'Loading your account…', connecting: 'Connecting…',
         hint: '<span>↑ ↓</span> / <span>W S</span> fly up and down • <span>Space</span> spice boost<br>Phone: drag up and down to fly • tap to boost',
         rotate: 'Tip: turn your phone sideways for a wider view', boss: 'THE GINGER KING', cancel: 'Cancel',
         paused: '⏸ Paused', resume: '▶ Resume', quit: 'Quit flight (points not saved)', pauseTip: 'Tip: press P or Esc to pause on a keyboard.', pause: 'Pause',
@@ -1401,27 +1401,27 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
       plane: [
         { id: 'biplane', name: 'Classic Biplane', unlock: 'free' },
         { id: 'heli', name: 'Chopper', unlock: { best: 15000 } },
-        { id: 'jet', name: 'Spice Jet', unlock: { ngn: 1500 } },
-        { id: 'danfo', name: 'Flying Danfo', unlock: { ngn: 2000 } }
+        { id: 'jet', name: 'Spice Jet', unlock: { ngn: 1000, usd: 0.99 } },
+        { id: 'danfo', name: 'Flying Danfo', unlock: { ngn: 1500, usd: 1.49 } }
       ],
       paint: [
         { id: 'classic', name: 'Air Force Green', unlock: 'free', c: { body: 0x1f8f3d, stripe: 0xffffff, wing: 0xeedfb4, accent: 0xc1121f } },
         { id: 'naija', name: 'Naija Green-White', unlock: { best: 5000 }, c: { body: 0x0a8f3c, stripe: 0xffffff, wing: 0xffffff, accent: 0x0a8f3c } },
         { id: 'camo', name: 'Camo', unlock: { best: 25000 }, c: { body: 0x556b2f, stripe: 0x3b4a22, wing: 0x8f9a5b, accent: 0x3b4a22 } },
-        { id: 'neon', name: 'Neon Lagos', unlock: { ngn: 700 }, c: { body: 0xff2bd6, stripe: 0x00f0ff, wing: 0x1a1a2e, accent: 0x00f0ff, glow: 0x330022 } },
-        { id: 'gold', name: 'Royal Gold', unlock: { ngn: 1000 }, c: { body: 0xf2c230, stripe: 0x8a5a12, wing: 0xffe7a0, accent: 0x8a5a12, glow: 0x2a1e00 } }
+        { id: 'neon', name: 'Neon Lagos', unlock: { ngn: 500, usd: 0.49 }, c: { body: 0xff2bd6, stripe: 0x00f0ff, wing: 0x1a1a2e, accent: 0x00f0ff, glow: 0x330022 } },
+        { id: 'gold', name: 'Royal Gold', unlock: { ngn: 700, usd: 0.79 }, c: { body: 0xf2c230, stripe: 0x8a5a12, wing: 0xffe7a0, accent: 0x8a5a12, glow: 0x2a1e00 } }
       ],
       trail: [
         { id: 'spice', name: 'Spice Dust', unlock: 'free', c: [0xf59e0b, 0xfde047] },
         { id: 'naija', name: 'Green-White', unlock: { best: 5000 }, c: [0x1f8f3d, 0xffffff] },
         { id: 'fire', name: 'Fire', unlock: { best: 40000 }, c: [0xff3b1f, 0xff9a1f, 0xffe14a] },
-        { id: 'rainbow', name: 'Rainbow', unlock: { ngn: 700 }, c: [0xff3b30, 0xff9500, 0xffcc00, 0x34c759, 0x007aff, 0xaf52de] }
+        { id: 'rainbow', name: 'Rainbow', unlock: { ngn: 500, usd: 0.49 }, c: [0xff3b30, 0xff9500, 0xffcc00, 0x34c759, 0x007aff, 0xaf52de] }
       ],
       pilot: [
         { id: 'cap', name: 'Air Force Cap', unlock: 'free' },
         { id: 'shades', name: 'Cool Shades', unlock: { best: 10000 } },
-        { id: 'agbada', name: 'Agbada & Fila', unlock: { ngn: 1000 } },
-        { id: 'crown', name: 'Gold Crown', unlock: { ngn: 1500 } }
+        { id: 'agbada', name: 'Agbada & Fila', unlock: { ngn: 700, usd: 0.79 } },
+        { id: 'crown', name: 'Gold Crown', unlock: { ngn: 1000, usd: 0.99 } }
       ]
     };
     const SKIN_KEY = 'ggLoadout', OWN_KEY = 'ggOwned';
@@ -1430,6 +1430,8 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
     let loadout = { plane: 'biplane', paint: 'classic', trail: 'spice', pilot: 'cap' };
     try { Object.assign(loadout, JSON.parse(localStorage.getItem(SKIN_KEY) || '{}')); } catch (e) {}
     for (const k in SKINS) { const it = SKINS[k].find(x => x.id === loadout[k]); if (!it || !isOpen(k, it)) loadout[k] = SKINS[k][0].id; }
+    let inNigeria = false; try { inNigeria = Intl.DateTimeFormat().resolvedOptions().timeZone === 'Africa/Lagos'; } catch (e) {}
+    const priceOf = u => inNigeria ? '₦' + u.ngn.toLocaleString('en') : '$' + u.usd.toFixed(2);
     const trailColors = () => (SKINS.trail.find(x => x.id === loadout.trail) || SKINS.trail[0]).c;
 
     /* ================= Game objects ================= */
@@ -1718,10 +1720,10 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
         for (const c of sw) { const i = document.createElement('i'); i.className = 'sw'; i.style.background = hexCss(c); name.appendChild(i); }
         name.appendChild(document.createTextNode((open ? '' : '🔒 ') + it.name));
         const sub = document.createElement('small');
-        sub.textContent = on ? t('hgEquipped') : open ? t('hgTap') : it.unlock.best ? t('hgBest', { n: fmt(it.unlock.best) }) : t('hgSoon', { n: fmt(it.unlock.ngn) });
+        sub.textContent = on ? t('hgEquipped') : open ? t('hgTap') : it.unlock.best ? t('hgBest', { n: fmt(it.unlock.best) }) : t('hgSoon', { n: priceOf(it.unlock) });
         b.append(name, sub);
         b.addEventListener('click', () => {
-          if (!open) { toast(it.unlock.best ? t('hgBest', { n: fmt(it.unlock.best) }) : t('hgSoon', { n: fmt(it.unlock.ngn) }), 1.8); return; }
+          if (!open) { toast(it.unlock.best ? t('hgBest', { n: fmt(it.unlock.best) }) : t('hgSoon', { n: priceOf(it.unlock) }), 1.8); return; }
           loadout[hgKind] = it.id; applyLoadout(); P.root.visible = true; renderHangar();
         });
         grid.appendChild(b);

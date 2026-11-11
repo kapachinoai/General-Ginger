@@ -185,7 +185,7 @@
   <div id="overlay">
     <h1 id="ov-title">General Ginger<br>Flight</h1>
     <select id="lang"></select>
-    <p id="ov-text" data-t="intro">The Ginger King's pest army is firing from the ground. Dodge rot bombs, shears and sticky nets, grab power-ups, and shoot down the King's airship to reach the next level!</p>
+    <p id="ov-text" data-t="intro">The Ginger King's pest army is firing from the ground. Dodge missiles, RPGs and sticky nets, grab power-ups, and shoot down the King's airship to reach the next level!</p>
     <div id="result"></div>
     <div id="account" hidden></div>
     <button id="go-btn" data-t="takeOff">Oya, Take Off!</button>
@@ -645,7 +645,7 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
     const STR = {
       en: {
         loading: 'Loading General Ginger…', loadFail: 'Could not load the 3D engine. Check your connection and refresh.',
-        intro: "The Ginger King's pest army is firing from the ground. Dodge rot bombs, shears and sticky nets, grab power-ups, and shoot down the King's airship to reach the next level!",
+        intro: "The Ginger King's pest army is firing from the ground. Dodge missiles, RPGs and sticky nets, grab power-ups, and shoot down the King's airship to reach the next level!",
         takeOff: 'Oya, Take Off!', flyAgain: 'Fly Again', shareX: '𝕏 Challenge friends', joinTG: 'Join the Ginger Army on Telegram', hangar: '🛩️ Hangar', hgPlane: 'Planes', hgPaint: 'Paint', hgTrail: 'Trails', hgPilot: 'Pilot', hgNote: 'Skins only change how you look. Every pilot flies the same.', hgEquipped: '✓ Equipped', hgTap: 'Tap to equip', hgBest: 'Unlock: best score {n}', hgSoon: '{n} · shop opening soon', hgBuy: '{n} · tap to buy', hgSignIn: 'Sign in first so your skin is saved to your account.', hgOpening: 'Opening secure checkout…', hgChecking: 'Checking your payment…', hgUnlocked: 'Skin unlocked! It\'s yours forever 🎉', hgPayFail: 'We couldn\'t confirm the payment yet. If you paid, the skin unlocks automatically within a few minutes.', hgNew: 'New skin unlocked: {name}! Open the Hangar 🛩️', shareText: 'I scored {score} and reached level {level} in General Ginger 🛩️\n\nCan you beat me? Overthrow the Ginger King 👑', loadingAcct: 'Loading your account…', connecting: 'Connecting…',
         hint: '<span>↑ ↓</span> / <span>W S</span> fly up and down • <span>Space</span> spice boost<br>Phone: drag up and down to fly • tap to boost',
         rotate: 'Tip: turn your phone sideways for a wider view', boss: 'THE GINGER KING', cancel: 'Cancel',
@@ -667,7 +667,7 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
         summary: 'General Ginger reached level {level}, flew {m} m and scored {score}.{kings} Best: {best}.',
         checking: 'Checking {pts} points with the server…', signToSave: '{pts} points. Sign in to save them next time.', practiceRes: '{pts} points (practice mode, not saved)',
         saved: '✅ {n} points saved · {total} total', capped: ' (daily limit reached)', verified: '✅ {n} points verified and saved', notSaved: '⚠️ Points not saved: {reason}', srvErr: 'server error',
-        shears: 'Shears! Ouch!', bomb: 'Rot bomb! Ouch!', net: 'Sticky net! Slowed down', block: 'Blocked by pepper!', jar: '+250 Spice!', pepper: 'Pepper shield!',
+        shears: 'RPG hit! Ouch!', bomb: 'Missile hit! Ouch!', net: 'Sticky net! Slowed down', block: 'Blocked by pepper!', jar: '+250 Spice!', pepper: 'Pepper shield!',
         heartFull: 'Ginger root! +1 heart', heart: 'Ginger root!', cannon: 'Spice cannon! Shoot it down', bossIn: 'The Ginger King attacks! (Level {level})',
         kingDown: 'King defeated! +{pts}', levelUp: 'Level {level}! Pests fight harder', go: 'Go!',
         soundOn: 'Sound on', soundOff: 'Sound off', buzzOn: 'Vibration on', buzzOff: 'Vibration off',
@@ -676,7 +676,7 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
       },
       fr: {
         loading: 'Chargement de General Ginger…', loadFail: 'Impossible de charger le moteur 3D. Vérifie ta connexion et recharge la page.',
-        intro: "L'armée de nuisibles du Roi Gingembre tire depuis le sol. Esquive les bombes pourries, les cisailles et les filets collants, attrape les bonus et abats le dirigeable du Roi pour passer au niveau suivant !",
+        intro: "L'armée de nuisibles du Roi Gingembre tire depuis le sol. Esquive les missiles, les RPG et les filets collants, attrape les bonus et abats le dirigeable du Roi pour passer au niveau suivant !",
         takeOff: 'Oya, décollage !', flyAgain: 'Rejouer', shareX: '𝕏 Défie tes amis', joinTG: 'Rejoins la Ginger Army sur Telegram', hangar: '🛩️ Hangar', hgPlane: 'Avions', hgPaint: 'Peinture', hgTrail: 'Traînées', hgPilot: 'Pilote', hgNote: 'Les skins changent seulement ton look. Tout le monde vole pareil.', hgEquipped: '✓ Équipé', hgTap: 'Touche pour équiper', hgBest: 'Débloqué avec un record de {n}', hgSoon: '{n} · boutique bientôt ouverte', hgBuy: '{n} · touche pour acheter', hgSignIn: 'Connecte-toi d\'abord pour garder ton skin sur ton compte.', hgOpening: 'Ouverture du paiement sécurisé…', hgChecking: 'Vérification du paiement…', hgUnlocked: 'Skin débloqué ! Il est à toi pour toujours 🎉', hgPayFail: 'Paiement pas encore confirmé. Si tu as payé, le skin se débloque tout seul dans quelques minutes.', hgNew: 'Nouveau skin débloqué : {name} ! Va au Hangar 🛩️', shareText: 'J\'ai fait {score} points et atteint le niveau {level} dans General Ginger 🛩️\n\nTu peux me battre ? Renverse le Roi Gingembre 👑', loadingAcct: 'Chargement de ton compte…', connecting: 'Connexion…',
         hint: '<span>↑ ↓</span> / <span>W S</span> monter et descendre • <span>Espace</span> turbo épicé<br>Téléphone : glisse vers le haut ou le bas pour voler • touche pour le turbo',
         rotate: 'Astuce : tourne ton téléphone pour une vue plus large', boss: 'LE ROI GINGEMBRE', cancel: 'Annuler',
@@ -698,7 +698,7 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
         summary: 'General Ginger a atteint le niveau {level}, a volé {m} m et marqué {score}.{kings} Record : {best}.',
         checking: 'Vérification de {pts} points avec le serveur…', signToSave: '{pts} points. Connecte-toi pour les enregistrer la prochaine fois.', practiceRes: '{pts} points (entraînement, non enregistrés)',
         saved: '✅ {n} points enregistrés · {total} au total', capped: ' (limite du jour atteinte)', verified: '✅ {n} points vérifiés et enregistrés', notSaved: '⚠️ Points non enregistrés : {reason}', srvErr: 'erreur du serveur',
-        shears: 'Cisailles ! Aïe !', bomb: 'Bombe pourrie ! Aïe !', net: 'Filet collant ! Ralenti', block: 'Bloqué par le piment !', jar: '+250 Épices !', pepper: 'Bouclier piment !',
+        shears: 'Touché par un RPG ! Aïe !', bomb: 'Touché par un missile ! Aïe !', net: 'Filet collant ! Ralenti', block: 'Bloqué par le piment !', jar: '+250 Épices !', pepper: 'Bouclier piment !',
         heartFull: 'Racine de gingembre ! +1 cœur', heart: 'Racine de gingembre !', cannon: 'Canon à épices ! Abats-les', bossIn: 'Le Roi Gingembre attaque ! (Niveau {level})',
         kingDown: 'Roi vaincu ! +{pts}', levelUp: 'Niveau {level} ! Les nuisibles se déchaînent', go: 'Go !',
         soundOn: 'Son activé', soundOff: 'Son coupé', buzzOn: 'Vibration activée', buzzOff: 'Vibration coupée',
@@ -707,7 +707,7 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
       },
       es: {
         loading: 'Cargando General Ginger…', loadFail: 'No se pudo cargar el motor 3D. Revisa tu conexión y recarga.',
-        intro: '¡El ejército de plagas del Rey Jengibre dispara desde el suelo! Esquiva bombas podridas, tijeras y redes pegajosas, recoge mejoras y derriba el dirigible del Rey para pasar de nivel.',
+        intro: '¡El ejército de plagas del Rey Jengibre dispara desde el suelo! Esquiva misiles, RPG y redes pegajosas, recoge mejoras y derriba el dirigible del Rey para pasar de nivel.',
         takeOff: '¡Oya, a despegar!', flyAgain: 'Volar otra vez', shareX: '𝕏 Reta a tus amigos', joinTG: 'Únete a la Ginger Army en Telegram', hangar: '🛩️ Hangar', hgPlane: 'Aviones', hgPaint: 'Pintura', hgTrail: 'Estelas', hgPilot: 'Piloto', hgNote: 'Los skins solo cambian tu aspecto. Todos vuelan igual.', hgEquipped: '✓ Equipado', hgTap: 'Toca para equipar', hgBest: 'Se desbloquea con un récord de {n}', hgSoon: '{n} · tienda abre pronto', hgBuy: '{n} · toca para comprar', hgSignIn: 'Inicia sesión primero para guardar tu skin en tu cuenta.', hgOpening: 'Abriendo pago seguro…', hgChecking: 'Comprobando tu pago…', hgUnlocked: '¡Skin desbloqueado! Es tuyo para siempre 🎉', hgPayFail: 'Aún no confirmamos el pago. Si pagaste, el skin se desbloquea solo en unos minutos.', hgNew: '¡Nuevo skin desbloqueado: {name}! Abre el Hangar 🛩️', shareText: 'Hice {score} puntos y llegué al nivel {level} en General Ginger 🛩️\n\n¿Me superas? Derroca al Rey Jengibre 👑', loadingAcct: 'Cargando tu cuenta…', connecting: 'Conectando…',
         hint: '<span>↑ ↓</span> / <span>W S</span> subir y bajar • <span>Espacio</span> turbo picante<br>Móvil: arrastra arriba y abajo para volar • toca para el turbo',
         rotate: 'Consejo: gira el móvil para ver más', boss: 'EL REY JENGIBRE', cancel: 'Cancelar',
@@ -729,7 +729,7 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
         summary: 'General Ginger llegó al nivel {level}, voló {m} m y sumó {score}.{kings} Récord: {best}.',
         checking: 'Comprobando {pts} puntos con el servidor…', signToSave: '{pts} puntos. Inicia sesión para guardarlos la próxima vez.', practiceRes: '{pts} puntos (práctica, no se guardan)',
         saved: '✅ {n} puntos guardados · {total} en total', capped: ' (límite diario alcanzado)', verified: '✅ {n} puntos verificados y guardados', notSaved: '⚠️ Puntos no guardados: {reason}', srvErr: 'error del servidor',
-        shears: '¡Tijeras! ¡Ay!', bomb: '¡Bomba podrida! ¡Ay!', net: '¡Red pegajosa! Vas más lento', block: '¡Bloqueado por el chile!', jar: '¡+250 Especias!', pepper: '¡Escudo de chile!',
+        shears: '¡Impacto de RPG! ¡Ay!', bomb: '¡Impacto de misil! ¡Ay!', net: '¡Red pegajosa! Vas más lento', block: '¡Bloqueado por el chile!', jar: '¡+250 Especias!', pepper: '¡Escudo de chile!',
         heartFull: '¡Raíz de jengibre! +1 corazón', heart: '¡Raíz de jengibre!', cannon: '¡Cañón de especias! Derríbalos', bossIn: '¡Ataca el Rey Jengibre! (Nivel {level})',
         kingDown: '¡Rey derrotado! +{pts}', levelUp: '¡Nivel {level}! Las plagas atacan con más fuerza', go: '¡Ya!',
         soundOn: 'Sonido activado', soundOff: 'Sonido apagado', buzzOn: 'Vibración activada', buzzOff: 'Vibración apagada',
@@ -738,7 +738,7 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
       },
       pt: {
         loading: 'Carregando General Ginger…', loadFail: 'Não foi possível carregar o motor 3D. Verifique sua conexão e recarregue.',
-        intro: 'O exército de pragas do Rei Gengibre está atirando do chão! Desvie de bombas podres, tesouras e redes grudentas, pegue power-ups e derrube o dirigível do Rei para passar de nível.',
+        intro: 'O exército de pragas do Rei Gengibre está atirando do chão! Desvie de mísseis, RPGs e redes grudentas, pegue power-ups e derrube o dirigível do Rei para passar de nível.',
         takeOff: 'Oya, decolar!', flyAgain: 'Voar de novo', shareX: '𝕏 Desafie amigos', joinTG: 'Entre na Ginger Army no Telegram', hangar: '🛩️ Hangar', hgPlane: 'Aviões', hgPaint: 'Pintura', hgTrail: 'Rastros', hgPilot: 'Piloto', hgNote: 'Skins só mudam o visual. Todo mundo voa igual.', hgEquipped: '✓ Equipado', hgTap: 'Toque para equipar', hgBest: 'Desbloqueia com recorde de {n}', hgSoon: '{n} · loja abre em breve', hgBuy: '{n} · toque para comprar', hgSignIn: 'Entre primeiro para salvar sua skin na sua conta.', hgOpening: 'Abrindo pagamento seguro…', hgChecking: 'Verificando seu pagamento…', hgUnlocked: 'Skin desbloqueada! É sua para sempre 🎉', hgPayFail: 'Ainda não confirmamos o pagamento. Se você pagou, a skin desbloqueia sozinha em alguns minutos.', hgNew: 'Nova skin desbloqueada: {name}! Abra o Hangar 🛩️', shareText: 'Fiz {score} pontos e cheguei ao nível {level} no General Ginger 🛩️\n\nConsegue me vencer? Derrube o Rei Gengibre 👑', loadingAcct: 'Carregando sua conta…', connecting: 'Conectando…',
         hint: '<span>↑ ↓</span> / <span>W S</span> subir e descer • <span>Espaço</span> turbo apimentado<br>Celular: arraste para cima e para baixo para voar • toque para o turbo',
         rotate: 'Dica: vire o celular para ver mais', boss: 'O REI GENGIBRE', cancel: 'Cancelar',
@@ -760,7 +760,7 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
         summary: 'General Ginger chegou ao nível {level}, voou {m} m e fez {score}.{kings} Recorde: {best}.',
         checking: 'Conferindo {pts} pontos com o servidor…', signToSave: '{pts} pontos. Entre para salvá-los da próxima vez.', practiceRes: '{pts} pontos (treino, não salvos)',
         saved: '✅ {n} pontos salvos · {total} no total', capped: ' (limite diário atingido)', verified: '✅ {n} pontos verificados e salvos', notSaved: '⚠️ Pontos não salvos: {reason}', srvErr: 'erro no servidor',
-        shears: 'Tesouras! Ai!', bomb: 'Bomba podre! Ai!', net: 'Rede grudenta! Mais devagar', block: 'Bloqueado pela pimenta!', jar: '+250 Temperos!', pepper: 'Escudo de pimenta!',
+        shears: 'Atingido por RPG! Ai!', bomb: 'Atingido por míssil! Ai!', net: 'Rede grudenta! Mais devagar', block: 'Bloqueado pela pimenta!', jar: '+250 Temperos!', pepper: 'Escudo de pimenta!',
         heartFull: 'Raiz de gengibre! +1 coração', heart: 'Raiz de gengibre!', cannon: 'Canhão de temperos! Derrube tudo', bossIn: 'O Rei Gengibre ataca! (Nível {level})',
         kingDown: 'Rei derrotado! +{pts}', levelUp: 'Nível {level}! As pragas estão mais fortes', go: 'Vai!',
         soundOn: 'Som ligado', soundOff: 'Som desligado', buzzOn: 'Vibração ligada', buzzOff: 'Vibração desligada',
@@ -769,7 +769,7 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
       },
       ar: {
         loading: 'جارٍ تحميل General Ginger…', loadFail: 'تعذّر تحميل محرك الرسوم ثلاثية الأبعاد. تحقّق من اتصالك وأعد تحميل الصفحة.',
-        intro: 'جيش آفات ملك الزنجبيل يطلق النار من الأرض! تفادَ القنابل الفاسدة والمقصّات والشِّباك اللزجة، واجمع المكافآت، وأسقط منطاد الملك لتنتقل إلى المستوى التالي!',
+        intro: 'جيش آفات ملك الزنجبيل يطلق النار من الأرض! تفادَ الصواريخ وقذائف آر بي جي والشِّباك اللزجة، واجمع المكافآت، وأسقط منطاد الملك لتنتقل إلى المستوى التالي!',
         takeOff: 'هيّا، أقلِع!', flyAgain: 'طِر مجددًا', shareX: '𝕏 تحدَّ أصدقاءك', joinTG: 'انضم إلى جيش الزنجبيل على تيليجرام', hangar: '🛩️ الحظيرة', hgPlane: 'الطائرات', hgPaint: 'الطلاء', hgTrail: 'الأثر', hgPilot: 'الطيار', hgNote: 'الأشكال تغيّر المظهر فقط. الجميع يطير بالطريقة نفسها.', hgEquipped: '✓ مُجهَّز', hgTap: 'اضغط للتجهيز', hgBest: 'يُفتح عند أفضل نتيجة {n}', hgSoon: '{n} · المتجر يفتح قريبًا', hgBuy: '{n} · اضغط للشراء', hgSignIn: 'سجّل الدخول أولًا ليُحفظ الشكل في حسابك.', hgOpening: 'جارٍ فتح الدفع الآمن…', hgChecking: 'جارٍ التحقق من الدفع…', hgUnlocked: 'تم فتح الشكل! إنه لك إلى الأبد 🎉', hgPayFail: 'لم نؤكد الدفع بعد. إذا دفعت، سيُفتح الشكل تلقائيًا خلال دقائق.', hgNew: 'شكل جديد مفتوح: {name}! افتح الحظيرة 🛩️', shareText: 'سجّلت {score} نقطة ووصلت إلى المستوى {level} في General Ginger 🛩️\n\nهل تستطيع التفوق عليّ؟ أطِح بملك الزنجبيل 👑', loadingAcct: 'جارٍ تحميل حسابك…', connecting: 'جارٍ الاتصال…',
         hint: '<span>↑ ↓</span> / <span>W S</span> للصعود والنزول • <span>Space</span> دفعة التوابل<br>على الهاتف: اسحب للأعلى والأسفل للطيران • انقر للدفعة',
         rotate: 'نصيحة: أدِر هاتفك أفقيًا لرؤية أوسع', boss: 'ملك الزنجبيل', cancel: 'إلغاء',
@@ -791,7 +791,7 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
         summary: 'وصل General Ginger إلى المستوى {level}، وطار {m} م وسجّل {score}.{kings} الأفضل: {best}.',
         checking: 'جارٍ التحقق من {pts} نقطة مع الخادم…', signToSave: '{pts} نقطة. سجّل الدخول لحفظها في المرة القادمة.', practiceRes: '{pts} نقطة (تدريب، لم تُحفظ)',
         saved: '✅ حُفظت {n} نقطة · المجموع {total}', capped: ' (بلغت الحد اليومي)', verified: '✅ تم التحقق من {n} نقطة وحفظها', notSaved: '⚠️ لم تُحفظ النقاط: {reason}', srvErr: 'خطأ في الخادم',
-        shears: 'مقصّ! آخ!', bomb: 'قنبلة فاسدة! آخ!', net: 'شبكة لزجة! تباطأت', block: 'صدّها الفلفل!', jar: '+250 توابل!', pepper: 'درع الفلفل!',
+        shears: 'إصابة بصاروخ آر بي جي! آخ!', bomb: 'إصابة بصاروخ! آخ!', net: 'شبكة لزجة! تباطأت', block: 'صدّها الفلفل!', jar: '+250 توابل!', pepper: 'درع الفلفل!',
         heartFull: 'جذر زنجبيل! +1 قلب', heart: 'جذر زنجبيل!', cannon: 'مدفع التوابل! أسقطهم', bossIn: 'ملك الزنجبيل يهاجم! (المستوى {level})',
         kingDown: 'هُزم الملك! +{pts}', levelUp: 'المستوى {level}! الآفات تشتد', go: 'انطلق!',
         soundOn: 'الصوت مفعّل', soundOff: 'الصوت متوقف', buzzOn: 'الاهتزاز مفعّل', buzzOff: 'الاهتزاز متوقف',
@@ -1369,40 +1369,34 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
       c.userData.ph = ph;
       return c;
     }
-    function buildTrebuchet() {
+    function buildTrebuchet() { // now a rocket-launcher truck (kept the name: the game refers to it as unit type 0)
       const t = new THREE.Group();
-      const wood = gloss(0xa0682f, { shininess: 25 }), woodD = gloss(0x7a4a22, { shininess: 25 }), iron = gloss(0x3a3d42, { shininess: 90 }), gold = gloss(0xf2c230, { shininess: 100 });
-      // base with iron-banded beams and spoked wheels
-      [-0.55, 0.55].forEach(z => {
-        part(t, BOX, wood, [0, 0.42, z], [2.5, 0.2, 0.2]);
-        [-0.9, 0.9].forEach(x => {
-          part(t, new THREE.TorusGeometry(0.34, 0.07, 8, 20), woodD, [x, 0.36, z * 1.25], null, false);
-          for (let k = 0; k < 4; k++) part(t, BOX, woodD, [x, 0.36, z * 1.25], [0.05, 0.62, 0.05], false, [0, 0, k * Math.PI / 4]);
-          part(t, CYL, iron, [x, 0.36, z * 1.25], [0.09, 0.12, 0.09], false, [Math.PI / 2, 0, 0]);
-        });
-      });
-      [-0.9, 0, 0.9].forEach(x => part(t, BOX, wood, [x, 0.42, 0], [0.18, 0.18, 1.1], false));
-      // A-frame towers with iron caps
-      [-0.55, 0.55].forEach(z => {
-        part(t, CYL, woodD, [-0.38, 1.35, z], [0.09, 2.0, 0.09], false, [0, 0, -0.32]);
-        part(t, CYL, woodD, [0.38, 1.35, z], [0.09, 2.0, 0.09], false, [0, 0, 0.32]);
-        part(t, SPL, iron, [0, 2.25, z], [0.14, 0.14, 0.14], false);
-      });
-      part(t, CYL, iron, [0, 2.2, 0], [0.07, 1.3, 0.07], false, [Math.PI / 2, 0, 0]);
-      // throwing arm: tapered beam, riveted counterweight crate, sling with a rot bomb
-      const arm = new THREE.Group(); arm.position.set(0, 2.2, 0); t.add(arm);
-      part(arm, CYL, wood, [0.7, 0, 0], [0.09, 2.6, 0.09], 1.1, [0, 0, Math.PI / 2]);
-      part(arm, BOX, gloss(0x5a5f66, { shininess: 70 }), [-0.75, -0.28, 0], [0.55, 0.55, 0.55]);
-      [-1, 1].forEach(sd => part(arm, BOX, gold, [-0.75, -0.28, sd * 0.28], [0.57, 0.08, 0.02], false));
-      part(arm, CYL, toon(0x5a3a1c), [2.0, -0.12, 0], [0.22, 0.12, 0.22], 1.1);
-      part(arm, SPL, gloss(0x6b5a2a), [2.0, 0.02, 0], [0.18, 0.18, 0.18], false);
-      arm.rotation.z = -0.7;
-      // the King's pennant
-      rod(t, [-1.15, 0.5, -0.55], [-1.15, 2.1, -0.55], 0.03, woodD);
-      part(t, fin([[0, 0], [0.6, 0.15], [0, 0.32]], 0.02), gloss(0x1f8f3d), [-1.15, 1.75, -0.55], null, false);
-      part(t, SPL, gold, [-1.15, 2.12, -0.55], [0.06, 0.06, 0.06], false);
-      t.userData.arm = arm;
-      t.userData.crew = [caterpillar(t, 1.5, 0.95, 0), caterpillar(t, -1.05, 0.95, 2)];
+      const olive = gloss(0x5d6b2f, { shininess: 50 }), oliveD = gloss(0x434d22, { shininess: 50 }), tyre = gloss(0x1e1e22, { shininess: 15 }), metal = gloss(0x3a3d42, { shininess: 90 }), glass = new THREE.MeshPhongMaterial({ color: 0x9fd8ff, emissive: 0x224455, shininess: 120 });
+      // chassis + cab (cab faces the plane, toward -x)
+      part(t, BOX, oliveD, [0, 0.55, 0], [2.6, 0.22, 1.1]);
+      part(t, BOX, olive, [-0.95, 1.05, 0], [0.75, 0.85, 1.05]);
+      part(t, BOX, glass, [-1.33, 1.2, 0], [0.02, 0.35, 0.85], false);
+      [-1, 1].forEach(sd => part(t, BOX, glass, [-1.0, 1.2, sd * 0.53], [0.45, 0.3, 0.02], false));
+      part(t, BOX, metal, [-1.36, 0.72, 0], [0.06, 0.2, 0.95], false); // bumper
+      [-1, 1].forEach(sd => part(t, SPL, gloss(0xffe9a0, { emissive: 0x665522 }), [-1.37, 0.85, sd * 0.38], [0.04, 0.08, 0.08], false)); // headlights
+      // wheels
+      [-0.95, 0.45, 0.95].forEach(x => [-1, 1].forEach(sd => {
+        part(t, CYL, tyre, [x, 0.32, sd * 0.56], [0.32, 0.22, 0.32], 1.08, [Math.PI / 2, 0, 0]);
+        part(t, CYL, olive, [x, 0.32, sd * 0.68], [0.15, 0.03, 0.15], false, [Math.PI / 2, 0, 0]);
+      }));
+      // rocket pod on a turntable; arm = the pod's pivot, aimed up toward the plane
+      part(t, CYL, metal, [0.45, 0.75, 0], [0.42, 0.18, 0.42], false);
+      const arm = new THREE.Group(); arm.position.set(0.45, 1.0, 0); t.add(arm);
+      part(arm, BOX, olive, [-0.15, 0.2, 0], [1.5, 0.55, 0.8]);
+      for (let r = 0; r < 2; r++) for (let c = 0; c < 3; c++) {
+        part(arm, CYL, metal, [-0.9, 0.08 + r * 0.24, -0.24 + c * 0.24], [0.09, 0.04, 0.09], false, [0, 0, Math.PI / 2]);
+        part(arm, CONE, gloss(0xc1121f), [-0.93, 0.08 + r * 0.24, -0.24 + c * 0.24], [0.06, 0.1, 0.06], false, [0, 0, Math.PI / 2]);
+      }
+      part(arm, BOX, gloss(0xf2c230), [-0.15, 0.48, 0.41], [1.2, 0.08, 0.02], false); // warning stripe
+      arm.rotation.z = -0.55;
+      const muzzle = new THREE.Object3D(); muzzle.position.set(-1.0, 0.2, 0); arm.add(muzzle);
+      t.userData.arm = arm; t.userData.muzzle = muzzle; t.userData.kind = 0;
+      t.userData.crew = [caterpillar(t, 1.75, 0.95, 0), caterpillar(t, -1.85, 0.95, 2)];
       return t;
     }
     function buildGrub() {
@@ -1424,9 +1418,15 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
       [-1, 1].forEach(sd => part(head, CONE, gloss(0x3a1a0a), [-0.18, -0.12, sd * 0.08 + 0.1], [0.035, 0.12, 0.035], false, [0, 0, 2.6])); // mandibles
       part(head, CYL, gloss(0xd62828), [0, 0.13, 0], [0.26, 0.07, 0.26], false);
       part(head, SPL, gloss(0xd62828), [0.25, 0.12, -0.05], [0.1, 0.05, 0.05], false);
-      // shiny shears in hand
-      part(body, BOX, gloss(0xd9dde2, { shininess: 120, specular: 0xffffff }), [-0.1, 1.25, 0.25], [0.5, 0.05, 0.08], false, [0, 0, 0.6]);
-      g.userData.body = body;
+      // RPG launcher on the shoulder, aimed up at the plane
+      const rpg = new THREE.Group(); rpg.position.set(-0.3, 1.18, 0.28); rpg.rotation.z = -0.55; body.add(rpg);
+      part(rpg, CYL, gloss(0x4a5a2a, { shininess: 60 }), [0, 0, 0], [0.07, 1.1, 0.07], 1.12, [0, 0, Math.PI / 2]);
+      part(rpg, CYL, gloss(0x2e3326), [0.1, -0.1, 0], [0.04, 0.18, 0.04], false);
+      part(rpg, SPH, gloss(0x6b7a3a, { shininess: 70 }), [-0.62, 0, 0], [0.16, 0.11, 0.11], 1.1);
+      part(rpg, CONE, gloss(0x6b7a3a, { shininess: 70 }), [-0.82, 0, 0], [0.09, 0.14, 0.09], false, [0, 0, Math.PI / 2]);
+      const muzzle = new THREE.Object3D(); muzzle.position.set(-0.7, 0, 0); rpg.add(muzzle);
+      const back = new THREE.Object3D(); back.position.set(0.6, 0, 0); rpg.add(back);
+      g.userData.body = body; g.userData.muzzle = muzzle; g.userData.back = back; g.userData.kind = 1;
       return g;
     }
     function buildNematode() {
@@ -1449,23 +1449,32 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
     }
     function buildShot(k) {
       const g = new THREE.Group();
-      if (k === 0) { // rot bomb
-        part(g, SPH, gloss(0x7a6a2a, { shininess: 60 }), [0, 0, 0], [0.48, 0.48, 0.48]);
-        [[0.3, 0.2, 0.3], [-0.25, 0.1, 0.35], [0.05, -0.3, 0.35], [0.1, 0.35, -0.3]].forEach(p => part(g, SPL, toon(0x3e7a2a), p, [0.12, 0.12, 0.12], false));
-        part(g, CYL, toon(0x3a2a1a), [0, 0.5, 0], [0.05, 0.2, 0.05], false);
-      } else if (k === 1) { // shears
-        const steel = gloss(0xd9dde2, { shininess: 120, specular: 0xffffff }), handle = gloss(0xc1121f);
-        part(g, BOX, steel, [0.25, 0, 0], [0.9, 0.08, 0.12], 1.12, [0, 0, 0.35]);
-        part(g, BOX, steel, [0.25, 0, 0], [0.9, 0.08, 0.12], 1.12, [0, 0, -0.35]);
-        part(g, new THREE.TorusGeometry(0.14, 0.05, 6, 12), handle, [-0.35, 0.18, 0], null, false);
-        part(g, new THREE.TorusGeometry(0.14, 0.05, 6, 12), handle, [-0.35, -0.18, 0], null, false);
-      } else if (k === 3) { // royal spice bomb from the King's airship
-        part(g, SPH, toon(0xc1121f, { emissive: 0x4a0000 }), [0, 0, 0], [0.42, 0.42, 0.42]);
-        for (let i = 0; i < 5; i++) {
-          const a = i / 5 * Math.PI * 2;
-          part(g, CONE, toon(0xf2c230, { emissive: 0x3a2a00 }), [Math.cos(a) * 0.3, 0.35, Math.sin(a) * 0.3], [0.08, 0.22, 0.08], false);
-        }
-        g.add(glowSprite('rgba(255,90,40,0.7)', 1.6));
+      const flame = () => { const f = new THREE.Group(); part(f, CONE, new THREE.MeshBasicMaterial({ color: 0xffd23f }), [0, 0, 0], [0.12, 0.42, 0.12], false, [0, 0, Math.PI / 2]);
+        part(f, CONE, new THREE.MeshBasicMaterial({ color: 0xff6a1a }), [-0.08, 0, 0], [0.08, 0.3, 0.08], false, [0, 0, Math.PI / 2]); f.add(glowSprite('rgba(255,150,40,0.85)', 1.1)); return f; };
+      if (k === 0) { // artillery missile from the launcher truck
+        const body = gloss(0xe8e4d8, { shininess: 90 }), nose = gloss(0xc1121f, { shininess: 100 }), fins = gloss(0x55602a);
+        part(g, CYL, body, [0, 0, 0], [0.14, 0.9, 0.14], 1.12, [0, 0, Math.PI / 2]);
+        part(g, CONE, nose, [0.6, 0, 0], [0.14, 0.32, 0.14], 1.1, [0, 0, -Math.PI / 2]);
+        part(g, CYL, fins, [0.22, 0, 0], [0.145, 0.08, 0.145], false, [0, 0, Math.PI / 2]);
+        for (let i = 0; i < 4; i++) part(g, BOX, fins, [-0.38, Math.cos(i * Math.PI / 2) * 0.17, Math.sin(i * Math.PI / 2) * 0.17], [0.24, 0.14, 0.03], false, [i * Math.PI / 2, 0, 0]);
+        const fl = flame(); fl.position.x = -0.62; g.add(fl);
+        g.userData.trail = 0xd8d2c8;
+      } else if (k === 1) { // RPG rocket
+        const olive = gloss(0x6b7a3a, { shininess: 70 }), dark = gloss(0x2e3326, { shininess: 60 });
+        part(g, SPH, olive, [0.28, 0, 0], [0.24, 0.15, 0.15], 1.1);                       // warhead bulb
+        part(g, CONE, olive, [0.56, 0, 0], [0.13, 0.2, 0.13], 1.1, [0, 0, -Math.PI / 2]);  // pointed tip
+        part(g, CYL, dark, [-0.15, 0, 0], [0.06, 0.55, 0.06], false, [0, 0, Math.PI / 2]); // motor tube
+        for (let i = 0; i < 4; i++) part(g, BOX, dark, [-0.38, Math.cos(i * Math.PI / 2) * 0.1, Math.sin(i * Math.PI / 2) * 0.1], [0.16, 0.12, 0.02], false, [i * Math.PI / 2, 0, 0]);
+        const fl = flame(); fl.position.x = -0.5; fl.scale.setScalar(0.8); g.add(fl);
+        g.userData.trail = 0xeeeeee;
+      } else if (k === 3) { // the King's royal bomb: red with gold fins
+        const red = gloss(0xc1121f, { emissive: 0x3a0000, shininess: 100 }), gold = gloss(0xf2c230, { emissive: 0x2a1e00, shininess: 110 });
+        part(g, SPH, red, [0.05, 0, 0], [0.42, 0.26, 0.26], 1.08);
+        part(g, CYL, gold, [0.12, 0, 0], [0.27, 0.07, 0.27], false, [0, 0, Math.PI / 2]);
+        part(g, CYL, gold, [-0.42, 0, 0], [0.08, 0.3, 0.08], false, [0, 0, Math.PI / 2]);
+        for (let i = 0; i < 4; i++) part(g, BOX, gold, [-0.5, Math.cos(i * Math.PI / 2) * 0.15, Math.sin(i * Math.PI / 2) * 0.15], [0.22, 0.22, 0.03], false, [i * Math.PI / 2, 0, 0]);
+        g.add(glowSprite('rgba(255,90,40,0.6)', 1.4));
+        g.userData.trail = 0x8a7a70;
       } else { // sticky net
         const web = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.85 });
         g.add(new THREE.Mesh(new THREE.TorusGeometry(0.7, 0.04, 6, 24), web));
@@ -2046,6 +2055,7 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
       }
     }
 
+    const _mzv = new THREE.Vector3();
     /* ================= Events from the simulation ================= */
     function handleEvents() {
       for (const e of sim.events) {
@@ -2070,7 +2080,19 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
         else if (e.t === 'level') { setTimeout(() => { if (state === 'playing') toast(t('levelUp', { level: e.level }), 2); }, 1600); }
         else if (e.t === 'crash') { smoke(sim.x, sim.y, 0, 12, 0.8, 0x6a5a52); burst(sim.x, sim.y, [0xf59e0b, 0xfde047, 0x1f8f3d, 0xc1121f], 40, 9); shake = 0.9; }
         else if (e.t === 'boost') { for (let i = 0; i < 14; i++) emit(sim.x - 1.5, sim.y + rand(-0.3, 0.3), rand(-0.4, 0.4), rand(-8, -4), rand(-1, 1), rand(-1, 1), i % 2 ? 0xf59e0b : 0xfde047, rand(0.3, 0.6), rand(0.1, 0.2), 1); }
-        else if (e.t === 'fire') { const m = unitMeshes.get(e.id); if (m) for (let i = 0; i < 6; i++) emit(m.position.x, 0.4, 0.5, rand(-1.5, 1.5), rand(1, 3), rand(-0.5, 0.5), 0xb08a5a, 0.5, 0.15, 4); }
+        else if (e.t === 'fire') {
+          const m = unitMeshes.get(e.id);
+          if (m) {
+            for (let i = 0; i < 5; i++) emit(m.position.x, 0.4, 0.5, rand(-1.5, 1.5), rand(1, 3), rand(-0.5, 0.5), 0xb08a5a, 0.5, 0.15, 4);
+            const mz = m.userData.muzzle;
+            if (mz) {
+              mz.getWorldPosition(_mzv);
+              for (let i = 0; i < 8; i++) emit(_mzv.x, _mzv.y, _mzv.z, rand(-2.5, 0.5), rand(-0.5, 2), rand(-0.8, 0.8), i % 3 ? 0xffd23f : 0xff6a1a, rand(0.15, 0.3), rand(0.12, 0.22), 0);
+              smoke(_mzv.x, _mzv.y, _mzv.z, 2, 0.35, 0xbdb6ac);
+              if (m.userData.back) { m.userData.back.getWorldPosition(_mzv); smoke(_mzv.x, _mzv.y, _mzv.z, 3, 0.4, 0xd8d2c8); }
+            }
+          }
+        }
       }
       sim.events.length = 0;
     }
@@ -2092,7 +2114,7 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
         const since = (s.tick - u.fired) * G.DT;
         if (u.k === 0) {
           const a = m.userData.arm;
-          a.rotation.z = since < 0.25 ? lerp(-0.7, 2.2, since / 0.25) : since < 1.2 ? lerp(2.2, -0.7, (since - 0.25) / 0.95) : -0.7;
+          a.rotation.z = -0.55 + (since < 0.35 ? 0.18 * (1 - since / 0.35) : 0); a.position.x = 0.45 + (since < 0.2 ? 0.15 * (1 - since / 0.2) : 0); // launcher recoil
           m.userData.crew.forEach(c => { c.position.y = Math.abs(Math.sin(time * 6 + c.userData.ph)) * 0.08; });
         } else if (u.k === 1) {
           const b = m.userData.body;
@@ -2104,9 +2126,11 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
       });
       sync(shotMeshes, s.shots, sh => buildShot(sh.k), (m, sh) => {
         m.position.set(sh.x, sh.y, 0);
-        if (sh.k === 0) { m.rotation.z += dt * 4; if (Math.random() < 0.3) emit(sh.x, sh.y, 0, 0, -0.5, 0, 0x3e7a2a, 0.4, 0.1, 1); }
-        else if (sh.k === 1) m.rotation.z += dt * 16;
-        else if (sh.k === 3) { m.rotation.y += dt * 5; if (Math.random() < 0.3) emit(sh.x, sh.y, 0, 0, 0, 0, 0xff5a28, 0.3, 0.12, 0); }
+        if (sh.k !== 2) { // missiles, RPGs and bombs point where they're flying and leave smoke
+          m.rotation.z = Math.atan2(sh.vy, sh.vx);
+          const tr = m.userData.trail, back = 0.55;
+          if (tr && Math.random() < dt * 40) emit(sh.x - Math.cos(m.rotation.z) * back, sh.y - Math.sin(m.rotation.z) * back, 0, rand(-0.3, 0.3), rand(0.2, 0.7), rand(-0.2, 0.2), tr, rand(0.4, 0.7), rand(0.12, 0.22), -0.5);
+        }
         else { m.rotation.z += dt * 2; m.rotation.y = 0.6; }
       });
       sync(itemMeshes, s.items, it => itemBuilders[it.k](), (m, it) => {
@@ -2215,6 +2239,7 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
     const chime = notes => notes.forEach((n, i) => tone(n, 0.16, 'triangle', 0.12, 0, i * 0.07));
     const SND = {
       pew() { if (!ready('pew', 0.07)) return; tone(1500, 0.08, 'square', 0.035, 520); noise(0.05, 0.05, 7000, 2500, 'highpass'); },
+      launch(v) { if (!ready('launch', 0.1)) return; thump(140, 55, 0.18, 0.3 * v); noise(0.5, 0.18 * v, 300, 2600, 'bandpass', 0, 1.5); noise(0.08, 0.12 * v, 6000, 2000, 'highpass'); },
       toss(v) { if (!ready('toss', 0.12)) return; noise(0.22, 0.05 * v, 350, 1900, 'bandpass', 0, 2); },
       pop(combo) { // an enemy shot blown out of the air; pitch climbs with the combo
         const up = Math.pow(2, Math.min(combo, 12) / 12);
@@ -2321,7 +2346,7 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
         popText(e.x, e.y, '+50');
         if (combo >= 3) { popText(e.x, e.y + 1.4, t('combo', { n: combo }), 'combo'); buzz(12); }
       }
-      else if (e.t === 'fire') { const m = unitMeshes.get(e.id); if (m && sim) { const dx = Math.abs(m.position.x - sim.x); SND.toss(Math.max(0.25, 1 - dx / 30)); } }
+      else if (e.t === 'fire') { const m = unitMeshes.get(e.id); if (m && sim) { const v = Math.max(0.25, 1 - Math.abs(m.position.x - sim.x) / 30); if (m.userData.muzzle) SND.launch(v); else SND.toss(v); } }
       else if (e.t === 'boost') { buzz(25); noise(0.45, 0.22, 400, 2400, 'bandpass'); fovKick = 3; }
       else if (e.t === 'bossIn') { buzz([100, 60, 100, 60, 220]); SND.siren(); lightning = 0.25; }
       else if (e.t === 'bossFire') { buzz(18); SND.bossFire(); if (Math.random() < 0.25) lightning = 0.18; }

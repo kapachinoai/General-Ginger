@@ -19,8 +19,7 @@
     canvas { display: block; width: 100%; height: 100%; touch-action: none; }
     /* cinematic vignette + faint film grain over the battlefield */
     #stage::after { content: ''; position: absolute; inset: 0; pointer-events: none;
-      background: radial-gradient(ellipse at 50% 45%, rgba(0,0,0,0) 55%, rgba(0,0,0,0.55) 100%),
-        repeating-linear-gradient(0deg, rgba(255,255,255,0.025) 0 1px, rgba(0,0,0,0) 1px 3px); }
+      background: radial-gradient(ellipse at 50% 45%, rgba(0,0,0,0) 65%, rgba(0,0,0,0.22) 100%); }
 
     #hud {
       position: fixed; top: 0; left: 0; right: 0;
@@ -43,7 +42,7 @@
       display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
       padding: 0 20px calc(36px + env(safe-area-inset-bottom));
       text-align: center; pointer-events: none;
-      background: linear-gradient(180deg, rgba(8,6,4,0) 35%, rgba(8,6,4,0.82) 100%);
+      background: linear-gradient(180deg, rgba(8,6,4,0) 40%, rgba(12,8,30,0.7) 100%);
       transition: opacity 0.3s;
     }
     #overlay.hidden { opacity: 0; }
@@ -51,9 +50,13 @@
     #overlay h1 {
       font-size: clamp(1.7rem, 6.5vw, 2.7rem); line-height: 1.05; margin-bottom: 6px;
       font-family: 'Black Ops One', 'Oswald', sans-serif; font-weight: 400; letter-spacing: 0.04em; text-transform: uppercase;
-      color: #ffb547; text-shadow: 0 2px 0 #3a1e05, 0 0 24px rgba(255,120,30,0.45), 0 6px 18px rgba(0,0,0,0.8);
+      color: #ffd23f; background: linear-gradient(180deg, #fff3a8 0%, #ffd23f 45%, #ff8a1a 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+      -webkit-text-stroke: 2px #4a1a05; paint-order: stroke fill;
+      filter: drop-shadow(0 4px 0 #4a1a05) drop-shadow(0 8px 14px rgba(0,0,0,0.45));
+      font-size: clamp(2rem, 8vw, 3.3rem);
     }
-    #overlay p { color: #f1f5f9; font-size: 1rem; margin-bottom: 14px; max-width: 520px; text-shadow: 0 2px 6px rgba(0,0,0,0.8); line-height: 1.4; }
+    #overlay p { color: #fff; font-size: 1rem; margin-bottom: 14px; max-width: 520px; line-height: 1.4; text-shadow: 0 1px 2px rgba(0,0,0,0.9);
+      background: rgba(20,12,40,0.55); padding: 8px 14px; border-radius: 12px; backdrop-filter: blur(3px); }
     #result { font-size: 0.95rem; color: #fef3c7; margin: -6px 0 14px; min-height: 1.2em; }
     #go-btn {
       pointer-events: auto;
@@ -121,6 +124,16 @@
 
     #loading { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; color: #ffb547; font-weight: 700; padding: 20px; text-align: center; }
     #flash { position: fixed; inset: 0; background: #ef4444; opacity: 0; pointer-events: none; }
+    #flash-w { position: fixed; inset: 0; background: #fff6dc; opacity: 0; pointer-events: none; }
+    #lowhp { position: fixed; inset: 0; pointer-events: none; opacity: 0; background: radial-gradient(ellipse at center, transparent 55%, rgba(200,20,10,0.55) 100%); }
+    #pops { position: fixed; inset: 0; pointer-events: none; overflow: hidden; }
+    .pop { position: absolute; transform: translate(-50%, -50%); font-family: 'Black Ops One', Oswald, sans-serif; font-size: clamp(0.9rem, 3vw, 1.25rem); color: #ffe08a;
+      text-shadow: 0 2px 0 #3a1e05, 0 0 10px rgba(255,140,0,0.55); white-space: nowrap; animation: popUp 0.9s ease-out forwards; }
+    .pop.big { font-size: clamp(1.4rem, 6vw, 2.4rem); color: #fff3c4; animation-duration: 1.4s; }
+    .pop.combo { color: #ff8a3d; font-size: clamp(1rem, 3.6vw, 1.5rem); }
+    .pop.gold { color: #ffd23f; }
+    @keyframes popUp { 0% { opacity: 0; transform: translate(-50%, -30%) scale(0.6); } 15% { opacity: 1; transform: translate(-50%, -60%) scale(1.15); }
+      30% { transform: translate(-50%, -70%) scale(1); } 100% { opacity: 0; transform: translate(-50%, -160%) scale(1); } }
     #toast {
       position: fixed; top: 24%; left: 50%; transform: translateX(-50%);
       font-weight: 900; font-size: clamp(1.1rem, 4.5vw, 1.6rem); color: #ffb547; pointer-events: none;
@@ -217,6 +230,9 @@
   <div id="count" hidden></div>
   <div id="toast"></div>
   <div id="flash"></div>
+  <div id="flash-w"></div>
+  <div id="lowhp"></div>
+  <div id="pops"></div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
@@ -643,7 +659,7 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
         tagTitle: 'Create your player', tagText: 'Pick your gamer tag (3 to 15 letters, numbers or underscores) and a password with at least 8 characters.', save: 'Save',
         pwTitle: 'Set your password', pwText: 'Choose a password with at least 8 characters. Next time, sign in with {tag} and this password.', yourTag: 'your gamer tag', savePw: 'Save password',
         enterTagPw: 'Enter your gamer tag and password.', noConn: 'No connection. Try again.', signInFail: 'Could not sign you in. Try again.', welcomeBack: 'Welcome back, {tag}!',
-        badEmail: 'Enter a valid email address.', sendFail: 'Could not send the email. Try again.', linkExpired: "That link has expired or was already used. Enter your email to get a new one, and open the newest email.", tapLink: 'Tap the link in the email, or enter the 6-digit code if it has one.',
+        badEmail: 'Enter a valid email address.', sendFail: 'Could not send the email. Try again.', linkExpired: "That link has expired or was already used. Enter your email to get a new one, and open the newest email.", combo: "COMBO ×{n}!", tapLink: 'Tap the link in the email, or enter the 6-digit code if it has one.',
         codeBad: 'That code is wrong or has expired. Check it, or press Cancel and send a new one.', tagRule: 'Gamer tag: use 3 to 15 letters, numbers or underscores.',
         welcome: 'Welcome, {tag}! Tap Take Off to fly', pwSaved: 'Password saved', pwShort: 'Use at least 8 characters for your password.', pwLong: 'That password is too long.', pwFail: 'Could not save your password. Try again.',
         stNoSign: 'Not signed in: practice', stOffline: 'Offline: practice mode', stPractice: 'Practice mode', stSignToSave: 'Practice: sign in to save', stOffline2: 'Offline: practice',
@@ -674,7 +690,7 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
         tagTitle: 'Crée ton joueur', tagText: 'Choisis ton pseudo (3 à 15 lettres, chiffres ou tirets bas) et un mot de passe d’au moins 8 caractères.', save: 'Enregistrer',
         pwTitle: 'Choisis ton mot de passe', pwText: 'Au moins 8 caractères. La prochaine fois, connecte-toi avec {tag} et ce mot de passe.', yourTag: 'ton pseudo', savePw: 'Enregistrer',
         enterTagPw: 'Entre ton pseudo et ton mot de passe.', noConn: 'Pas de connexion. Réessaie.', signInFail: 'Connexion impossible. Réessaie.', welcomeBack: 'Bon retour, {tag} !',
-        badEmail: 'Entre une adresse e-mail valide.', sendFail: "Impossible d'envoyer l'e-mail. Réessaie.", linkExpired: "Ce lien a expiré ou a déjà été utilisé. Entre ton e-mail pour en recevoir un nouveau, et ouvre le plus récent.", tapLink: "Touche le lien dans l'e-mail, ou entre le code à 6 chiffres s'il y en a un.",
+        badEmail: 'Entre une adresse e-mail valide.', sendFail: "Impossible d'envoyer l'e-mail. Réessaie.", linkExpired: "Ce lien a expiré ou a déjà été utilisé. Entre ton e-mail pour en recevoir un nouveau, et ouvre le plus récent.", combo: "COMBO ×{n} !", tapLink: "Touche le lien dans l'e-mail, ou entre le code à 6 chiffres s'il y en a un.",
         codeBad: 'Ce code est faux ou a expiré. Vérifie-le, ou appuie sur Annuler pour en recevoir un nouveau.', tagRule: 'Pseudo : 3 à 15 lettres, chiffres ou tirets bas.',
         welcome: 'Bienvenue, {tag} ! Touche Décollage pour voler', pwSaved: 'Mot de passe enregistré', pwShort: 'Ton mot de passe doit faire au moins 8 caractères.', pwLong: 'Ce mot de passe est trop long.', pwFail: "Impossible d'enregistrer ton mot de passe. Réessaie.",
         stNoSign: 'Non connecté : entraînement', stOffline: 'Hors ligne : entraînement', stPractice: 'Entraînement', stSignToSave: 'Entraînement : connecte-toi pour enregistrer', stOffline2: 'Hors ligne : entraînement',
@@ -705,7 +721,7 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
         tagTitle: 'Crea tu jugador', tagText: 'Elige tu nombre de jugador (de 3 a 15 letras, números o guiones bajos) y una contraseña de al menos 8 caracteres.', save: 'Guardar',
         pwTitle: 'Elige tu contraseña', pwText: 'Al menos 8 caracteres. La próxima vez, entra con {tag} y esta contraseña.', yourTag: 'tu nombre de jugador', savePw: 'Guardar contraseña',
         enterTagPw: 'Escribe tu nombre de jugador y tu contraseña.', noConn: 'Sin conexión. Inténtalo de nuevo.', signInFail: 'No pudimos iniciar tu sesión. Inténtalo de nuevo.', welcomeBack: '¡Hola de nuevo, {tag}!',
-        badEmail: 'Escribe un correo válido.', sendFail: 'No se pudo enviar el correo. Inténtalo de nuevo.', linkExpired: "Ese enlace caducó o ya se usó. Escribe tu correo para recibir uno nuevo y abre el más reciente.", tapLink: 'Toca el enlace del correo o escribe el código de 6 cifras si lo tiene.',
+        badEmail: 'Escribe un correo válido.', sendFail: 'No se pudo enviar el correo. Inténtalo de nuevo.', linkExpired: "Ese enlace caducó o ya se usó. Escribe tu correo para recibir uno nuevo y abre el más reciente.", combo: "¡COMBO ×{n}!", tapLink: 'Toca el enlace del correo o escribe el código de 6 cifras si lo tiene.',
         codeBad: 'Ese código es incorrecto o ha caducado. Revísalo o pulsa Cancelar para recibir otro.', tagRule: 'Nombre de jugador: de 3 a 15 letras, números o guiones bajos.',
         welcome: '¡Bienvenido, {tag}! Toca Despegar para volar', pwSaved: 'Contraseña guardada', pwShort: 'Usa al menos 8 caracteres en tu contraseña.', pwLong: 'Esa contraseña es demasiado larga.', pwFail: 'No se pudo guardar tu contraseña. Inténtalo de nuevo.',
         stNoSign: 'Sin sesión: práctica', stOffline: 'Sin conexión: modo práctica', stPractice: 'Modo práctica', stSignToSave: 'Práctica: inicia sesión para guardar', stOffline2: 'Sin conexión: práctica',
@@ -736,7 +752,7 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
         tagTitle: 'Crie seu jogador', tagText: 'Escolha seu nome de jogador (3 a 15 letras, números ou sublinhados) e uma senha com pelo menos 8 caracteres.', save: 'Salvar',
         pwTitle: 'Defina sua senha', pwText: 'Pelo menos 8 caracteres. Da próxima vez, entre com {tag} e esta senha.', yourTag: 'seu nome de jogador', savePw: 'Salvar senha',
         enterTagPw: 'Digite seu nome de jogador e senha.', noConn: 'Sem conexão. Tente de novo.', signInFail: 'Não foi possível entrar. Tente de novo.', welcomeBack: 'Bem-vindo de volta, {tag}!',
-        badEmail: 'Digite um e-mail válido.', sendFail: 'Não foi possível enviar o e-mail. Tente de novo.', linkExpired: "Esse link expirou ou já foi usado. Digite seu e-mail para receber um novo e abra o mais recente.", tapLink: 'Toque no link do e-mail ou digite o código de 6 dígitos, se houver.',
+        badEmail: 'Digite um e-mail válido.', sendFail: 'Não foi possível enviar o e-mail. Tente de novo.', linkExpired: "Esse link expirou ou já foi usado. Digite seu e-mail para receber um novo e abra o mais recente.", combo: "COMBO ×{n}!", tapLink: 'Toque no link do e-mail ou digite o código de 6 dígitos, se houver.',
         codeBad: 'Esse código está errado ou expirou. Confira ou toque em Cancelar para receber outro.', tagRule: 'Nome de jogador: 3 a 15 letras, números ou sublinhados.',
         welcome: 'Bem-vindo, {tag}! Toque em Decolar para voar', pwSaved: 'Senha salva', pwShort: 'Use pelo menos 8 caracteres na senha.', pwLong: 'Essa senha é longa demais.', pwFail: 'Não foi possível salvar sua senha. Tente de novo.',
         stNoSign: 'Sem login: treino', stOffline: 'Offline: modo treino', stPractice: 'Modo treino', stSignToSave: 'Treino: entre para salvar', stOffline2: 'Offline: treino',
@@ -767,7 +783,7 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
         tagTitle: 'أنشئ لاعبك', tagText: 'اختر اسم لاعب (من 3 إلى 15 حرفًا لاتينيًا أو رقمًا أو شرطة سفلية) وكلمة مرور من 8 أحرف على الأقل.', save: 'حفظ',
         pwTitle: 'عيّن كلمة المرور', pwText: '8 أحرف على الأقل. في المرة القادمة سجّل الدخول باسم {tag} وكلمة المرور هذه.', yourTag: 'اسم اللاعب', savePw: 'حفظ كلمة المرور',
         enterTagPw: 'أدخل اسم اللاعب وكلمة المرور.', noConn: 'لا يوجد اتصال. حاول مرة أخرى.', signInFail: 'تعذّر تسجيل دخولك. حاول مرة أخرى.', welcomeBack: 'مرحبًا بعودتك، {tag}!',
-        badEmail: 'أدخل بريدًا إلكترونيًا صحيحًا.', sendFail: 'تعذّر إرسال البريد. حاول مرة أخرى.', linkExpired: "انتهت صلاحية هذا الرابط أو تم استخدامه. أدخل بريدك للحصول على رابط جديد وافتح أحدث رسالة.", tapLink: 'انقر على الرابط في البريد، أو أدخل الرمز المكوّن من 6 أرقام إن وُجد.',
+        badEmail: 'أدخل بريدًا إلكترونيًا صحيحًا.', sendFail: 'تعذّر إرسال البريد. حاول مرة أخرى.', linkExpired: "انتهت صلاحية هذا الرابط أو تم استخدامه. أدخل بريدك للحصول على رابط جديد وافتح أحدث رسالة.", combo: "كومبو ×{n}!", tapLink: 'انقر على الرابط في البريد، أو أدخل الرمز المكوّن من 6 أرقام إن وُجد.',
         codeBad: 'هذا الرمز خاطئ أو منتهي الصلاحية. تحقّق منه، أو اضغط إلغاء واطلب رمزًا جديدًا.', tagRule: 'اسم اللاعب: من 3 إلى 15 حرفًا لاتينيًا أو رقمًا أو شرطة سفلية.',
         welcome: 'أهلًا {tag}! اضغط «أقلِع» لتطير', pwSaved: 'تم حفظ كلمة المرور', pwShort: 'استخدم 8 أحرف على الأقل لكلمة المرور.', pwLong: 'كلمة المرور طويلة جدًا.', pwFail: 'تعذّر حفظ كلمة المرور. حاول مرة أخرى.',
         stNoSign: 'غير مسجّل: تدريب', stOffline: 'غير متصل: وضع التدريب', stPractice: 'وضع التدريب', stSignToSave: 'تدريب: سجّل الدخول للحفظ', stOffline2: 'غير متصل: تدريب',
@@ -847,12 +863,12 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
     /* ================= Renderer, scene, camera ================= */
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
-    renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.2;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.05;
     document.getElementById('stage').appendChild(renderer.domElement);
 
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x8a6a55);
-    scene.fog = new THREE.Fog(0x8a6a55, 26, 95);
+    scene.background = new THREE.Color(0xbfe6ff);
+    scene.fog = new THREE.Fog(0xbfe6ff, 60, 190);
 
     const FOV = 45, NEED_W = 10.5, NEED_H = 8.2;
     const camera = new THREE.PerspectiveCamera(FOV, 1, 0.1, 300);
@@ -870,8 +886,8 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
     window.addEventListener('resize', resize);
     resize();
 
-    scene.add(new THREE.HemisphereLight(0xffe2c4, 0x2b2418, 1.0));
-    const sun = new THREE.DirectionalLight(0xffb070, 1.1);
+    scene.add(new THREE.HemisphereLight(0xe3f4ff, 0x6b5536, 1.1));
+    const sun = new THREE.DirectionalLight(0xfff1d0, 1.3);
     sun.position.set(-6, 12, 10);
     scene.add(sun);
 
@@ -882,8 +898,8 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
       return t;
     })();
     const mats = {};
-    // War-zone look: real shading, muted gritty colours (was bright cartoon toon shading)
-    const grit = c => { const col = new THREE.Color(c); col.offsetHSL(0, -0.32, -0.08); return col; };
+    // V2 look: bright, saturated "premium cartoon" colours (like the top CrazyGames hits)
+    const grit = c => { const col = new THREE.Color(c); col.offsetHSL(0, 0.22, -0.02); return col; };
     const toon = (c, extra) => {
       const k = c + JSON.stringify(extra || {});
       if (mats[k]) return mats[k];
@@ -891,7 +907,7 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
       delete o.gradientMap;
       return (mats[k] = new THREE.MeshLambertMaterial(Object.assign(o, { color: grit(c) })));
     };
-    const outlineMat = new THREE.MeshBasicMaterial({ color: 0x0a0806, side: THREE.BackSide, transparent: true, opacity: 0.35 });
+    const outlineMat = new THREE.MeshBasicMaterial({ color: 0x2a1406, side: THREE.BackSide });
     const geos = {};
     const GEO = (k, f) => geos[k] || (geos[k] = f());
     const SPH = GEO('sph', () => new THREE.SphereGeometry(1, 20, 14));
@@ -1316,9 +1332,9 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
     }
 
     /* ================= World scenery ================= */
-    const ground = new THREE.Mesh(new THREE.PlaneGeometry(400, 160), new THREE.MeshLambertMaterial({ color: 0x3f3d26 }));
+    const ground = new THREE.Mesh(new THREE.PlaneGeometry(400, 160), new THREE.MeshLambertMaterial({ color: 0x3fa52a }));
     ground.rotation.x = -Math.PI / 2; ground.position.z = -40; scene.add(ground);
-    const road = new THREE.Mesh(new THREE.PlaneGeometry(400, 3.5), new THREE.MeshLambertMaterial({ color: 0x4e3524 }));
+    const road = new THREE.Mesh(new THREE.PlaneGeometry(400, 3.5), new THREE.MeshLambertMaterial({ color: 0xc8682a }));
     road.rotation.x = -Math.PI / 2; road.position.set(0, 0.01, 0); scene.add(road);
 
     const scenery = [];
@@ -1367,11 +1383,11 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
     })();
     const hills = [];
     for (let i = 0; i < 10; i++) {
-      const h = part(scene, SPH, toon(0x3a3324), [-60 + i * 16, -3, -60 - rand(0, 15)], [rand(10, 16), rand(8, 14), 8], false);
+      const h = part(scene, SPH, toon(i % 2 ? 0x2f9a3a : 0x48b043), [-60 + i * 16, -3, -60 - rand(0, 15)], [rand(10, 16), rand(8, 14), 8], false);
       hills.push(h);
     }
     const clouds = [];
-    const smokeCloudMat = new THREE.MeshLambertMaterial({ color: 0x4a423c, transparent: true, opacity: 0.82 });
+    const smokeCloudMat = new THREE.MeshLambertMaterial({ color: 0xffffff, emissive: 0x9fb8d8, transparent: true, opacity: 0.95 });
     for (let i = 0; i < 14; i++) {
       const c = new THREE.Group();
       const n = 4 + (i % 3);
@@ -1410,7 +1426,7 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
       scene.add(m); smokePool.push(m);
     }
     let smokeIdx = 0;
-    function smoke(x, y, z, n = 4, size = 0.6, dark = 0x2a2522) {
+    function smoke(x, y, z, n = 4, size = 0.6, dark = 0x4a4040) {
       for (let i = 0; i < n; i++) {
         const m = smokePool[smokeIdx]; smokeIdx = (smokeIdx + 1) % smokePool.length;
         m.material.color.setHex(dark); m.visible = true; m.position.set(x + rand(-0.4, 0.4), y + rand(-0.3, 0.3), z + rand(-0.3, 0.3));
@@ -1436,7 +1452,7 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
         if (f.position.x < cx - 45) f.position.x += 84;
         const k = 1 + Math.sin(u.t * 17) * 0.12 + Math.sin(u.t * 7.3) * 0.1;
         u.fl1.scale.set(0.6 * k, 1.4 * k, 0.6 * k); u.fl2.scale.set(0.35 / k, 0.9 * k, 0.35 / k);
-        if (Math.random() < dt * 5) smoke(f.position.x + rand(-0.3, 0.3), 2.2, f.position.z, 1, 0.9, 0x3d3632);
+        if (Math.random() < dt * 2.5) smoke(f.position.x + rand(-0.3, 0.3), 2.2, f.position.z, 1, 0.75, 0x6a5f58);
       }
     }
     function updateParticles(dt) {
@@ -2002,43 +2018,82 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
         })
         .catch(() => { musicGain = null; });
     }
-    const SFX = false; // sound effects and engine hum are off: the only sound is the music
+    const SFX = true; // V2: punchy effects mixed under the music (engine hum stays off)
+    let sfxBus = null, punch = null, duckT = 0, duckDepth = 1;
+    const lastSfx = {};
+    const ready = (name, gap) => { const now = ac ? ac.currentTime : 0; if (now - (lastSfx[name] || -9) < gap) return false; lastSfx[name] = now; return true; };
     function audioStart() {
       if (!FX.sound) return;
       try {
         if (!ac) {
           ac = new (window.AudioContext || window.webkitAudioContext)();
-          if (SFX) {
           noiseBuf = ac.createBuffer(1, ac.sampleRate, ac.sampleRate);
           const d = noiseBuf.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
-          const o1 = ac.createOscillator(), o2 = ac.createOscillator(), f = ac.createBiquadFilter(), g = ac.createGain();
-          o1.type = 'sawtooth'; o2.type = 'square'; o1.frequency.value = 70; o2.frequency.value = 35;
-          f.type = 'lowpass'; f.frequency.value = 380; g.gain.value = 0;
-          o1.connect(f); o2.connect(f); f.connect(g); g.connect(ac.destination); o1.start(); o2.start();
-          eng = { o1, o2, f, g };
-          }
+          // effects -> compressor -> speakers, so explosions stay punchy without clipping
+          const comp = ac.createDynamicsCompressor();
+          comp.threshold.value = -16; comp.knee.value = 10; comp.ratio.value = 4; comp.attack.value = 0.003; comp.release.value = 0.18;
+          sfxBus = ac.createGain(); sfxBus.gain.value = 0.85; sfxBus.connect(comp); comp.connect(ac.destination);
+          punch = ac.createWaveShaper(); const c = new Float32Array(512);
+          for (let i = 0; i < 512; i++) { const x = i / 256 - 1; c[i] = Math.tanh(x * 2.6); }
+          punch.curve = c; punch.connect(sfxBus);
         }
         if (ac.state === 'suspended') ac.resume();
         musicLoad();
       } catch (e) { ac = null; }
     }
+    const sfxOn = () => SFX && ac && sfxBus && FX.sound;
     function tone(freq, dur, type = 'square', vol = 0.12, slideTo = 0, delay = 0) {
-      if (!SFX || !ac || !FX.sound) return;
+      if (!sfxOn()) return;
       const t = ac.currentTime + delay, o = ac.createOscillator(), g = ac.createGain();
       o.type = type; o.frequency.setValueAtTime(freq, t);
       if (slideTo) o.frequency.exponentialRampToValueAtTime(slideTo, t + dur);
-      g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.001, t + dur);
-      o.connect(g); g.connect(ac.destination); o.start(t); o.stop(t + dur + 0.05);
+      g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(vol, t + 0.004); g.gain.exponentialRampToValueAtTime(0.001, t + dur);
+      o.connect(g); g.connect(sfxBus); o.start(t); o.stop(t + dur + 0.05);
     }
-    function noise(dur, vol = 0.4, from = 1200, to = 80, type = 'lowpass') {
-      if (!SFX || !ac || !FX.sound) return;
-      const t = ac.currentTime, s = ac.createBufferSource(), f = ac.createBiquadFilter(), g = ac.createGain();
-      s.buffer = noiseBuf; s.loop = true; f.type = type;
-      f.frequency.setValueAtTime(from, t); f.frequency.exponentialRampToValueAtTime(to, t + dur);
-      g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.001, t + dur);
-      s.connect(f); f.connect(g); g.connect(ac.destination); s.start(t); s.stop(t + dur + 0.05);
+    function noise(dur, vol = 0.4, from = 1200, to = 80, type = 'lowpass', delay = 0, q = 0.8) {
+      if (!sfxOn()) return;
+      const t = ac.currentTime + delay, s = ac.createBufferSource(), f = ac.createBiquadFilter(), g = ac.createGain();
+      s.buffer = noiseBuf; s.loop = true; s.loopStart = Math.random() * 0.5; f.type = type; f.Q.value = q;
+      f.frequency.setValueAtTime(from, t); f.frequency.exponentialRampToValueAtTime(Math.max(20, to), t + dur);
+      g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(vol, t + 0.006); g.gain.exponentialRampToValueAtTime(0.001, t + dur);
+      s.connect(f); f.connect(g); g.connect(sfxBus); s.start(t, Math.random() * 0.5); s.stop(t + dur + 0.05);
     }
+    // a deep "thump" (kick-drum body) pushed through soft distortion: the weight behind every impact
+    function thump(f0, f1, dur, vol, delay = 0) {
+      if (!sfxOn()) return;
+      const t = ac.currentTime + delay, o = ac.createOscillator(), g = ac.createGain();
+      o.type = 'sine'; o.frequency.setValueAtTime(f0, t); o.frequency.exponentialRampToValueAtTime(f1, t + dur * 0.6);
+      g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(vol, t + 0.004); g.gain.exponentialRampToValueAtTime(0.001, t + dur);
+      o.connect(g); g.connect(punch); o.start(t); o.stop(t + dur + 0.05);
+    }
+    // music dips under big moments so they cut through
+    function duck(depth, secs) { duckDepth = Math.min(duckT > 0 ? duckDepth : 1, depth); duckT = Math.max(duckT, secs); }
     const chime = notes => notes.forEach((n, i) => tone(n, 0.16, 'triangle', 0.12, 0, i * 0.07));
+    const SND = {
+      pew() { if (!ready('pew', 0.07)) return; tone(1500, 0.08, 'square', 0.035, 520); noise(0.05, 0.05, 7000, 2500, 'highpass'); },
+      toss(v) { if (!ready('toss', 0.12)) return; noise(0.22, 0.05 * v, 350, 1900, 'bandpass', 0, 2); },
+      pop(combo) { // an enemy shot blown out of the air; pitch climbs with the combo
+        const up = Math.pow(2, Math.min(combo, 12) / 12);
+        thump(200 * up, 55, 0.18, 0.24); noise(0.25, 0.16, 3000, 250); tone(1760 * up, 0.07, 'triangle', 0.045);
+      },
+      hit() { thump(130, 32, 0.4, 0.7); noise(0.45, 0.45, 1800, 60); tone(240, 0.28, 'sawtooth', 0.07, 70); duck(0.3, 0.45); },
+      boom(big) {
+        thump(big ? 85 : 110, 24, big ? 1.1 : 0.7, 0.85); noise(big ? 1.8 : 1.1, 0.75, 2400, 30);
+        for (let i = 0; i < (big ? 6 : 3); i++) noise(0.12, 0.18, 5000, 1500, 'highpass', 0.12 + i * (0.09 + Math.random() * 0.08));
+        duck(0.18, big ? 1.4 : 0.9);
+      },
+      coin() { tone(1319, 0.08, 'square', 0.11); tone(1976, 0.28, 'square', 0.11, 0, 0.07); },
+      power() { [523, 659, 784, 1047, 1319].forEach((n, i) => tone(n, 0.14, 'triangle', 0.15, 0, i * 0.045)); tone(2093, 0.4, 'sine', 0.07, 0, 0.22); },
+      heart() { tone(784, 0.18, 'sine', 0.17); tone(1175, 0.3, 'sine', 0.17, 0, 0.1); },
+      shield() { tone(1250, 0.2, 'triangle', 0.15, 820); noise(0.1, 0.2, 8000, 3000, 'highpass'); },
+      net() { tone(320, 0.32, 'sine', 0.2, 85); noise(0.3, 0.2, 500, 140, 'bandpass', 0, 3); },
+      siren() { for (let i = 0; i < 3; i++) { tone(392, 0.3, 'sawtooth', 0.05, 523, i * 0.38); tone(196, 0.3, 'square', 0.03, 262, i * 0.38); } thump(70, 30, 0.9, 0.5); duck(0.45, 1.2); },
+      bossFire() { if (!ready('bossFire', 0.15)) return; thump(150, 50, 0.22, 0.3); noise(0.2, 0.12, 900, 120); },
+      tink() { if (!ready('tink', 0.05)) return; tone(2300 + Math.random() * 400, 0.05, 'square', 0.03, 1400); noise(0.04, 0.06, 7000, 3500, 'highpass'); },
+      fanfare(delay = 0) { [[523, 659, 784], [587, 740, 880], [659, 831, 988, 1319]].forEach((ch, i) => ch.forEach(n => tone(n, i === 2 ? 0.7 : 0.16, 'triangle', 0.07, 0, delay + i * 0.16))); },
+      beep(hi) { tone(hi ? 1320 : 660, hi ? 0.25 : 0.12, 'square', 0.1); },
+      click() { tone(950, 0.04, 'triangle', 0.05); }
+    };
 
     // --- Wind streaks rushing past, between the plane and your eyes ---
     const streakMat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.45, depthWrite: false });
@@ -2071,34 +2126,90 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
     scene.add(stars);
 
     // --- Sky moods: each level looks different, boss fights bring a storm ---
+    // sky = horizon colour (also fog), top = colour overhead
     const SKIES = [
-      { sky: 0x8a6a55, hemi: 1.0, sun: 1.1, sunC: 0xffb070, night: 0 },     // level 1: smoky dusk over the market
-      { sky: 0x6e3326, hemi: 0.9, sun: 1.05, sunC: 0xff7a45, night: 0 },    // level 2: burning red sunset
-      { sky: 0x3a3442, hemi: 0.8, sun: 0.8, sunC: 0xc9a0ff, night: 0.4 },   // level 3: ash and twilight
-      { sky: 0x14161f, hemi: 0.65, sun: 0.6, sunC: 0x9fb4ff, night: 1 }     // level 4+: night raid
+      { sky: 0xbfe6ff, top: 0x2f86e6, hemi: 1.1, sun: 1.3, sunC: 0xfff1d0, night: 0 },     // level 1: bright sunny day over the market
+      { sky: 0xffb07a, top: 0x5b4fd8, hemi: 1.0, sun: 1.2, sunC: 0xffb36b, night: 0 },     // level 2: golden sunset
+      { sky: 0xf08aa8, top: 0x2d2d82, hemi: 0.9, sun: 0.95, sunC: 0xffc0e0, night: 0.35 }, // level 3: pink-purple dusk
+      { sky: 0x4256a8, top: 0x0b1240, hemi: 0.8, sun: 0.75, sunC: 0xb8c8ff, night: 1 }     // level 4+: moonlit night raid
     ];
-    const STORM = { sky: 0x2a2228, hemi: 0.75, sun: 0.7, sunC: 0xff6a3a, night: 0.35 };
+    const STORM = { sky: 0xe0603c, top: 0x3a1858, hemi: 0.95, sun: 0.9, sunC: 0xff8a4a, night: 0.3 }; // boss fight: dramatic red-purple storm
+    // gradient sky dome that follows the camera
+    const skyTopNow = new THREE.Color(0x2f86e6), skyTopWant = new THREE.Color();
+    const skyDome = new THREE.Mesh(new THREE.SphereGeometry(240, 24, 12), new THREE.ShaderMaterial({
+      side: THREE.BackSide, depthWrite: false, fog: false,
+      uniforms: { top: { value: skyTopNow }, hz: { value: new THREE.Color(0xbfe6ff) } },
+      vertexShader: 'varying vec3 vP; void main(){ vP = normalize(position); gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
+      fragmentShader: 'uniform vec3 top; uniform vec3 hz; varying vec3 vP; void main(){ float k = smoothstep(-0.02, 0.55, vP.y); gl_FragColor = vec4(mix(hz, top, k), 1.0); }'
+    }));
+    skyDome.renderOrder = -1; scene.add(skyDome);
     const hemiLight = scene.children.find(o => o.isHemisphereLight);
-    const skyNow = new THREE.Color(0x8a6a55), skyWant = new THREE.Color(), sunWant = new THREE.Color(), white = new THREE.Color(0xffffff);
+    const skyNow = new THREE.Color(0xbfe6ff), skyWant = new THREE.Color(), sunWant = new THREE.Color(), white = new THREE.Color(0xffffff);
     let nightNow = 0, lightning = 0, hitStop = 0, roll = 0, fovNow = FOV, camLift = 0, camPull = 0;
 
+    // --- V2 "juice": score pop-ups, combo, flashes, camera kick (looks and sound only; scoring is untouched) ---
+    let combo = 0, comboT = 0, fovKick = 0, lastBulletId = -1;
+    const popsEl = $('pops'), flashW = $('flash-w'), lowHpEl = $('lowhp'), _pv = new THREE.Vector3();
+    function popText(x, y, text, cls = '') {
+      if (popsEl.childElementCount > 14) popsEl.firstChild.remove();
+      _pv.set(x, y, 0).project(camera);
+      if (_pv.z > 1) return;
+      const r = renderer.domElement.getBoundingClientRect();
+      const d = document.createElement('div'); d.className = 'pop ' + cls; d.textContent = text;
+      d.style.left = (r.left + (_pv.x + 1) / 2 * r.width) + 'px'; d.style.top = (r.top + (1 - _pv.y) / 2 * r.height) + 'px';
+      d.addEventListener('animationend', () => d.remove()); popsEl.appendChild(d);
+    }
+    function flashWhite(v) { flashW.style.transition = 'none'; flashW.style.opacity = v; requestAnimationFrame(() => { flashW.style.transition = 'opacity 0.5s'; flashW.style.opacity = 0; }); }
     function fx4d(e) {
-      if (e.t === 'hit') { buzz([60, 40, 60]); noise(0.35, 0.5, 900, 60); tone(140, 0.3, 'sawtooth', 0.12, 50); hitStop = 0.07; ring(sim.x, sim.y, 0xffffff, 3.5, 0.3); }
-      else if (e.t === 'net') { buzz(90); tone(300, 0.35, 'sine', 0.12, 120); }
-      else if (e.t === 'block') { buzz(35); tone(520, 0.12, 'square', 0.1, 760); ring(sim.x, sim.y, 0xff7a1a, 3, 0.3); }
-      else if (e.t === 'jar') { buzz(15); chime([880, 1320]); ring(e.x, e.y, 0xfde047, 2.5, 0.35); }
-      else if (e.t === 'pepper' || e.t === 'heart' || e.t === 'cannon') { buzz([20, 30, 20]); chime([660, 880, 1100]); ring(e.x, e.y, e.t === 'heart' ? 0xff4d6d : e.t === 'pepper' ? 0xd62828 : 0xffb020, 3, 0.4); }
-      else if (e.t === 'shotDown') { tone(900, 0.06, 'square', 0.05, 400); }
-      else if (e.t === 'boost') { buzz(25); noise(0.45, 0.25, 400, 2400, 'bandpass'); }
-      else if (e.t === 'bossIn') { buzz([100, 60, 100, 60, 220]); tone(110, 1.3, 'sawtooth', 0.14, 70); noise(1.2, 0.3, 300, 60); lightning = 0.25; }
-      else if (e.t === 'bossFire') { buzz(18); noise(0.18, 0.18, 600, 100); if (Math.random() < 0.25) lightning = 0.18; }
-      else if (e.t === 'bossHit') { tone(260 + Math.random() * 80, 0.05, 'square', 0.05); }
-      else if (e.t === 'bossDown') { buzz([80, 40, 80, 40, 450]); noise(1.4, 0.7, 1500, 40); chime([523, 659, 784, 1047]); ring(e.x, e.y + 1, 0xfde047, 14, 0.9); ring(e.x, e.y + 1, 0xff7a1a, 9, 0.7); popOut(e.x, e.y + 1, [0xd9822b, 0xc1121f, 0xf2c230], 26); hitStop = 0.15; }
-      else if (e.t === 'level') { setTimeout(() => chime([523, 784, 1047, 1568]), 1600); }
-      else if (e.t === 'crash') { buzz([200, 80, 320]); noise(1.0, 0.7, 1200, 40); ring(sim.x, sim.y, 0xff7a1a, 7, 0.6); popOut(sim.x, sim.y, [0xf59e0b, 0xfde047, 0x1f8f3d], 18); }
+      if (e.t === 'hit') { buzz([60, 40, 60]); SND.hit(); hitStop = 0.09; fovKick = 5; combo = 0; ring(sim.x, sim.y, 0xffffff, 3.5, 0.3); }
+      else if (e.t === 'net') { buzz(90); SND.net(); combo = 0; }
+      else if (e.t === 'block') { buzz(35); SND.shield(); ring(sim.x, sim.y, 0xff7a1a, 3, 0.3); }
+      else if (e.t === 'jar') { buzz(15); SND.coin(); ring(e.x, e.y, 0xfde047, 2.5, 0.35); popText(e.x, e.y, '+250', 'gold'); }
+      else if (e.t === 'pepper' || e.t === 'heart' || e.t === 'cannon') {
+        buzz([20, 30, 20]); if (e.t === 'heart') SND.heart(); else SND.power();
+        ring(e.x, e.y, e.t === 'heart' ? 0xff4d6d : e.t === 'pepper' ? 0xd62828 : 0xffb020, 3, 0.4);
+        if (e.t === 'heart' && sim.hp >= G.MAX_HP) popText(e.x, e.y, '+300', 'gold');
+      }
+      else if (e.t === 'shotDown') {
+        combo = comboT > 0 ? combo + 1 : 1; comboT = 1.8;
+        SND.pop(combo); hitStop = Math.max(hitStop, 0.025); shake = Math.max(shake, 0.12);
+        ring(e.x, e.y, 0xffe08a, 2.2, 0.25);
+        popText(e.x, e.y, '+50');
+        if (combo >= 3) { popText(e.x, e.y + 1.4, t('combo', { n: combo }), 'combo'); buzz(12); }
+      }
+      else if (e.t === 'fire') { const m = unitMeshes.get(e.id); if (m && sim) { const dx = Math.abs(m.position.x - sim.x); SND.toss(Math.max(0.25, 1 - dx / 30)); } }
+      else if (e.t === 'boost') { buzz(25); noise(0.45, 0.22, 400, 2400, 'bandpass'); fovKick = 3; }
+      else if (e.t === 'bossIn') { buzz([100, 60, 100, 60, 220]); SND.siren(); lightning = 0.25; }
+      else if (e.t === 'bossFire') { buzz(18); SND.bossFire(); if (Math.random() < 0.25) lightning = 0.18; }
+      else if (e.t === 'bossHit') { SND.tink(); }
+      else if (e.t === 'bossDown') {
+        buzz([80, 40, 80, 40, 450]); SND.boom(true); SND.fanfare(0.7); flashWhite(0.75); fovKick = 8;
+        ring(e.x, e.y + 1, 0xfde047, 14, 0.9); ring(e.x, e.y + 1, 0xff7a1a, 9, 0.7); popOut(e.x, e.y + 1, [0xd9822b, 0xc1121f, 0xf2c230], 26);
+        hitStop = 0.28; popText(e.x, e.y + 1, '+' + fmt(1500 * e.level), 'big');
+      }
+      else if (e.t === 'level') { setTimeout(() => { if (state === 'playing') SND.fanfare(); }, 1600); }
+      else if (e.t === 'crash') { buzz([200, 80, 320]); SND.boom(false); flashWhite(0.35); fovKick = 6; ring(sim.x, sim.y, 0xff7a1a, 7, 0.6); popOut(sim.x, sim.y, [0xf59e0b, 0xfde047, 0x1f8f3d], 18); }
+    }
+    // Your own cannon: no event from the simulation, so watch for new shells
+    let shotsSim = null;
+    function watchShots() {
+      if (sim !== shotsSim) { shotsSim = sim; lastBulletId = -1; }
+      if (!sim || !sim.bullets.length) return;
+      for (const b of sim.bullets) if (b.id > lastBulletId) {
+        lastBulletId = b.id; SND.pew();
+        for (let i = 0; i < 3; i++) emit(b.x, b.y, 0, rand(2, 6), rand(-1.5, 1.5), rand(-0.5, 0.5), i ? 0xffd23f : 0xffffff, 0.15, rand(0.1, 0.18), 0);
+      }
+    }
+    function updateJuice(dt) {
+      comboT = Math.max(0, comboT - dt); if (comboT === 0) combo = 0;
+      fovKick = Math.max(0, fovKick - dt * 22);
+      duckT = Math.max(0, duckT - dt);
+      const low = sim && state === 'playing' && sim.hp <= 1;
+      lowHpEl.style.opacity = low ? (0.55 + Math.sin(time * 6) * 0.3).toFixed(2) : '0';
     }
 
     function update4D(dt, camX) {
+      updateJuice(dt);
       const flying = sim && (state === 'playing' || state === 'crashed');
       // Engine hum follows your speed
       if (eng && ac) {
@@ -2121,19 +2232,20 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
           musicGain.gain.cancelScheduledValues(ac.currentTime); musicGain.gain.setValueAtTime(0, ac.currentTime);
           musicSrc.start();
         }
-        if (musicSrc) musicGain.gain.setTargetAtTime(FX.sound && flight ? 0.55 : 0, ac.currentTime, 0.25);
+        if (musicSrc) musicGain.gain.setTargetAtTime(FX.sound && flight ? 0.55 * (duckT > 0 ? duckDepth : 1) : 0, ac.currentTime, duckT > 0 ? 0.04 : 0.3);
       }
       // Sky mood
       const mood = sim && sim.boss ? STORM : SKIES[Math.min(SKIES.length - 1, (sim ? sim.level : 1) - 1)];
       skyWant.setHex(mood.sky);
       const k = Math.min(1, dt * 0.8);
-      skyNow.lerp(skyWant, k);
+      skyNow.lerp(skyWant, k); skyTopWant.setHex(mood.top); skyTopNow.lerp(skyTopWant, k);
       nightNow = lerp(nightNow, mood.night, k);
       if (sim && sim.boss && Math.random() < dt * 0.12) { lightning = 0.2; setTimeout(() => noise(1.1, 0.35, 200, 40), 250); }
       lightning = Math.max(0, lightning - dt);
       const flashK = lightning > 0 && Math.floor(lightning * 30) % 2 === 0 ? 0.7 : 0;
       scene.background.copy(skyNow).lerp(white, flashK);
       scene.fog.color.copy(scene.background);
+      skyDome.material.uniforms.hz.value.copy(scene.background); skyDome.position.copy(camera.position);
       if (hemiLight) hemiLight.intensity = lerp(hemiLight.intensity, mood.hemi, k) + flashK * 0.6;
       sun.intensity = lerp(sun.intensity, mood.sun, k); sunWant.setHex(mood.sunC); sun.color.lerp(sunWant, k);
       stars.material.opacity = nightNow * 0.9;
@@ -2174,7 +2286,9 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
       camPull = lerp(camPull, sim && sim.boss ? 1 : 0, Math.min(1, dt * 1.5));
       camLift = lerp(camLift, sim && state === 'playing' ? (sim.y - 7) * 0.08 : 0, Math.min(1, dt * 2));
       const fovWant = FOV + b * 7;
-      if (Math.abs(fovWant - fovNow) > 0.01) { fovNow = lerp(fovNow, fovWant, Math.min(1, dt * 6)); camera.fov = fovNow; camera.updateProjectionMatrix(); }
+      fovNow = lerp(fovNow, fovWant, Math.min(1, dt * 6));
+      const fovShow = fovNow + fovKick;
+      if (Math.abs(camera.fov - fovShow) > 0.01) { camera.fov = fovShow; camera.updateProjectionMatrix(); }
       const camY = halfH - 1.2 + camLift;
       const sx = rand(-1, 1) * shake * 0.4, sy = rand(-1, 1) * shake * 0.4;
       camera.position.set(camX - 2.5 - b * 1.2 - camPull * 1.5 + sx, camY + 1.5 + camPull * 0.6 + sy, camDist * (1 + camPull * 0.08));
@@ -2230,9 +2344,9 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
       if (pauseBtn.hidden === show) pauseBtn.hidden = !show;
       if (state !== 'countdown') return;
       countT -= dt;
-      if (countT <= 0) { state = 'playing'; acc = 0; countEl.hidden = true; toast(t('go'), 0.6); return; }
+      if (countT <= 0) { state = 'playing'; acc = 0; countEl.hidden = true; toast(t('go'), 0.6); SND.beep(true); return; }
       const n = String(Math.ceil(countT));
-      if (countEl.textContent !== n) { countEl.textContent = n; countEl.hidden = false; tone(660, 0.12, 'square', 0.08); buzz(15); }
+      if (countEl.textContent !== n) { countEl.textContent = n; countEl.hidden = false; SND.beep(false); buzz(15); }
     }
 
     /* ================= Main loop ================= */
@@ -2256,7 +2370,7 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
           acc -= G.DT; n++;
         }
         if (n >= 15) acc = 0;
-        handleEvents();
+        handleEvents(); watchShots();
         if (!sim.alive) { state = 'crashed'; crashT = 0; crashVy = 2; }
       }
 

@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <title>General Ginger Flight</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" /><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Oswald:wght@500;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Lilita+One&family=Oswald:wght@500;700&display=swap" rel="stylesheet" />
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html, body { height: 100%; }
@@ -49,7 +49,7 @@
     #overlay.hidden * { pointer-events: none !important; }
     #overlay h1 {
       font-size: clamp(1.7rem, 6.5vw, 2.7rem); line-height: 1.05; margin-bottom: 6px;
-      font-family: 'Black Ops One', 'Oswald', sans-serif; font-weight: 400; letter-spacing: 0.04em; text-transform: uppercase;
+      font-family: 'Lilita One', 'Black Ops One', 'Oswald', sans-serif; font-weight: 400; letter-spacing: 0.02em; text-transform: uppercase;
       color: #ffd23f; background: linear-gradient(180deg, #fff3a8 0%, #ffd23f 45%, #ff8a1a 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
       -webkit-text-stroke: 2px #4a1a05; paint-order: stroke fill;
       filter: drop-shadow(0 4px 0 #4a1a05) drop-shadow(0 8px 14px rgba(0,0,0,0.45));
@@ -940,6 +940,46 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
       return s;
     }
 
+    /* ================= V2 hero-model helpers: smooth, glossy "premium toy" shapes ================= */
+    const glossM = {};
+    const gloss = (c, extra) => {
+      const k = c + JSON.stringify(extra || {});
+      return glossM[k] || (glossM[k] = new THREE.MeshPhongMaterial(Object.assign({ color: grit(c), shininess: 70, specular: 0x555555 }, extra || {})));
+    };
+    // a smooth body of revolution along +x, centred on its middle. prof = [[radius, x], ...]
+    function lathe(prof, segs = 24) {
+      const g = new THREE.LatheGeometry(prof.map(([r, x]) => new THREE.Vector2(r, x)), segs);
+      g.rotateZ(-Math.PI / 2); g.center(); return g;
+    }
+    // rounded flat panel (wings, fins) lying in the XZ plane: w along x, d along z
+    function slab(w, d, t = 0.08, r = 0.3) {
+      const sh = new THREE.Shape(), x = -w / 2, y = -d / 2; r = Math.min(r, w / 2, d / 2);
+      sh.moveTo(x + r, y); sh.lineTo(x + w - r, y); sh.quadraticCurveTo(x + w, y, x + w, y + r); sh.lineTo(x + w, y + d - r);
+      sh.quadraticCurveTo(x + w, y + d, x + w - r, y + d); sh.lineTo(x + r, y + d); sh.quadraticCurveTo(x, y + d, x, y + d - r);
+      sh.lineTo(x, y + r); sh.quadraticCurveTo(x, y, x + r, y);
+      const g = new THREE.ExtrudeGeometry(sh, { depth: t, bevelEnabled: true, bevelThickness: t * 0.4, bevelSize: t * 0.4, bevelSegments: 2, curveSegments: 6 });
+      g.rotateX(Math.PI / 2); g.center(); return g;
+    }
+    // a fin from an outline [[x,y]...] (side view), extruded thin along z
+    function fin(pts, t = 0.06) {
+      const sh = new THREE.Shape(); sh.moveTo(pts[0][0], pts[0][1]);
+      for (let i = 1; i < pts.length; i++) { const q = pts[i]; if (q.length === 4) sh.quadraticCurveTo(q[0], q[1], q[2], q[3]); else sh.lineTo(q[0], q[1]); }
+      const g = new THREE.ExtrudeGeometry(sh, { depth: t, bevelEnabled: true, bevelThickness: 0.02, bevelSize: 0.02, bevelSegments: 1, curveSegments: 8 });
+      g.translate(0, 0, -t / 2); return g;
+    }
+    function roundel(parent, pos, size, cols, rot) { // concentric circles, like a wing marking
+      const g = new THREE.Group(); g.position.set(pos[0], pos[1], pos[2]); if (rot) g.rotation.set(rot[0], rot[1], rot[2]); parent.add(g);
+      cols.forEach((c, i) => { const m = new THREE.Mesh(new THREE.CircleGeometry(size * (1 - i * 0.32), 24), toon(c)); m.position.z = i * 0.004; g.add(m); });
+      return g;
+    }
+    const strutGeo = GEO('strut', () => new THREE.CylinderGeometry(1, 1, 1, 8));
+    function rod(parent, a, b, r, mat) { // a thin cylinder from point a to point b
+      const A = new THREE.Vector3(...a), B = new THREE.Vector3(...b), m = new THREE.Mesh(strutGeo, mat);
+      m.position.copy(A).add(B).multiplyScalar(0.5); m.scale.set(r, A.distanceTo(B), r);
+      m.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), B.clone().sub(A).normalize()); parent.add(m); return m;
+    }
+    const discMat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.16, side: THREE.DoubleSide, depthWrite: false });
+
     /* ================= Pick-ups ================= */
     const glassMat = new THREE.MeshPhongMaterial({ color: 0xfff7e0, transparent: true, opacity: 0.35, shininess: 100 });
     function buildJar() {
@@ -1062,6 +1102,7 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
         shield.scale.set(3.2, 2.1, 2.8); shield.visible = false; root.add(shield);
         const net = new THREE.Mesh(SPH, new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true, transparent: true, opacity: 0.6 }));
         net.scale.set(1.9, 1.2, 1.4); net.visible = false; root.add(net);
+        body.rotation.set(0.16, -0.1, 0); // three-quarter view: banked toward the camera so wings and markings show
         return { root, body, prop, pilot, shield, net };
       };
       if (L.plane === 'jet') {
@@ -1107,31 +1148,59 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
         part(prop, BOX, wood, [0, 0, 0], [0.06, 1.5, 0.16], 1.15);
         const f = finish(prop); f.pilot.position.set(0.6, 0.62, 0); f.pilot.scale.setScalar(0.32); return f;
       }
-      // fuselage
-      part(body, BOX, green, [0, 0, 0], [3.0, 0.62, 0.72]);
-      part(body, BOX, white, [0.05, 0, 0], [0.5, 0.64, 0.74], false);
-      part(body, BOX, green, [-1.8, 0.05, 0], [0.9, 0.4, 0.45]);
-      // wings (stacked, Wright-era style)
-      part(body, BOX, canvasM, [0.35, -0.28, 0], [1.15, 0.08, 4.6]);
-      part(body, BOX, canvasM, [0.45, 0.88, 0], [1.15, 0.08, 4.8]);
-      [-2.2, -1.2, 1.2, 2.2].forEach(z => {
-        part(body, BOX, wood, [0.1, 0.3, z], [0.06, 1.15, 0.06], false);
-        part(body, BOX, wood, [0.75, 0.3, z], [0.06, 1.15, 0.06], false);
+      // ---- Classic biplane, V2 hero model ----
+      const G = c => gloss(c, pal.glow ? { emissive: pal.glow } : undefined);
+      const paint = G(pal.body), stripe = G(pal.stripe), wing = G(pal.wing), accent = G(pal.accent), metal = gloss(0x3a3d42, { shininess: 90, specular: 0x999999 });
+      // fuselage: smooth tapered body from tail (-2.55) to nose (1.6)
+      const fus = new THREE.Mesh(lathe([[0.05, -2.55], [0.16, -2.1], [0.3, -1.3], [0.42, -0.4], [0.46, 0.5], [0.44, 1.25], [0.4, 1.6]]), paint);
+      fus.position.set(-0.47, 0, 0); fus.scale.set(1, 1.05, 0.92); body.add(fus);
+      const fo = new THREE.Mesh(fus.geometry, outlineMat); fo.scale.setScalar(1.05); fus.add(fo);
+      // racing stripe band + tail band
+      part(body, new THREE.CylinderGeometry(0.47, 0.47, 0.32, 24), stripe, [0.1, 0, 0], [1, 1.05, 0.93], false, [0, 0, Math.PI / 2]);
+      part(body, new THREE.CylinderGeometry(0.29, 0.31, 0.22, 24), accent, [-1.45, 0, 0], [1, 1.05, 0.93], false, [0, 0, Math.PI / 2]);
+      // engine cowling, radial cylinders, spinner
+      part(body, new THREE.CylinderGeometry(0.46, 0.5, 0.42, 28), accent, [1.32, 0, 0], null, 1.06, [0, 0, -Math.PI / 2]);
+      part(body, new THREE.CylinderGeometry(0.4, 0.4, 0.05, 24), metal, [1.54, 0, 0], null, false, [0, 0, Math.PI / 2]);
+      for (let i = 0; i < 7; i++) { const an = i / 7 * Math.PI * 2; part(body, CYL, metal, [1.5, Math.cos(an) * 0.3, Math.sin(an) * 0.3], [0.07, 0.16, 0.07], false, [an, 0, 0]); }
+      part(body, new THREE.SphereGeometry(1, 16, 10, 0, Math.PI * 2, 0, Math.PI / 2), accent, [1.62, 0, 0], [0.2, 0.32, 0.2], 1.1, [0, 0, -Math.PI / 2]);
+      // propeller: two curved blades + a motion-blur disc
+      const prop = new THREE.Group(); prop.position.set(1.7, 0, 0); body.add(prop);
+      [-1, 1].forEach(sd => { const bl = part(prop, SPH, gloss(0x9a5f2c, { shininess: 40 }), [0, sd * 0.48, 0], [0.04, 0.5, 0.11], 1.12); bl.rotation.y = sd * 0.35; });
+      const disc = new THREE.Mesh(new THREE.CircleGeometry(1.0, 32), discMat); disc.rotation.y = Math.PI / 2; prop.add(disc);
+      // cockpit: padded rim, windscreen, headrest
+      part(body, new THREE.TorusGeometry(0.3, 0.06, 8, 20), gloss(0x5a3418), [-0.35, 0.38, 0], [1, 1, 0.85], false, [Math.PI / 2, 0, 0]);
+      part(body, BOX, new THREE.MeshPhongMaterial({ color: 0xbfe8ff, transparent: true, opacity: 0.45, shininess: 120, specular: 0xffffff }), [0.05, 0.56, 0], [0.04, 0.3, 0.52], false, [0, 0, -0.45]);
+      part(body, SPH, paint, [-0.82, 0.38, 0], [0.32, 0.2, 0.22]);
+      // wings: rounded, with coloured tips and roundels
+      const wingT = new THREE.Mesh(slab(1.2, 5.0, 0.07, 0.45), wing); wingT.position.set(0.45, 0.95, 0); body.add(wingT);
+      const wingB = new THREE.Mesh(slab(1.1, 4.6, 0.07, 0.42), wing); wingB.position.set(0.35, -0.3, 0); wingB.rotation.x = 0; body.add(wingB);
+      [wingT, wingB].forEach(w => { const o = new THREE.Mesh(w.geometry, outlineMat); o.scale.set(1.03, 1.6, 1.015); w.add(o); });
+      [-1, 1].forEach(sd => {
+        const tip = new THREE.Mesh(slab(1.22, 0.55, 0.075, 0.25), accent); tip.position.set(0.45, 0.955, sd * 2.25); body.add(tip);
+        roundel(body, [0.45, 1.0, sd * 1.55], 0.36, [pal.accent, pal.stripe, pal.body], [-Math.PI / 2, 0, 0]);
       });
-      [-2.3, 2.3].forEach(z => part(body, BOX, red, [0.45, 0.94, z], [1.15, 0.02, 0.4], false));
-      // tail
-      part(body, BOX, canvasM, [-2.15, 0.08, 0], [0.6, 0.06, 1.7]);
-      part(body, BOX, red, [-2.2, 0.45, 0], [0.55, 0.65, 0.06]);
-      // nose + propeller
-      part(body, CYL, dark, [1.6, 0, 0], [0.34, 0.3, 0.34], 1.1, [0, 0, Math.PI / 2]);
-      const prop = new THREE.Group(); prop.position.set(1.8, 0, 0); body.add(prop);
-      part(prop, BOX, wood, [0, 0, 0], [0.06, 1.7, 0.16], 1.15);
-      part(prop, SPL, dark, [0.05, 0, 0], [0.12, 0.12, 0.12], false);
-      // wheels
-      [-0.5, 0.5].forEach(z => {
-        part(body, BOX, dark, [0.6, -0.55, z], [0.05, 0.5, 0.05], false);
-        part(body, CYL, dark, [0.6, -0.82, z], [0.26, 0.1, 0.26], 1.1, [Math.PI / 2, 0, 0]);
+      roundel(body, [-1.05, 0.02, 0.42], 0.22, [pal.accent, pal.stripe, pal.body], [0, 0, 0]);
+      roundel(body, [-1.05, 0.02, -0.42], 0.22, [pal.accent, pal.stripe, pal.body], [0, Math.PI, 0]);
+      // struts + bracing wires
+      const strutM = gloss(0x7a4a24, { shininess: 30 });
+      [-1.95, 1.95].forEach(z => { rod(body, [0.15, -0.26, z], [0.2, 0.92, z], 0.035, strutM); rod(body, [0.75, -0.26, z], [0.8, 0.92, z], 0.035, strutM); });
+      [-0.35, 0.35].forEach(z => { rod(body, [0.6, 0.3, z * 0.9], [0.55, 0.92, z], 0.03, strutM); rod(body, [0.05, 0.3, z * 0.9], [0.15, 0.92, z], 0.03, strutM); });
+      const wireM = new THREE.LineBasicMaterial({ color: 0x2a1a10 });
+      const wp = []; [-1, 1].forEach(sd => { wp.push(0.2, -0.26, sd * 0.4, 0.2, 0.92, sd * 1.95, 0.2, 0.92, sd * 0.4, 0.2, -0.26, sd * 1.95); });
+      const wg = new THREE.BufferGeometry(); wg.setAttribute('position', new THREE.Float32BufferAttribute(wp, 3)); body.add(new THREE.LineSegments(wg, wireM));
+      // tail: curved rudder + elevator
+      const rud = new THREE.Mesh(fin([[0, 0], [0.75, 0], [0.55, 0.55], [0.35, 0.95, 0.05, 0.95], [-0.1, 0.9], [-0.15, 0.5, 0, 0]], 0.06), accent);
+      rud.position.set(-2.95, 0.12, 0); body.add(rud); { const o = new THREE.Mesh(rud.geometry, outlineMat); o.scale.setScalar(1.06); rud.add(o); }
+      part(body, BOX, stripe, [-2.72, 0.55, 0], [0.08, 0.6, 0.075], false, [0, 0, -0.25]);
+      const elev = new THREE.Mesh(slab(0.62, 1.9, 0.05, 0.28), wing); elev.position.set(-2.55, 0.12, 0); body.add(elev);
+      // landing gear: V struts, fat tyres with coloured hubs, tail skid
+      [-0.45, 0.45].forEach(z => {
+        rod(body, [0.75, -0.25, z * 0.6], [0.7, -0.78, z], 0.035, metal); rod(body, [0.25, -0.25, z * 0.6], [0.7, -0.78, z], 0.035, metal);
+        part(body, new THREE.TorusGeometry(0.2, 0.09, 10, 20), gloss(0x1e1e22, { shininess: 20 }), [0.7, -0.8, z], null, false);
+        part(body, CYL, accent, [0.7, -0.8, z], [0.13, 0.19, 0.13], false, [Math.PI / 2, 0, 0]);
       });
+      rod(body, [0.7, -0.8, -0.45], [0.7, -0.8, 0.45], 0.03, metal);
+      rod(body, [-2.2, -0.12, 0], [-2.45, -0.38, 0], 0.03, metal);
       return finish(prop);
     }
 
@@ -1210,32 +1279,60 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
     function buildAirship() {
       const a = new THREE.Group();
       const body = new THREE.Group(); a.add(body);
-      const orange = toon(0xd9822b), green = toon(0x1f8f3d), red = toon(0xc1121f), gold = toon(0xf2c230, { emissive: 0x2a1e00 }), wood = toon(0x7a4a24);
-      // balloon
-      part(body, SPH, orange, [0, 2.1, 0], [2.6, 1.35, 1.35], 1.05);
-      [-1.6, 0, 1.6].forEach((x, i) => part(body, new THREE.TorusGeometry(1, 0.06, 8, 28), i === 1 ? red : green, [x, 2.1, 0], [0.3, 1.18 - Math.abs(x) * 0.2, 1.18 - Math.abs(x) * 0.2], false, [0, Math.PI / 2, 0]));
-      part(body, CONE, red, [2.75, 2.1, 0], [0.4, 0.6, 0.4], 1.1, [0, 0, -Math.PI / 2]);
-      // tail fins
-      part(body, BOX, green, [-2.7, 2.1, 0], [0.7, 1.3, 0.08]);
-      part(body, BOX, green, [-2.7, 2.1, 0], [0.7, 0.08, 1.3]);
-      // ropes + gondola
-      [[-0.9, 0.5], [0.9, 0.5], [-0.9, -0.5], [0.9, -0.5]].forEach(([x, z]) => part(body, BOX, wood, [x, 0.9, z], [0.04, 1.1, 0.04], false));
-      part(body, BOX, wood, [0, 0.15, 0], [2.4, 0.5, 1.3]);
-      part(body, BOX, gold, [0, 0.42, 0], [2.5, 0.08, 1.4], false);
-      // royal flags
-      [-1, 1].forEach(s => {
-        part(body, BOX, wood, [s * 1.1, 0.9, 0.6], [0.04, 1.0, 0.04], false);
-        part(body, BOX, s < 0 ? green : red, [s * 1.1 + 0.22, 1.25, 0.6], [0.42, 0.26, 0.02], false);
+      const green = gloss(0x1f8f3d), red = gloss(0xc1121f), gold = gloss(0xf2c230, { emissive: 0x2a1e00, shininess: 100, specular: 0xffeeaa }), wood = gloss(0x7a4a24, { shininess: 25 }), metal = gloss(0x3a3d42, { shininess: 90 });
+      // envelope: smooth ellipsoid with royal orange-and-gold gores
+      const cv = document.createElement('canvas'); cv.width = 256; cv.height = 64; const g2 = cv.getContext('2d');
+      for (let i = 0; i < 12; i++) { g2.fillStyle = i % 2 ? '#f2b33a' : '#e2741e'; g2.fillRect(i * 256 / 12, 0, 256 / 12 + 1, 64); }
+      const gores = new THREE.CanvasTexture(cv);
+      const env = new THREE.Mesh(lathe([[0.05, -2.9], [0.55, -2.6], [1.05, -1.9], [1.38, -0.8], [1.42, 0.2], [1.3, 1.3], [0.95, 2.2], [0.45, 2.7], [0.05, 2.85]], 32),
+        new THREE.MeshPhongMaterial({ map: gores, shininess: 60, specular: 0x664422 }));
+      env.position.set(0, 2.1, 0); body.add(env);
+      const eo = new THREE.Mesh(env.geometry, outlineMat); eo.scale.setScalar(1.035); env.add(eo);
+      // royal bands and a gold nose cap
+      [-1.4, 0.3, 1.6].forEach((x, i) => { const r = [1.2, 1.43, 1.12][i]; part(body, new THREE.TorusGeometry(r, 0.07, 8, 32), i === 1 ? red : green, [x, 2.1, 0], null, false, [0, Math.PI / 2, 0]); });
+      part(body, new THREE.SphereGeometry(1, 16, 10, 0, Math.PI * 2, 0, Math.PI / 2), gold, [2.78, 2.1, 0], [0.28, 0.42, 0.42], 1.08, [0, 0, -Math.PI / 2]);
+      // four curved tail fins with gold edges
+      for (let i = 0; i < 4; i++) {
+        const f = new THREE.Mesh(fin([[0, 0], [1.1, 0], [0.7, 0.9, 0.05, 1.05], [-0.25, 1.0], [-0.1, 0.5, 0, 0]], 0.08), green);
+        const holder = new THREE.Group(); holder.position.set(-2.35, 2.1, 0); holder.rotation.x = i * Math.PI / 2 + Math.PI / 4; body.add(holder);
+        f.position.set(-0.35, 0.75, 0); holder.add(f); const o = new THREE.Mesh(f.geometry, outlineMat); o.scale.setScalar(1.05); f.add(o);
+      }
+      // gondola: a little royal ship with gold rails and portholes
+      const hull = new THREE.Mesh(fin([[-1.35, 0.35], [1.35, 0.35], [1.55, 0.6], [1.25, -0.25, 0.6, -0.35], [-0.9, -0.35], [-1.45, -0.2, -1.35, 0.35]], 1.1), wood);
+      hull.position.set(0, 0.0, 0); body.add(hull); { const o = new THREE.Mesh(hull.geometry, outlineMat); o.scale.setScalar(1.04); hull.add(o); }
+      part(body, BOX, gold, [0, 0.38, 0.58], [2.8, 0.06, 0.06], false); part(body, BOX, gold, [0, 0.38, -0.58], [2.8, 0.06, 0.06], false);
+      part(body, BOX, gold, [0, 0.0, 0.6], [2.6, 0.08, 0.02], false); part(body, BOX, gold, [0, 0.0, -0.6], [2.6, 0.08, 0.02], false);
+      [-0.8, 0, 0.8].forEach(x => [-1, 1].forEach(sd => {
+        part(body, new THREE.TorusGeometry(0.1, 0.03, 6, 14), gold, [x, 0.12, sd * 0.6], null, false);
+        part(body, new THREE.CircleGeometry(0.09, 14), new THREE.MeshPhongMaterial({ color: 0x9fd8ff, emissive: 0x335577, shininess: 120 }), [x, 0.12, sd * 0.605], null, false, [0, sd < 0 ? Math.PI : 0, 0]);
+      }));
+      // rigging from envelope to gondola
+      [[-0.9, 0.5], [0.9, 0.5], [-0.9, -0.5], [0.9, -0.5]].forEach(([x, z]) => rod(body, [x, 0.4, z], [x * 1.1, 1.0, z * 1.5], 0.025, wood));
+      // royal pennants
+      [-1, 1].forEach(sd => {
+        rod(body, [sd * 1.15, 0.38, 0.45], [sd * 1.15, 1.35, 0.45], 0.025, wood);
+        part(body, fin([[0, 0], [0.55, 0.13], [0, 0.26]], 0.02), sd < 0 ? green : red, [sd * 1.15, 1.08, 0.45], null, false);
+        part(body, SPL, gold, [sd * 1.15, 1.37, 0.45], [0.06, 0.06, 0.06], false);
       });
-      // cannons on the gondola
-      [-0.4, 0.4].forEach(z => part(body, CYL, toon(0x333333), [-1.35, 0.2, z], [0.12, 0.5, 0.12], 1.1, [0, 0, Math.PI / 2]));
-      // propeller at the back
-      const prop = new THREE.Group(); prop.position.set(-3.15, 2.1, 0); body.add(prop);
-      part(prop, BOX, wood, [0, 0, 0], [0.06, 1.5, 0.14], 1.15);
+      // cannons with gold bands
+      [-0.38, 0.38].forEach(z => { part(body, CYL, metal, [-1.4, 0.22, z], [0.13, 0.6, 0.13], 1.1, [0, 0, Math.PI / 2]); part(body, CYL, gold, [-1.62, 0.22, z], [0.15, 0.08, 0.15], false, [0, 0, Math.PI / 2]); });
+      // twin engine pods with spinning props
+      const props = [];
+      [-1, 1].forEach(sd => {
+        const pod = new THREE.Mesh(lathe([[0.03, -0.45], [0.2, -0.3], [0.22, 0.2], [0.12, 0.45]], 16), gold); pod.position.set(-0.9, 0.6, sd * 1.15); body.add(pod);
+        rod(body, [-0.9, 0.45, sd * 0.6], [-0.9, 0.6, sd * 1.1], 0.03, metal);
+        const pp = new THREE.Group(); pp.position.set(-1.38, 0.6, sd * 1.15); body.add(pp); props.push(pp);
+        part(pp, BOX, wood, [0, 0, 0], [0.04, 0.8, 0.1], false);
+        const d = new THREE.Mesh(new THREE.CircleGeometry(0.45, 24), discMat); d.rotation.y = Math.PI / 2; pp.add(d);
+      });
+      // big propeller at the back
+      const prop = new THREE.Group(); prop.position.set(-3.0, 2.1, 0); body.add(prop);
+      [-1, 1].forEach(sd => part(prop, SPH, wood, [0, sd * 0.6, 0], [0.05, 0.62, 0.14], 1.12));
+      { const d = new THREE.Mesh(new THREE.CircleGeometry(1.25, 32), discMat); d.rotation.y = Math.PI / 2; prop.add(d); }
       // the King himself, waving the spice jar
       const king = buildKing(); king.root.scale.setScalar(0.55); king.root.position.set(0.2, 0.42, 0.25); king.root.rotation.y = Math.PI - 0.6;
       body.add(king.root);
-      a.userData = { body, prop, king };
+      a.userData = { body, prop, props, king };
       a.rotation.y = Math.PI; // faces the plane (toward -x)
       return a;
     }
@@ -1979,7 +2076,7 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
         airship.visible = true;
         airship.position.set(G.bossX(s), s.boss.y - 1.6, 0);
         airship.rotation.z = Math.sin(time * 1.3) * 0.05;
-        ud.prop.rotation.x += dt * 30;
+        ud.prop.rotation.x += dt * 30; if (ud.props) ud.props.forEach(q => { q.rotation.x += dt * 45; });
         const flashOn = bossFlash > 0;
         ud.body.scale.setScalar(flashOn ? 1.06 : 1);
         ud.king.armL.rotation.z = -0.55 + Math.sin(time * 6) * 0.5;

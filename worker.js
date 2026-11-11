@@ -291,7 +291,13 @@ const SHOP = {
   'pilot:agbada': { ngn: 700, usd: 0.79 },
   'pilot:crown': { ngn: 1000, usd: 0.99 }
 };
-const shopOn = env => !!String(env.PAYSTACK_SECRET_KEY || '').trim();
+// The shop is open with a live Paystack key. A test key (sk_test_) only opens it when SHOP_TEST = "1",
+// so players can't unlock skins with Paystack's test cards before the account is approved.
+const shopOn = env => {
+  const k = String(env.PAYSTACK_SECRET_KEY || '').trim();
+  if (!k) return false;
+  return !k.startsWith('sk_test_') || String(env.SHOP_TEST || '').trim() === '1';
+};
 const paystack = (env, method, path, body) => fetch('https://api.paystack.co' + path, {
   method,
   headers: { Authorization: 'Bearer ' + String(env.PAYSTACK_SECRET_KEY || '').trim(), 'Content-Type': 'application/json' },

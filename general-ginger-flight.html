@@ -47,12 +47,14 @@
     }
     #overlay.hidden { opacity: 0; }
     #overlay.hidden * { pointer-events: none !important; }
+    /* logo font built in, so the title never falls back to another font while web fonts load (SIL Open Font License) */
+    @font-face { font-family: 'Lilita One'; src: url(data:font/woff;base64,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) format('woff'); font-display: block; }
     #overlay h1 {
       font-size: clamp(1.7rem, 6.5vw, 2.7rem); line-height: 1.05; margin-bottom: 6px;
       font-family: 'Lilita One', 'Black Ops One', 'Oswald', sans-serif; font-weight: 400; letter-spacing: 0.02em; text-transform: uppercase;
       color: #ffd23f; background: linear-gradient(180deg, #fff3a8 0%, #ffd23f 45%, #ff8a1a 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
-      -webkit-text-stroke: 2px #4a1a05; paint-order: stroke fill;
-      filter: drop-shadow(0 4px 0 #4a1a05) drop-shadow(0 8px 14px rgba(0,0,0,0.45));
+      /* outline drawn with shadows, not a text stroke: a stroke shows through the see-through gradient letters */
+      filter: drop-shadow(1.5px 0 0 #4a1a05) drop-shadow(-1.5px 0 0 #4a1a05) drop-shadow(0 1.5px 0 #4a1a05) drop-shadow(0 -1.5px 0 #4a1a05) drop-shadow(0 4px 0 #4a1a05) drop-shadow(0 8px 14px rgba(0,0,0,0.45));
       font-size: clamp(2rem, 8vw, 3.3rem);
     }
     #overlay p { color: #fff; font-size: 1rem; margin-bottom: 14px; max-width: 520px; line-height: 1.4; text-shadow: 0 1px 2px rgba(0,0,0,0.9);
@@ -74,6 +76,35 @@
     @keyframes hgpulse { 70% { box-shadow: 0 0 0 14px rgba(255,181,71,0); } 100% { box-shadow: 0 0 0 0 rgba(255,181,71,0); } }
     #hangar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; max-height: 50vh; overflow: auto; background: rgba(14,12,10,0.96); border-top: 2px solid #ffb547; border-radius: 0; padding: 14px 16px 18px; color: #fff; }
     #hangar[hidden] { display: none; }
+    #btn-row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; pointer-events: none; }
+    #mission-btn { pointer-events: auto; position: relative; margin-top: 12px; padding: 10px 22px; border-radius: 4px; border: 1.5px solid #a8a29e; background: rgba(20,16,12,0.75); text-transform: uppercase; letter-spacing: 0.06em; color: #fff; font: inherit; font-weight: 800; font-size: 1rem; cursor: pointer; }
+    #mission-btn.dot::after { content: ''; position: absolute; top: -5px; inset-inline-end: -5px; width: 13px; height: 13px; border-radius: 50%; background: #ff3b30; border: 2px solid #fff; animation: hgpulse 1.4s infinite; }
+    #mline { font-size: 0.9rem; color: #ffe08a; margin: -8px 0 12px; min-height: 1.1em; text-shadow: 0 1px 2px rgba(0,0,0,0.9); }
+    #missions { position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; max-height: 78vh; overflow: auto; background: rgba(14,12,10,0.96); border-top: 2px solid #ffb547; padding: 14px 16px 18px; color: #fff; }
+    #missions[hidden] { display: none; }
+    #missions .hg-head { display: flex; align-items: center; justify-content: space-between; }
+    #missions h2 { margin: 0; font-size: 1.3rem; font-family: 'Black Ops One', 'Oswald', sans-serif; font-weight: 400; letter-spacing: 0.06em; color: #ffb547; }
+    #ms-close { background: none; border: 0; color: #fff; font-size: 1.4rem; cursor: pointer; padding: 4px 8px; }
+    #missions .ms-wrap { max-width: 620px; margin: 0 auto; }
+    .ms-rank { display: flex; align-items: center; gap: 12px; margin: 10px 0 6px; }
+    .ms-badge { flex: none; width: 46px; height: 46px; border-radius: 50%; display: grid; place-items: center; font-size: 1.5rem; background: linear-gradient(180deg, #ffe08a, #f59e0b); box-shadow: 0 0 0 2px #4a1a05, 0 0 14px rgba(255,181,71,0.5); }
+    .ms-rank b { font-size: 1.05rem; color: #ffe08a; letter-spacing: 0.04em; text-transform: uppercase; }
+    .ms-rank small { display: block; color: #d6d3d1; font-size: 0.8rem; }
+    .ms-bar { height: 9px; border-radius: 6px; background: rgba(255,255,255,0.14); overflow: hidden; margin-top: 5px; }
+    .ms-bar i { display: block; height: 100%; background: linear-gradient(90deg, #f59e0b, #ffe08a); border-radius: 6px; }
+    .ms-card { border: 1.5px solid rgba(255,255,255,0.16); border-radius: 8px; padding: 10px 12px; margin-top: 9px; background: rgba(255,255,255,0.04); }
+    .ms-card.done { border-color: #4ade80; background: rgba(74,222,128,0.09); }
+    .ms-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-weight: 700; }
+    .ms-row span.xp { flex: none; color: #ffe08a; font-size: 0.9rem; }
+    .ms-card.done .ms-bar i { background: #4ade80; }
+    .ms-sub { font-size: 0.78rem; color: #a8a29e; margin-top: 3px; }
+    .ms-days { display: flex; gap: 5px; margin-top: 8px; }
+    .ms-days i { flex: 1; text-align: center; font-style: normal; font-size: 0.72rem; padding: 5px 0; border-radius: 5px; background: rgba(255,255,255,0.08); color: #a8a29e; }
+    .ms-days i.got { background: #f59e0b; color: #1c1300; font-weight: 800; }
+    .ms-days i.now { outline: 2px solid #ffe08a; color: #fff; }
+    #ms-claim { margin-top: 9px; width: 100%; padding: 10px; border-radius: 6px; border: 0; background: linear-gradient(180deg, #ffd987, #f7b538); color: #1d1300; font: inherit; font-weight: 800; font-size: 1rem; text-transform: uppercase; cursor: pointer; }
+    #ms-claim:disabled { background: rgba(255,255,255,0.12); color: #a8a29e; cursor: default; }
+    .ms-note { font-size: 0.74rem; color: #a8a29e; margin-top: 12px; text-align: center; }
     #hangar .hg-head { display: flex; align-items: center; justify-content: space-between; }
     #hangar h2 { margin: 0; font-size: 1.3rem; font-family: 'Black Ops One', 'Oswald', sans-serif; font-weight: 400; letter-spacing: 0.06em; color: #ffb547; }
     #hg-close { background: none; border: 0; color: #fff; font-size: 1.4rem; cursor: pointer; padding: 4px 8px; }
@@ -163,6 +194,14 @@
     #pause .tip { font-size: 0.8rem; opacity: 0.75; }
     #count { position: fixed; inset: 0; z-index: 24; display: flex; align-items: center; justify-content: center; pointer-events: none; font-size: 7rem; font-weight: 900; color: #ffb547; text-shadow: 0 6px 18px rgba(0,0,0,0.6); }
     #count[hidden] { display: none; }
+    @media (max-height: 440px) { /* sideways phone: keep the whole menu on screen */
+      #overlay { padding-top: 6px; padding-bottom: 6px; }
+      #overlay h1 { font-size: 1.45rem; line-height: 1; margin-bottom: 4px; }
+      #overlay p { font-size: 0.78rem; line-height: 1.25; margin-bottom: 6px; padding: 4px 10px; max-width: 640px; } #rotate { display: none; }
+      #overlay #result { margin: -2px 0 4px; } #overlay #mline { margin: -2px 0 4px; }
+      #go-btn { padding-top: 9px; padding-bottom: 9px; } #hangar-btn, #mission-btn { margin-top: 8px; padding: 7px 18px; }
+      #hint { margin-top: 6px; font-size: 0.76rem; }
+    }
   </style>
 </head>
 <body>
@@ -187,9 +226,11 @@
     <select id="lang"></select>
     <p id="ov-text" data-t="intro">The Ginger King's pest army is firing from the ground. Dodge missiles, RPGs and sticky nets, grab power-ups, and shoot down the King's airship to reach the next level!</p>
     <div id="result"></div>
+    <div id="mline"></div>
     <div id="account" hidden></div>
     <button id="go-btn" data-t="takeOff">Oya, Take Off!</button>
     <button id="hangar-btn" type="button" data-t="hangar">🛩️ Hangar</button>
+    <button id="mission-btn" type="button" data-t="missions">🎖 Missions</button>
     <button id="share-btn" type="button" hidden data-t="shareX">𝕏 Challenge friends</button>
     <a id="tg-btn" href="https://t.me/Thegingerarmy" target="_blank" rel="noopener" hidden data-t="joinTG">Join the Ginger Army on Telegram</a>
     <div id="hint" data-th="hint">
@@ -198,6 +239,12 @@
     </div>
     <div id="credit">♪ “Bali” (sped up) · KliensMan</div>
     <div id="rotate" data-t="rotate">Tip: turn your phone sideways for a wider view</div>
+  </div>
+  <div id="missions" hidden role="dialog" aria-modal="true" aria-labelledby="ms-title">
+    <div class="ms-wrap">
+      <div class="hg-head"><h2 id="ms-title" data-t="missions">🎖 Missions</h2><button id="ms-close" type="button" aria-label="Close">✕</button></div>
+      <div id="ms-body"></div>
+    </div>
   </div>
   <div id="hangar" hidden role="dialog" aria-modal="true" aria-labelledby="hg-title">
     <div class="hg-head"><h2 id="hg-title" data-t="hangar">🛩️ Hangar</h2><button id="hg-close" type="button" aria-label="Close">✕</button></div>
@@ -646,7 +693,7 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
       en: {
         loading: 'Loading General Ginger…', loadFail: 'Could not load the 3D engine. Check your connection and refresh.',
         intro: "The Ginger King's pest army is firing from the ground. Dodge missiles, RPGs and sticky nets, grab power-ups, and shoot down the King's airship to reach the next level!",
-        takeOff: 'Oya, Take Off!', flyAgain: 'Fly Again', shareX: '𝕏 Challenge friends', joinTG: 'Join the Ginger Army on Telegram', hangar: '🛩️ Hangar', hgPlane: 'Planes', hgPaint: 'Paint', hgTrail: 'Trails', hgPilot: 'Pilot', hgNote: 'Skins only change how you look. Every pilot flies the same.', hgEquipped: '✓ Equipped', hgTap: 'Tap to equip', hgBest: 'Unlock: best score {n}', hgSoon: '{n} · shop opening soon', hgBuy: '{n} · tap to buy', hgSignIn: 'Sign in first so your skin is saved to your account.', hgOpening: 'Opening secure checkout…', hgChecking: 'Checking your payment…', hgUnlocked: 'Skin unlocked! It\'s yours forever 🎉', hgPayFail: 'We couldn\'t confirm the payment yet. If you paid, the skin unlocks automatically within a few minutes.', hgNew: 'New skin unlocked: {name}! Open the Hangar 🛩️', shareText: 'I scored {score} and reached level {level} in General Ginger 🛩️\n\nCan you beat me? Overthrow the Ginger King 👑', loadingAcct: 'Loading your account…', connecting: 'Connecting…',
+        takeOff: 'Oya, Take Off!', flyAgain: 'Fly Again', shareX: '𝕏 Challenge friends', joinTG: 'Join the Ginger Army on Telegram', hangar: '🛩️ Hangar', hgPlane: 'Planes', hgPaint: 'Paint', hgTrail: 'Trails', hgPilot: 'Pilot', hgNote: 'Skins only change how you look. Every pilot flies the same.', hgEquipped: '✓ Equipped', hgTap: 'Tap to equip', hgBest: 'Unlock: best score {n}', hgSoon: '{n} · shop opening soon', hgBuy: '{n} · tap to buy', hgSignIn: 'Sign in first so your skin is saved to your account.', hgOpening: 'Opening secure checkout…', hgChecking: 'Checking your payment…', hgUnlocked: 'Skin unlocked! It\'s yours forever 🎉', hgPayFail: 'We couldn\'t confirm the payment yet. If you paid, the skin unlocks automatically within a few minutes.', missions: "🎖 Missions", mShoot: "Shoot down {n} enemy shots", mJar: "Collect {n} spice jars", mPower: "Grab {n} power-ups", mFly: "Fly {n} flights", mCombo: "Get a ×{n} combo", mScore: "Score {n} in one flight", mBoss: "Shoot down the King's airship ×{n}", mLevel: "Reach level {n}", mClean: "Reach the King without taking a hit", mDone: "Mission complete! +{n} XP", mRankUp: "Promoted to {name}! 🎖", mDaily: "Daily reward", mStreak: "Streak: {n}", mClaim: "Claim +{n} XP", mClaimed: "Come back tomorrow", mGot: "Daily reward: +{n} XP", mNext: "{n} XP to {name}", mOneFlight: "in one flight", mReset: "Three new missions every day.", mNote: "XP and ranks are saved on this device. They are separate from leaderboard points.", mLine: "Missions today: {a}/{b} · {rank}", rank0: "Recruit", rank1: "Private", rank2: "Corporal", rank3: "Sergeant", rank4: "Lieutenant", rank5: "Captain", rank6: "Major", rank7: "Colonel", rank8: "General", hgNew: 'New skin unlocked: {name}! Open the Hangar 🛩️', shareText: 'I scored {score} and reached level {level} in General Ginger 🛩️\n\nCan you beat me? Overthrow the Ginger King 👑', loadingAcct: 'Loading your account…', connecting: 'Connecting…',
         hint: '<span>↑ ↓</span> / <span>W S</span> fly up and down • <span>Space</span> spice boost<br>Phone: drag up and down to fly • tap to boost',
         rotate: 'Tip: turn your phone sideways for a wider view', boss: 'THE GINGER KING', cancel: 'Cancel',
         paused: '⏸ Paused', resume: '▶ Resume', quit: 'Quit flight (points not saved)', pauseTip: 'Tip: press P or Esc to pause on a keyboard.', pause: 'Pause',
@@ -677,7 +724,7 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
       fr: {
         loading: 'Chargement de General Ginger…', loadFail: 'Impossible de charger le moteur 3D. Vérifie ta connexion et recharge la page.',
         intro: "L'armée de nuisibles du Roi Gingembre tire depuis le sol. Esquive les missiles, les RPG et les filets collants, attrape les bonus et abats le dirigeable du Roi pour passer au niveau suivant !",
-        takeOff: 'Oya, décollage !', flyAgain: 'Rejouer', shareX: '𝕏 Défie tes amis', joinTG: 'Rejoins la Ginger Army sur Telegram', hangar: '🛩️ Hangar', hgPlane: 'Avions', hgPaint: 'Peinture', hgTrail: 'Traînées', hgPilot: 'Pilote', hgNote: 'Les skins changent seulement ton look. Tout le monde vole pareil.', hgEquipped: '✓ Équipé', hgTap: 'Touche pour équiper', hgBest: 'Débloqué avec un record de {n}', hgSoon: '{n} · boutique bientôt ouverte', hgBuy: '{n} · touche pour acheter', hgSignIn: 'Connecte-toi d\'abord pour garder ton skin sur ton compte.', hgOpening: 'Ouverture du paiement sécurisé…', hgChecking: 'Vérification du paiement…', hgUnlocked: 'Skin débloqué ! Il est à toi pour toujours 🎉', hgPayFail: 'Paiement pas encore confirmé. Si tu as payé, le skin se débloque tout seul dans quelques minutes.', hgNew: 'Nouveau skin débloqué : {name} ! Va au Hangar 🛩️', shareText: 'J\'ai fait {score} points et atteint le niveau {level} dans General Ginger 🛩️\n\nTu peux me battre ? Renverse le Roi Gingembre 👑', loadingAcct: 'Chargement de ton compte…', connecting: 'Connexion…',
+        takeOff: 'Oya, décollage !', flyAgain: 'Rejouer', shareX: '𝕏 Défie tes amis', joinTG: 'Rejoins la Ginger Army sur Telegram', hangar: '🛩️ Hangar', hgPlane: 'Avions', hgPaint: 'Peinture', hgTrail: 'Traînées', hgPilot: 'Pilote', hgNote: 'Les skins changent seulement ton look. Tout le monde vole pareil.', hgEquipped: '✓ Équipé', hgTap: 'Touche pour équiper', hgBest: 'Débloqué avec un record de {n}', hgSoon: '{n} · boutique bientôt ouverte', hgBuy: '{n} · touche pour acheter', hgSignIn: 'Connecte-toi d\'abord pour garder ton skin sur ton compte.', hgOpening: 'Ouverture du paiement sécurisé…', hgChecking: 'Vérification du paiement…', hgUnlocked: 'Skin débloqué ! Il est à toi pour toujours 🎉', hgPayFail: 'Paiement pas encore confirmé. Si tu as payé, le skin se débloque tout seul dans quelques minutes.', missions: "🎖 Missions", mShoot: "Abats {n} tirs ennemis", mJar: "Ramasse {n} pots d’épices", mPower: "Attrape {n} bonus", mFly: "Fais {n} vols", mCombo: "Fais un combo ×{n}", mScore: "Marque {n} en un seul vol", mBoss: "Abats le dirigeable du Roi ×{n}", mLevel: "Atteins le niveau {n}", mClean: "Atteins le Roi sans être touché", mDone: "Mission accomplie ! +{n} XP", mRankUp: "Promu {name} ! 🎖", mDaily: "Récompense du jour", mStreak: "Série : {n}", mClaim: "Récupérer +{n} XP", mClaimed: "Reviens demain", mGot: "Récompense du jour : +{n} XP", mNext: "{n} XP avant {name}", mOneFlight: "en un seul vol", mReset: "Trois nouvelles missions chaque jour.", mNote: "L’XP et les grades sont enregistrés sur cet appareil. Ils sont séparés des points du classement.", mLine: "Missions du jour : {a}/{b} · {rank}", rank0: "Recrue", rank1: "Soldat", rank2: "Caporal", rank3: "Sergent", rank4: "Lieutenant", rank5: "Capitaine", rank6: "Commandant", rank7: "Colonel", rank8: "Général", hgNew: 'Nouveau skin débloqué : {name} ! Va au Hangar 🛩️', shareText: 'J\'ai fait {score} points et atteint le niveau {level} dans General Ginger 🛩️\n\nTu peux me battre ? Renverse le Roi Gingembre 👑', loadingAcct: 'Chargement de ton compte…', connecting: 'Connexion…',
         hint: '<span>↑ ↓</span> / <span>W S</span> monter et descendre • <span>Espace</span> turbo épicé<br>Téléphone : glisse vers le haut ou le bas pour voler • touche pour le turbo',
         rotate: 'Astuce : tourne ton téléphone pour une vue plus large', boss: 'LE ROI GINGEMBRE', cancel: 'Annuler',
         paused: '⏸ Pause', resume: '▶ Reprendre', quit: 'Quitter le vol (points non enregistrés)', pauseTip: 'Astuce : appuie sur P ou Échap pour mettre en pause au clavier.', pause: 'Pause',
@@ -708,7 +755,7 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
       es: {
         loading: 'Cargando General Ginger…', loadFail: 'No se pudo cargar el motor 3D. Revisa tu conexión y recarga.',
         intro: '¡El ejército de plagas del Rey Jengibre dispara desde el suelo! Esquiva misiles, RPG y redes pegajosas, recoge mejoras y derriba el dirigible del Rey para pasar de nivel.',
-        takeOff: '¡Oya, a despegar!', flyAgain: 'Volar otra vez', shareX: '𝕏 Reta a tus amigos', joinTG: 'Únete a la Ginger Army en Telegram', hangar: '🛩️ Hangar', hgPlane: 'Aviones', hgPaint: 'Pintura', hgTrail: 'Estelas', hgPilot: 'Piloto', hgNote: 'Los skins solo cambian tu aspecto. Todos vuelan igual.', hgEquipped: '✓ Equipado', hgTap: 'Toca para equipar', hgBest: 'Se desbloquea con un récord de {n}', hgSoon: '{n} · tienda abre pronto', hgBuy: '{n} · toca para comprar', hgSignIn: 'Inicia sesión primero para guardar tu skin en tu cuenta.', hgOpening: 'Abriendo pago seguro…', hgChecking: 'Comprobando tu pago…', hgUnlocked: '¡Skin desbloqueado! Es tuyo para siempre 🎉', hgPayFail: 'Aún no confirmamos el pago. Si pagaste, el skin se desbloquea solo en unos minutos.', hgNew: '¡Nuevo skin desbloqueado: {name}! Abre el Hangar 🛩️', shareText: 'Hice {score} puntos y llegué al nivel {level} en General Ginger 🛩️\n\n¿Me superas? Derroca al Rey Jengibre 👑', loadingAcct: 'Cargando tu cuenta…', connecting: 'Conectando…',
+        takeOff: '¡Oya, a despegar!', flyAgain: 'Volar otra vez', shareX: '𝕏 Reta a tus amigos', joinTG: 'Únete a la Ginger Army en Telegram', hangar: '🛩️ Hangar', hgPlane: 'Aviones', hgPaint: 'Pintura', hgTrail: 'Estelas', hgPilot: 'Piloto', hgNote: 'Los skins solo cambian tu aspecto. Todos vuelan igual.', hgEquipped: '✓ Equipado', hgTap: 'Toca para equipar', hgBest: 'Se desbloquea con un récord de {n}', hgSoon: '{n} · tienda abre pronto', hgBuy: '{n} · toca para comprar', hgSignIn: 'Inicia sesión primero para guardar tu skin en tu cuenta.', hgOpening: 'Abriendo pago seguro…', hgChecking: 'Comprobando tu pago…', hgUnlocked: '¡Skin desbloqueado! Es tuyo para siempre 🎉', hgPayFail: 'Aún no confirmamos el pago. Si pagaste, el skin se desbloquea solo en unos minutos.', missions: "🎖 Misiones", mShoot: "Derriba {n} disparos enemigos", mJar: "Recoge {n} tarros de especias", mPower: "Consigue {n} potenciadores", mFly: "Haz {n} vuelos", mCombo: "Logra un combo ×{n}", mScore: "Consigue {n} puntos en un vuelo", mBoss: "Derriba el dirigible del Rey ×{n}", mLevel: "Llega al nivel {n}", mClean: "Llega al Rey sin recibir un golpe", mDone: "¡Misión cumplida! +{n} XP", mRankUp: "¡Ascendido a {name}! 🎖", mDaily: "Recompensa diaria", mStreak: "Racha: {n}", mClaim: "Reclamar +{n} XP", mClaimed: "Vuelve mañana", mGot: "Recompensa diaria: +{n} XP", mNext: "{n} XP para {name}", mOneFlight: "en un vuelo", mReset: "Tres misiones nuevas cada día.", mNote: "La XP y los rangos se guardan en este dispositivo. Son independientes de los puntos de la clasificación.", mLine: "Misiones de hoy: {a}/{b} · {rank}", rank0: "Recluta", rank1: "Soldado", rank2: "Cabo", rank3: "Sargento", rank4: "Teniente", rank5: "Capitán", rank6: "Mayor", rank7: "Coronel", rank8: "General", hgNew: '¡Nuevo skin desbloqueado: {name}! Abre el Hangar 🛩️', shareText: 'Hice {score} puntos y llegué al nivel {level} en General Ginger 🛩️\n\n¿Me superas? Derroca al Rey Jengibre 👑', loadingAcct: 'Cargando tu cuenta…', connecting: 'Conectando…',
         hint: '<span>↑ ↓</span> / <span>W S</span> subir y bajar • <span>Espacio</span> turbo picante<br>Móvil: arrastra arriba y abajo para volar • toca para el turbo',
         rotate: 'Consejo: gira el móvil para ver más', boss: 'EL REY JENGIBRE', cancel: 'Cancelar',
         paused: '⏸ En pausa', resume: '▶ Continuar', quit: 'Abandonar el vuelo (no se guardan los puntos)', pauseTip: 'Consejo: pulsa P o Esc para pausar con teclado.', pause: 'Pausa',
@@ -739,7 +786,7 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
       pt: {
         loading: 'Carregando General Ginger…', loadFail: 'Não foi possível carregar o motor 3D. Verifique sua conexão e recarregue.',
         intro: 'O exército de pragas do Rei Gengibre está atirando do chão! Desvie de mísseis, RPGs e redes grudentas, pegue power-ups e derrube o dirigível do Rei para passar de nível.',
-        takeOff: 'Oya, decolar!', flyAgain: 'Voar de novo', shareX: '𝕏 Desafie amigos', joinTG: 'Entre na Ginger Army no Telegram', hangar: '🛩️ Hangar', hgPlane: 'Aviões', hgPaint: 'Pintura', hgTrail: 'Rastros', hgPilot: 'Piloto', hgNote: 'Skins só mudam o visual. Todo mundo voa igual.', hgEquipped: '✓ Equipado', hgTap: 'Toque para equipar', hgBest: 'Desbloqueia com recorde de {n}', hgSoon: '{n} · loja abre em breve', hgBuy: '{n} · toque para comprar', hgSignIn: 'Entre primeiro para salvar sua skin na sua conta.', hgOpening: 'Abrindo pagamento seguro…', hgChecking: 'Verificando seu pagamento…', hgUnlocked: 'Skin desbloqueada! É sua para sempre 🎉', hgPayFail: 'Ainda não confirmamos o pagamento. Se você pagou, a skin desbloqueia sozinha em alguns minutos.', hgNew: 'Nova skin desbloqueada: {name}! Abra o Hangar 🛩️', shareText: 'Fiz {score} pontos e cheguei ao nível {level} no General Ginger 🛩️\n\nConsegue me vencer? Derrube o Rei Gengibre 👑', loadingAcct: 'Carregando sua conta…', connecting: 'Conectando…',
+        takeOff: 'Oya, decolar!', flyAgain: 'Voar de novo', shareX: '𝕏 Desafie amigos', joinTG: 'Entre na Ginger Army no Telegram', hangar: '🛩️ Hangar', hgPlane: 'Aviões', hgPaint: 'Pintura', hgTrail: 'Rastros', hgPilot: 'Piloto', hgNote: 'Skins só mudam o visual. Todo mundo voa igual.', hgEquipped: '✓ Equipado', hgTap: 'Toque para equipar', hgBest: 'Desbloqueia com recorde de {n}', hgSoon: '{n} · loja abre em breve', hgBuy: '{n} · toque para comprar', hgSignIn: 'Entre primeiro para salvar sua skin na sua conta.', hgOpening: 'Abrindo pagamento seguro…', hgChecking: 'Verificando seu pagamento…', hgUnlocked: 'Skin desbloqueada! É sua para sempre 🎉', hgPayFail: 'Ainda não confirmamos o pagamento. Se você pagou, a skin desbloqueia sozinha em alguns minutos.', missions: "🎖 Missões", mShoot: "Derrube {n} tiros inimigos", mJar: "Colete {n} potes de tempero", mPower: "Pegue {n} power-ups", mFly: "Faça {n} voos", mCombo: "Faça um combo ×{n}", mScore: "Marque {n} pontos em um voo", mBoss: "Derrube o dirigível do Rei ×{n}", mLevel: "Chegue ao nível {n}", mClean: "Chegue ao Rei sem levar um golpe", mDone: "Missão cumprida! +{n} XP", mRankUp: "Promovido a {name}! 🎖", mDaily: "Recompensa diária", mStreak: "Sequência: {n}", mClaim: "Resgatar +{n} XP", mClaimed: "Volte amanhã", mGot: "Recompensa diária: +{n} XP", mNext: "{n} XP para {name}", mOneFlight: "em um voo", mReset: "Três missões novas todos os dias.", mNote: "XP e patentes ficam salvos neste aparelho. São separados dos pontos do ranking.", mLine: "Missões de hoje: {a}/{b} · {rank}", rank0: "Recruta", rank1: "Soldado", rank2: "Cabo", rank3: "Sargento", rank4: "Tenente", rank5: "Capitão", rank6: "Major", rank7: "Coronel", rank8: "General", hgNew: 'Nova skin desbloqueada: {name}! Abra o Hangar 🛩️', shareText: 'Fiz {score} pontos e cheguei ao nível {level} no General Ginger 🛩️\n\nConsegue me vencer? Derrube o Rei Gengibre 👑', loadingAcct: 'Carregando sua conta…', connecting: 'Conectando…',
         hint: '<span>↑ ↓</span> / <span>W S</span> subir e descer • <span>Espaço</span> turbo apimentado<br>Celular: arraste para cima e para baixo para voar • toque para o turbo',
         rotate: 'Dica: vire o celular para ver mais', boss: 'O REI GENGIBRE', cancel: 'Cancelar',
         paused: '⏸ Pausado', resume: '▶ Continuar', quit: 'Sair do voo (pontos não são salvos)', pauseTip: 'Dica: aperte P ou Esc para pausar no teclado.', pause: 'Pausar',
@@ -770,7 +817,7 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
       ar: {
         loading: 'جارٍ تحميل General Ginger…', loadFail: 'تعذّر تحميل محرك الرسوم ثلاثية الأبعاد. تحقّق من اتصالك وأعد تحميل الصفحة.',
         intro: 'جيش آفات ملك الزنجبيل يطلق النار من الأرض! تفادَ الصواريخ وقذائف آر بي جي والشِّباك اللزجة، واجمع المكافآت، وأسقط منطاد الملك لتنتقل إلى المستوى التالي!',
-        takeOff: 'هيّا، أقلِع!', flyAgain: 'طِر مجددًا', shareX: '𝕏 تحدَّ أصدقاءك', joinTG: 'انضم إلى جيش الزنجبيل على تيليجرام', hangar: '🛩️ الحظيرة', hgPlane: 'الطائرات', hgPaint: 'الطلاء', hgTrail: 'الأثر', hgPilot: 'الطيار', hgNote: 'الأشكال تغيّر المظهر فقط. الجميع يطير بالطريقة نفسها.', hgEquipped: '✓ مُجهَّز', hgTap: 'اضغط للتجهيز', hgBest: 'يُفتح عند أفضل نتيجة {n}', hgSoon: '{n} · المتجر يفتح قريبًا', hgBuy: '{n} · اضغط للشراء', hgSignIn: 'سجّل الدخول أولًا ليُحفظ الشكل في حسابك.', hgOpening: 'جارٍ فتح الدفع الآمن…', hgChecking: 'جارٍ التحقق من الدفع…', hgUnlocked: 'تم فتح الشكل! إنه لك إلى الأبد 🎉', hgPayFail: 'لم نؤكد الدفع بعد. إذا دفعت، سيُفتح الشكل تلقائيًا خلال دقائق.', hgNew: 'شكل جديد مفتوح: {name}! افتح الحظيرة 🛩️', shareText: 'سجّلت {score} نقطة ووصلت إلى المستوى {level} في General Ginger 🛩️\n\nهل تستطيع التفوق عليّ؟ أطِح بملك الزنجبيل 👑', loadingAcct: 'جارٍ تحميل حسابك…', connecting: 'جارٍ الاتصال…',
+        takeOff: 'هيّا، أقلِع!', flyAgain: 'طِر مجددًا', shareX: '𝕏 تحدَّ أصدقاءك', joinTG: 'انضم إلى جيش الزنجبيل على تيليجرام', hangar: '🛩️ الحظيرة', hgPlane: 'الطائرات', hgPaint: 'الطلاء', hgTrail: 'الأثر', hgPilot: 'الطيار', hgNote: 'الأشكال تغيّر المظهر فقط. الجميع يطير بالطريقة نفسها.', hgEquipped: '✓ مُجهَّز', hgTap: 'اضغط للتجهيز', hgBest: 'يُفتح عند أفضل نتيجة {n}', hgSoon: '{n} · المتجر يفتح قريبًا', hgBuy: '{n} · اضغط للشراء', hgSignIn: 'سجّل الدخول أولًا ليُحفظ الشكل في حسابك.', hgOpening: 'جارٍ فتح الدفع الآمن…', hgChecking: 'جارٍ التحقق من الدفع…', hgUnlocked: 'تم فتح الشكل! إنه لك إلى الأبد 🎉', hgPayFail: 'لم نؤكد الدفع بعد. إذا دفعت، سيُفتح الشكل تلقائيًا خلال دقائق.', missions: "🎖 المهام", mShoot: "أسقط {n} من قذائف العدو", mJar: "اجمع {n} من برطمانات التوابل", mPower: "التقط {n} من المقوّيات", mFly: "قم بـ {n} رحلات", mCombo: "حقّق كومبو ×{n}", mScore: "سجّل {n} في رحلة واحدة", mBoss: "أسقط منطاد الملك ×{n}", mLevel: "اوصل إلى المستوى {n}", mClean: "اوصل إلى الملك دون أن تُصاب", mDone: "اكتملت المهمة! +{n} XP", mRankUp: "تمت ترقيتك إلى {name}! 🎖", mDaily: "مكافأة يومية", mStreak: "أيام متتالية: {n}", mClaim: "احصل على +{n} XP", mClaimed: "عد غدًا", mGot: "المكافأة اليومية: +{n} XP", mNext: "{n} XP للوصول إلى {name}", mOneFlight: "في رحلة واحدة", mReset: "ثلاث مهام جديدة كل يوم.", mNote: "نقاط الخبرة والرتب محفوظة على هذا الجهاز، وهي منفصلة عن نقاط لوحة المتصدرين.", mLine: "مهام اليوم: {a}/{b} · {rank}", rank0: "مجنّد", rank1: "جندي", rank2: "عريف", rank3: "رقيب", rank4: "ملازم", rank5: "نقيب", rank6: "رائد", rank7: "عقيد", rank8: "جنرال", hgNew: 'شكل جديد مفتوح: {name}! افتح الحظيرة 🛩️', shareText: 'سجّلت {score} نقطة ووصلت إلى المستوى {level} في General Ginger 🛩️\n\nهل تستطيع التفوق عليّ؟ أطِح بملك الزنجبيل 👑', loadingAcct: 'جارٍ تحميل حسابك…', connecting: 'جارٍ الاتصال…',
         hint: '<span>↑ ↓</span> / <span>W S</span> للصعود والنزول • <span>Space</span> دفعة التوابل<br>على الهاتف: اسحب للأعلى والأسفل للطيران • انقر للدفعة',
         rotate: 'نصيحة: أدِر هاتفك أفقيًا لرؤية أوسع', boss: 'ملك الزنجبيل', cancel: 'إلغاء',
         paused: '⏸ متوقف مؤقتًا', resume: '▶ استئناف', quit: 'إنهاء الرحلة (لن تُحفظ النقاط)', pauseTip: 'نصيحة: اضغط P أو Esc للإيقاف المؤقت من لوحة المفاتيح.', pause: 'إيقاف مؤقت',
@@ -1728,7 +1775,7 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
     const $ = id => document.getElementById(id);
     const hud = $('hud'), overlay = $('overlay'), goBtn = $('go-btn'), toastEl = $('toast'), flash = $('flash');
     let best = loadBest(), toastT = 0;
-    function toast(msg, secs = 1.1) { toastEl.textContent = msg; toastEl.classList.add('show'); toastT = secs; }
+    function toast(msg, secs = 1.1) { toastEl.textContent = msg; toastEl.style.top = overlay.classList.contains('hidden') ? '' : '2.5%'; toastEl.classList.add('show'); toastT = secs; }
     function flashRed() { flash.style.transition = 'none'; flash.style.opacity = 0.35; requestAnimationFrame(() => { flash.style.transition = 'opacity 0.45s'; flash.style.opacity = 0; }); }
     goBtn.addEventListener('click', () => { if (state === 'menu' || state === 'over') startGame(); });
 
@@ -1924,7 +1971,7 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
     }
 
     async function startGame() {
-      if ((state !== 'menu' && state !== 'over') || !$('signin').hidden || !$('hangar').hidden) return;
+      if ((state !== 'menu' && state !== 'over') || !$('signin').hidden || !$('hangar').hidden || !$('missions').hidden) return;
       audioStart();
       // Coming back from the email link: finish loading the account first, then make sure a tag is chosen.
       if (authOn && !account && await loginToken()) {
@@ -1933,7 +1980,7 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
         goBtn.disabled = false; goBtn.textContent = state === 'over' ? t('flyAgain') : t('takeOff');
       }
       if (needsTag()) { openSignin('tag'); return; }
-      if ((state !== 'menu' && state !== 'over') || !$('signin').hidden || !$('hangar').hidden) return;
+      if ((state !== 'menu' && state !== 'over') || !$('signin').hidden || !$('hangar').hidden || !$('missions').hidden) return;
       state = 'starting'; goBtn.disabled = true;
       if (GG_API) goBtn.textContent = t('connecting');
       session = await requestSession();
@@ -2014,6 +2061,126 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
     $('hg-close').addEventListener('click', closeHangar);
     document.querySelectorAll('#hangar .hg-tabs button').forEach(b => b.addEventListener('click', () => { hgKind = b.dataset.kind; renderHangar(); }));
 
+    /* ================= Missions, daily reward and pilot rank =================
+       Looks-and-fun layer only: XP and ranks live on this device and never touch the
+       server-checked leaderboard points. Three missions a day, picked by the date. */
+    const MS_KEY = 'ggMissions';
+    const RANKS = [0, 200, 500, 1000, 2000, 3500, 5500, 8000, 12000];
+    const RANK_ICON = ['🪖', '🎗️', '🥉', '🥈', '🥇', '⭐', '🌟', '🦅', '👑'];
+    const DAILY_XP = [50, 75, 100, 125, 150, 200, 300];
+    const MPOOL = [
+      { id: 'shoot20', k: 'shoot', n: 20, xp: 60, tier: 0 }, { id: 'jar4', k: 'jar', n: 4, xp: 60, tier: 0 },
+      { id: 'power4', k: 'power', n: 4, xp: 70, tier: 0 }, { id: 'fly3', k: 'fly', n: 3, xp: 50, tier: 0 },
+      { id: 'shoot45', k: 'shoot', n: 45, xp: 120, tier: 1 }, { id: 'jar10', k: 'jar', n: 10, xp: 120, tier: 1 },
+      { id: 'fly6', k: 'fly', n: 6, xp: 100, tier: 1 }, { id: 'combo4', k: 'combo', n: 4, xp: 90, tier: 1, best: 1 },
+      { id: 'score5k', k: 'score', n: 5000, xp: 100, tier: 1, best: 1 }, { id: 'boss1', k: 'boss', n: 1, xp: 150, tier: 1 },
+      { id: 'combo7', k: 'combo', n: 7, xp: 180, tier: 2, best: 1 }, { id: 'score15k', k: 'score', n: 15000, xp: 200, tier: 2, best: 1 },
+      { id: 'boss2', k: 'boss', n: 2, xp: 250, tier: 2 }, { id: 'lvl3', k: 'level', n: 3, xp: 220, tier: 2, best: 1 },
+      { id: 'clean', k: 'clean', n: 1, xp: 160, tier: 2 }
+    ];
+    const MTEXT = { shoot: 'mShoot', jar: 'mJar', power: 'mPower', fly: 'mFly', combo: 'mCombo', score: 'mScore', boss: 'mBoss', level: 'mLevel', clean: 'mClean' };
+    const dayStr = (d = new Date()) => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+    const dayBefore = ds => { const [y, m, d] = ds.split('-').map(Number); return dayStr(new Date(y, m - 1, d - 1)); };
+    function pickMissions(ds) { // one easy, one medium, one hard; same three for everyone on a given date
+      let h = 2166136261; for (const c of ds) { h ^= c.charCodeAt(0); h = Math.imul(h, 16777619) >>> 0; }
+      const rnd = () => { h ^= h << 13; h >>>= 0; h ^= h >>> 17; h ^= h << 5; h >>>= 0; return h / 4294967296; };
+      const out = [], used = {};
+      for (let tier = 0; tier < 3; tier++) {
+        const c = MPOOL.filter(m => m.tier === tier && !used[m.k]);
+        const m = c[Math.floor(rnd() * c.length)]; used[m.k] = 1; out.push({ id: m.id, p: 0, done: false });
+      }
+      return out;
+    }
+    let MS = (() => { try { const v = JSON.parse(localStorage.getItem(MS_KEY)); if (v && typeof v.xp === 'number' && Array.isArray(v.list)) return v; } catch (e) {} return null; })()
+      || { xp: 0, day: '', list: [], streak: 0, lastClaim: '' };
+    const msSave = () => { try { localStorage.setItem(MS_KEY, JSON.stringify(MS)); } catch (e) {} };
+    function msRoll() { const d = dayStr(); if (MS.day !== d || MS.list.length !== 3 || MS.list.some(m => !MPOOL.find(q => q.id === m.id))) { MS.day = d; MS.list = pickMissions(d); msSave(); } }
+    const rankOf = xp => { let r = 0; for (let i = 0; i < RANKS.length; i++) if (xp >= RANKS[i]) r = i; return r; };
+    const rankName = r => t('rank' + r);
+    const canClaim = () => MS.lastClaim !== dayStr();
+    const streakNow = () => (MS.lastClaim === dayStr() || MS.lastClaim === dayBefore(dayStr())) ? MS.streak : 0; // a missed day starts again
+    function msDot() { $('mission-btn').classList.toggle('dot', canClaim()); }
+    function addXp(n) {
+      const before = rankOf(MS.xp); MS.xp += n; msSave();
+      const after = rankOf(MS.xp);
+      if (after > before) setTimeout(() => { toast(t('mRankUp', { name: rankName(after) }), 3.5); SND.fanfare(); }, 1300);
+    }
+    let msSim = null, msHit = false, msFlightBest = {};
+    let msDirty = false;
+    function msBump(kind, value, absolute) {
+      for (const m of MS.list) {
+        const def = MPOOL.find(q => q.id === m.id);
+        if (!def || def.k !== kind || m.done) continue;
+        const np = absolute ? Math.max(m.p, value) : m.p + value;
+        if (np === m.p) continue;
+        m.p = np;
+        if (m.p >= def.n) {
+          m.p = def.n; m.done = true; addXp(def.xp); msDirty = false;
+          toast('🎖 ' + t('mDone', { n: def.xp }), 2.4); SND.power(); buzz([30, 40, 30]);
+          msSave();
+        } else if (absolute) msDirty = true; // changes every frame: saved when the flight ends
+        else msSave();
+      }
+    }
+    function missionEvent(e) {
+      if (e.t === 'shotDown') { msBump('shoot', 1); msBump('combo', combo, true); }
+      else if (e.t === 'jar') msBump('jar', 1);
+      else if (e.t === 'pepper' || e.t === 'heart' || e.t === 'cannon') msBump('power', 1);
+      else if (e.t === 'hit') msHit = true;
+      else if (e.t === 'bossIn') { if (!msHit) msBump('clean', 1); }
+      else if (e.t === 'bossDown') msBump('boss', 1);
+    }
+    function missionTick() { // cheap per-frame checks for "in one flight" goals
+      if (sim !== msSim) { msSim = sim; msHit = false; msRoll(); }
+      if (!sim) return;
+      msBump('score', sim.score, true); msBump('level', sim.level, true);
+    }
+    function missionFlightEnd() {
+      msRoll(); msBump('fly', 1); if (msDirty) { msDirty = false; msSave(); }
+      const doneN = MS.list.filter(m => m.done).length;
+      $('mline').textContent = t('mLine', { a: doneN, b: MS.list.length, rank: rankName(rankOf(MS.xp)) });
+      msDot();
+    }
+    function renderMissions() {
+      msRoll();
+      const r = rankOf(MS.xp), next = RANKS[r + 1], base = RANKS[r];
+      const pct = next ? Math.round((MS.xp - base) / (next - base) * 100) : 100;
+      const esc = v => String(v).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+      const st = streakNow(), claim = canClaim(), dayIdx = claim ? st % 7 : (st - 1 + 7) % 7;
+      let h = `<div class="ms-rank"><div class="ms-badge">${RANK_ICON[r]}</div><div style="flex:1"><b>${esc(rankName(r))}</b>
+        <small>${fmt(MS.xp)} XP${next ? ' · ' + esc(t('mNext', { n: fmt(next - MS.xp), name: rankName(r + 1) })) : ''}</small>
+        <div class="ms-bar"><i style="width:${pct}%"></i></div></div></div>`;
+      h += `<div class="ms-card"><div class="ms-row"><span>🎁 ${esc(t('mDaily'))}</span><span class="xp">${esc(t('mStreak', { n: st }))}</span></div><div class="ms-days">`;
+      for (let i = 0; i < 7; i++) h += `<i class="${i < dayIdx || (!claim && i === dayIdx) ? 'got' : ''}${claim && i === dayIdx ? ' now' : ''}">+${DAILY_XP[i]}</i>`;
+      h += `</div><button id="ms-claim" type="button"${claim ? '' : ' disabled'}>${esc(claim ? t('mClaim', { n: DAILY_XP[dayIdx] }) : t('mClaimed'))}</button></div>`;
+      for (const m of MS.list) {
+        const d = MPOOL.find(q => q.id === m.id);
+        h += `<div class="ms-card${m.done ? ' done' : ''}"><div class="ms-row"><span>${m.done ? '✅ ' : ''}${esc(t(MTEXT[d.k], { n: fmt(d.n) }))}</span><span class="xp">+${d.xp} XP</span></div>
+          <div class="ms-bar"><i style="width:${Math.round(m.p / d.n * 100)}%"></i></div><div class="ms-sub">${d.k === 'clean' ? (m.done ? '1 / 1' : '0 / 1') : fmt(Math.min(m.p, d.n)) + ' / ' + fmt(d.n)}${d.best && d.k !== 'score' ? ' · ' + esc(t('mOneFlight')) : ''}</div></div>`;
+      }
+      h += `<div class="ms-note">${esc(t('mReset'))}<br>${esc(t('mNote'))}</div>`;
+      $('ms-body').innerHTML = h;
+      const cb = $('ms-claim');
+      if (cb && claim) cb.addEventListener('click', () => {
+        if (!canClaim()) return;
+        const s2 = streakNow(), gain = DAILY_XP[s2 % 7];
+        MS.streak = s2 + 1; MS.lastClaim = dayStr(); msSave();
+        audioStart(); SND.coin(); toast('🎁 ' + t('mGot', { n: gain }), 2.2); addXp(gain); msDot(); renderMissions();
+      });
+    }
+    function openMissions() {
+      if (state !== 'menu' && state !== 'over') return;
+      $('missions').hidden = false; overlay.classList.add('hidden'); renderMissions();
+    }
+    function closeMissions() { $('missions').hidden = true; overlay.classList.remove('hidden'); }
+    $('mission-btn').addEventListener('click', openMissions);
+    $('ms-close').addEventListener('click', closeMissions);
+    { // Hangar and Missions sit side by side so the menu stays short on a sideways phone
+      const row = document.createElement('div'); row.id = 'btn-row';
+      $('hangar-btn').before(row); row.append($('hangar-btn'), $('mission-btn'));
+    }
+    msRoll(); msDot();
+
     let lastRun = null;
     $('share-btn').addEventListener('click', () => {
       if (!lastRun) return;
@@ -2040,6 +2207,7 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
       goBtn.textContent = t('flyAgain');
       lastRun = { score: sim.score, level: sim.level }; $('share-btn').hidden = false; $('tg-btn').hidden = false;
       overlay.classList.remove('hidden'); hud.classList.remove('on');
+      missionFlightEnd();
       if (needsTag()) openSignin('tag');
       else if (account && account.tag) { let w = false; try { w = localStorage.getItem(WANT_PW) === '1'; } catch (e) {} if (w) openSignin('setpw'); }
       if (session) {
@@ -2059,7 +2227,7 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
     /* ================= Events from the simulation ================= */
     function handleEvents() {
       for (const e of sim.events) {
-        fx4d(e);
+        fx4d(e); missionEvent(e);
         if (e.t === 'hit') { smoke(sim.x, sim.y, 0, 6, 0.5, 0x5a4e48); burst(sim.x, sim.y, [0xf59e0b, 0x6b5a2a, 0xffffff], 22, 7); shake = 0.5; flashRed(); toast(e.k === 1 ? t('shears') : t('bomb')); }
         else if (e.t === 'net') { burst(sim.x, sim.y, [0xffffff], 18, 5); toast(t('net')); }
         else if (e.t === 'block') { burst(sim.x, sim.y, [0xff7a1a, 0xfde047], 16, 6); toast(t('block')); }
@@ -2539,7 +2707,7 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
           acc -= G.DT; n++;
         }
         if (n >= 15) acc = 0;
-        handleEvents(); watchShots();
+        handleEvents(); watchShots(); missionTick();
         if (!sim.alive) { state = 'crashed'; crashT = 0; crashVy = 2; }
       }
 

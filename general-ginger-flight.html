@@ -2559,7 +2559,7 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
     skyDome.renderOrder = -1; scene.add(skyDome);
     const hemiLight = scene.children.find(o => o.isHemisphereLight);
     const skyNow = new THREE.Color(0xbfe6ff), skyWant = new THREE.Color(), sunWant = new THREE.Color(), white = new THREE.Color(0xffffff);
-    let nightNow = 0, lightning = 0, hitStop = 0, roll = 0, fovNow = FOV, camLift = 0, camPull = 0;
+    let nightNow = 0, lightning = 0, hitStop = 0, roll = 0, fovNow = FOV, camLift = 0, camPull = 0, hgLift = 0;
 
     // --- V2 "juice": score pop-ups, combo, flashes, camera kick (looks and sound only; scoring is untouched) ---
     let combo = 0, comboT = 0, fovKick = 0, lastBulletId = -1;
@@ -2703,7 +2703,8 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
       fovNow = lerp(fovNow, fovWant, Math.min(1, dt * 6));
       const fovShow = fovNow + fovKick;
       if (Math.abs(camera.fov - fovShow) > 0.01) { camera.fov = fovShow; camera.updateProjectionMatrix(); }
-      const camY = halfH - 1.2 + camLift;
+      hgLift = lerp(hgLift, $('hangar').hidden ? 0 : 1, Math.min(1, dt * 5)); // lift the view so the Hangar panel never hides the plane
+      const camY = halfH - 1.2 + camLift - hgLift * halfH * (innerHeight > innerWidth ? 0.6 : 0.22);
       const sx = rand(-1, 1) * shake * 0.4, sy = rand(-1, 1) * shake * 0.4;
       camera.position.set(camX - 2.5 - b * 1.2 - camPull * 1.5 + sx, camY + 1.5 + camPull * 0.6 + sy, camDist * (1 + camPull * 0.08));
       camera.lookAt(camX - camPull * 0.5, camY, 0);

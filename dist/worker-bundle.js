@@ -680,7 +680,9 @@ const SHOP = {
   'paint:gold': { ngn: 700, usd: 0.79 },
   'trail:rainbow': { ngn: 500, usd: 0.49 },
   'pilot:agbada': { ngn: 700, usd: 0.79 },
-  'pilot:crown': { ngn: 1000, usd: 0.99 }
+  'pilot:crown': { ngn: 1000, usd: 0.99 },
+  'gun:rpg': { ngn: 700, usd: 0.79 },
+  'gun:laser': { ngn: 1000, usd: 0.99 }
 };
 // The shop is open with a live Paystack key. A test key (sk_test_) only opens it when SHOP_TEST = "1",
 // so players can't unlock skins with Paystack's test cards before the account is approved.

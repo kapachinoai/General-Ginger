@@ -82,6 +82,29 @@
     #mline { font-size: 0.9rem; color: #ffe08a; margin: -8px 0 12px; min-height: 1.1em; text-shadow: 0 1px 2px rgba(0,0,0,0.9); }
     #missions { position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; max-height: 78vh; overflow: auto; background: rgba(14,12,10,0.96); border-top: 2px solid #ffb547; padding: 14px 16px 18px; color: #fff; }
     #missions[hidden] { display: none; }
+    #settings { position: fixed; left: 0; right: 0; bottom: 0; z-index: 70; max-height: 82vh; overflow: auto; background: rgba(14,12,10,0.97); border-top: 2px solid #ffb547; padding: 14px 16px 18px; color: #fff; }
+    #settings[hidden] { display: none; }
+    #settings .hg-head { display: flex; align-items: center; justify-content: space-between; }
+    #settings h2 { margin: 0; font-size: 1.3rem; font-family: 'Black Ops One', 'Oswald', sans-serif; font-weight: 400; letter-spacing: 0.06em; color: #ffb547; }
+    #settings .ms-wrap { max-width: 520px; margin: 0 auto; }
+    #st-close { background: none; border: 0; color: #fff; font-size: 1.4rem; cursor: pointer; padding: 4px 8px; }
+    .st-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 11px 2px; border-bottom: 1px solid rgba(255,255,255,0.1); font-weight: 700; }
+    .st-seg { display: flex; gap: 6px; }
+    .st-tog { min-width: 64px; padding: 7px 14px; border-radius: 999px; border: 1.5px solid #a8a29e; background: rgba(255,255,255,0.06); color: #fff; font: inherit; font-weight: 800; font-size: 0.9rem; cursor: pointer; }
+    .st-tog.on { background: #f59e0b; border-color: #ffe08a; color: #1c1300; }
+    .st-help { font-size: 0.8rem; color: #a8a29e; padding: 8px 2px 0; line-height: 1.45; }
+    #fx-sound, #fx-buzz { display: none !important; } /* now in Settings */
+    #hangar { padding-bottom: 60px; }
+    #pad { position: fixed; inset: 0; z-index: 24; pointer-events: none; display: none; }
+    #pad.on { display: block; }
+    #pad button { position: absolute; pointer-events: auto; width: 68px; height: 68px; border-radius: 50%; border: 2.5px solid rgba(255,225,150,0.85); background: rgba(15,23,42,0.42); color: #fff; font-size: 1.6rem; line-height: 1; padding: 0; touch-action: none; -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; }
+    #pad button.dn { background: rgba(245,158,11,0.8); transform: scale(0.93); }
+    #pad-up { left: calc(16px + env(safe-area-inset-left)); bottom: calc(102px + env(safe-area-inset-bottom)); }
+    #pad-down { left: calc(16px + env(safe-area-inset-left)); bottom: calc(20px + env(safe-area-inset-bottom)); }
+    #pad #pad-boost { right: calc(16px + env(safe-area-inset-right)); bottom: calc(64px + env(safe-area-inset-bottom)); width: 80px; height: 80px; font-size: 1.9rem; }
+    #pad.swap #pad-up { left: auto; right: calc(16px + env(safe-area-inset-right)); bottom: calc(146px + env(safe-area-inset-bottom)); }
+    #pad.swap #pad-down { left: auto; right: calc(16px + env(safe-area-inset-right)); bottom: calc(64px + env(safe-area-inset-bottom)); }
+    #pad.swap #pad-boost { right: auto; left: calc(16px + env(safe-area-inset-left)); bottom: calc(40px + env(safe-area-inset-bottom)); }
     #missions .hg-head { display: flex; align-items: center; justify-content: space-between; }
     #missions h2 { margin: 0; font-size: 1.3rem; font-family: 'Black Ops One', 'Oswald', sans-serif; font-weight: 400; letter-spacing: 0.06em; color: #ffb547; }
     #ms-close { background: none; border: 0; color: #fff; font-size: 1.4rem; cursor: pointer; padding: 4px 8px; }
@@ -235,7 +258,7 @@
     <a id="tg-btn" href="https://t.me/Thegingerarmy" target="_blank" rel="noopener" hidden data-t="joinTG">Join the Ginger Army on Telegram</a>
     <div id="hint" data-th="hint">
       <span>↑ ↓</span> / <span>W S</span> fly up and down • <span>Space</span> spice boost<br>
-      Phone: drag up and down to fly • tap to boost
+      Phone: ▲ ▼ buttons to fly • 🔥 to boost • change in ⚙️
     </div>
     <div id="credit">♪ “Bali” (sped up) · KliensMan</div>
     <div id="rotate" data-t="rotate">Tip: turn your phone sideways for a wider view</div>
@@ -246,6 +269,13 @@
       <div id="ms-body"></div>
     </div>
   </div>
+  <div id="settings" hidden role="dialog" aria-modal="true" aria-labelledby="st-title">
+    <div class="ms-wrap">
+      <div class="hg-head"><h2 id="st-title" data-t="settings">⚙️ Settings</h2><button id="st-close" type="button" aria-label="Close">✕</button></div>
+      <div id="st-body"></div>
+    </div>
+  </div>
+  <div id="pad"><button type="button" id="pad-up" aria-label="Up">▲</button><button type="button" id="pad-down" aria-label="Down">▼</button><button type="button" id="pad-boost" aria-label="Boost">🔥</button></div>
   <div id="hangar" hidden role="dialog" aria-modal="true" aria-labelledby="hg-title">
     <div class="hg-head"><h2 id="hg-title" data-t="hangar">🛩️ Hangar</h2><button id="hg-close" type="button" aria-label="Close">✕</button></div>
     <div class="hg-tabs" role="tablist">
@@ -253,6 +283,7 @@
       <button type="button" role="tab" data-kind="paint" data-t="hgPaint">Paint</button>
       <button type="button" role="tab" data-kind="trail" data-t="hgTrail">Trails</button>
       <button type="button" role="tab" data-kind="pilot" data-t="hgPilot">Pilot</button>
+      <button type="button" role="tab" data-kind="gun" data-t="hgGun">Weapons</button>
     </div>
     <div id="hg-grid"></div>
     <p class="hg-note" data-t="hgNote">Skins only change how you look. Every pilot flies the same.</p>
@@ -272,7 +303,7 @@
       <button type="button" class="link-btn" id="si-alt" hidden></button>
     </form>
   </div>
-  <div id="fx"><button type="button" id="fx-pause" hidden aria-label="Pause" data-ta="pause">⏸</button><button type="button" id="fx-sound"></button><button type="button" id="fx-buzz"></button></div>
+  <div id="fx"><button type="button" id="fx-pause" hidden aria-label="Pause" data-ta="pause">⏸</button><button type="button" id="fx-set" aria-label="Settings">⚙️</button><button type="button" id="fx-sound"></button><button type="button" id="fx-buzz"></button></div>
   <div id="pause" hidden role="dialog" aria-modal="true" aria-labelledby="pause-title"><div class="card"><h2 id="pause-title" data-t="paused">⏸ Paused</h2><p id="pause-info"></p><button type="button" class="go" id="resume-btn" data-t="resume">▶ Resume</button><button type="button" class="link-btn" id="quit-btn" data-t="quit">Quit flight (points not saved)</button><p class="tip" data-t="pauseTip">Tip: press P or Esc to pause on a keyboard.</p></div></div>
   <div id="count" hidden></div>
   <div id="toast"></div>
@@ -693,8 +724,8 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
       en: {
         loading: 'Loading General Ginger…', loadFail: 'Could not load the 3D engine. Check your connection and refresh.',
         intro: "The Ginger King's pest army is firing from the ground. Dodge missiles, RPGs and sticky nets, grab power-ups, and shoot down the King's airship to reach the next level!",
-        takeOff: 'Oya, Take Off!', flyAgain: 'Fly Again', shareX: '𝕏 Challenge friends', joinTG: 'Join the Ginger Army on Telegram', hangar: '🛩️ Hangar', hgPlane: 'Planes', hgPaint: 'Paint', hgTrail: 'Trails', hgPilot: 'Pilot', hgNote: 'Skins only change how you look. Every pilot flies the same.', hgEquipped: '✓ Equipped', hgTap: 'Tap to equip', hgBest: 'Unlock: best score {n}', hgSoon: '{n} · shop opening soon', hgBuy: '{n} · tap to buy', hgSignIn: 'Sign in first so your skin is saved to your account.', hgOpening: 'Opening secure checkout…', hgChecking: 'Checking your payment…', hgUnlocked: 'Skin unlocked! It\'s yours forever 🎉', hgPayFail: 'We couldn\'t confirm the payment yet. If you paid, the skin unlocks automatically within a few minutes.', missions: "🎖 Missions", mShoot: "Shoot down {n} enemy shots", mJar: "Collect {n} spice jars", mPower: "Grab {n} power-ups", mFly: "Fly {n} flights", mCombo: "Get a ×{n} combo", mScore: "Score {n} in one flight", mBoss: "Shoot down the King's airship ×{n}", mLevel: "Reach level {n}", mClean: "Reach the King without taking a hit", mDone: "Mission complete! +{n} XP", mRankUp: "Promoted to {name}! 🎖", mDaily: "Daily reward", mStreak: "Streak: {n}", mClaim: "Claim +{n} XP", mClaimed: "Come back tomorrow", mGot: "Daily reward: +{n} XP", mNext: "{n} XP to {name}", mOneFlight: "in one flight", mReset: "Three new missions every day.", mNote: "XP and ranks are saved on this device. They are separate from leaderboard points.", mLine: "Missions today: {a}/{b} · {rank}", rank0: "Recruit", rank1: "Private", rank2: "Corporal", rank3: "Sergeant", rank4: "Lieutenant", rank5: "Captain", rank6: "Major", rank7: "Colonel", rank8: "General", hgNew: 'New skin unlocked: {name}! Open the Hangar 🛩️', shareText: 'I scored {score} and reached level {level} in General Ginger 🛩️\n\nCan you beat me? Overthrow the Ginger King 👑', loadingAcct: 'Loading your account…', connecting: 'Connecting…',
-        hint: '<span>↑ ↓</span> / <span>W S</span> fly up and down • <span>Space</span> spice boost<br>Phone: drag up and down to fly • tap to boost',
+        takeOff: 'Oya, Take Off!', flyAgain: 'Fly Again', shareX: '𝕏 Challenge friends', joinTG: 'Join the Ginger Army on Telegram', hangar: '🛩️ Hangar', hgPlane: 'Planes', hgPaint: 'Paint', hgTrail: 'Trails', hgPilot: 'Pilot', hgNote: 'Skins only change how you look. Every pilot flies the same.', hgEquipped: '✓ Equipped', hgTap: 'Tap to equip', hgBest: 'Unlock: best score {n}', hgSoon: '{n} · shop opening soon', hgBuy: '{n} · tap to buy', hgSignIn: 'Sign in first so your skin is saved to your account.', hgOpening: 'Opening secure checkout…', hgChecking: 'Checking your payment…', hgUnlocked: 'Skin unlocked! It\'s yours forever 🎉', hgPayFail: 'We couldn\'t confirm the payment yet. If you paid, the skin unlocks automatically within a few minutes.', missions: "🎖 Missions", mShoot: "Shoot down {n} enemy shots", mJar: "Collect {n} spice jars", mPower: "Grab {n} power-ups", mFly: "Fly {n} flights", mCombo: "Get a ×{n} combo", mScore: "Score {n} in one flight", mBoss: "Shoot down the King's airship ×{n}", mLevel: "Reach level {n}", mClean: "Reach the King without taking a hit", mDone: "Mission complete! +{n} XP", mRankUp: "Promoted to {name}! 🎖", mDaily: "Daily reward", mStreak: "Streak: {n}", mClaim: "Claim +{n} XP", mClaimed: "Come back tomorrow", mGot: "Daily reward: +{n} XP", mNext: "{n} XP to {name}", mOneFlight: "in one flight", mReset: "Three new missions every day.", mNote: "XP and ranks are saved on this device. They are separate from leaderboard points.", mLine: "Missions today: {a}/{b} · {rank}", rank0: "Recruit", rank1: "Private", rank2: "Corporal", rank3: "Sergeant", rank4: "Lieutenant", rank5: "Captain", rank6: "Major", rank7: "Colonel", rank8: "General", hgGun: "Weapons", settings: "⚙️ Settings", sCtrl: "Controls", sBtns: "Buttons", sDrag: "Drag", sSwap: "Swap button sides", sSound: "Sound", sMusic: "Music", sBuzz: "Vibration", sOn: "On", sOff: "Off", sKeys: "Keyboard: ↑ ↓ or W S to fly • Space to boost • P to pause", sBtnHelp: "▲ ▼ fly up and down • 🔥 spice boost", sDragHelp: "Drag up and down to fly • tap to boost", hgNew: 'New skin unlocked: {name}! Open the Hangar 🛩️', shareText: 'I scored {score} and reached level {level} in General Ginger 🛩️\n\nCan you beat me? Overthrow the Ginger King 👑', loadingAcct: 'Loading your account…', connecting: 'Connecting…',
+        hint: '<span>↑ ↓</span> / <span>W S</span> fly up and down • <span>Space</span> spice boost<br>Phone: ▲ ▼ buttons to fly • 🔥 to boost • change in ⚙️',
         rotate: 'Tip: turn your phone sideways for a wider view', boss: 'THE GINGER KING', cancel: 'Cancel',
         paused: '⏸ Paused', resume: '▶ Resume', quit: 'Quit flight (points not saved)', pauseTip: 'Tip: press P or Esc to pause on a keyboard.', pause: 'Pause',
         guest: 'Playing as a guest. ', signIn: 'Sign in', signUp: 'New player? Sign up', signedIn: 'Signed in. ', chooseTag: 'Choose your gamer tag',
@@ -724,8 +755,8 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
       fr: {
         loading: 'Chargement de General Ginger…', loadFail: 'Impossible de charger le moteur 3D. Vérifie ta connexion et recharge la page.',
         intro: "L'armée de nuisibles du Roi Gingembre tire depuis le sol. Esquive les missiles, les RPG et les filets collants, attrape les bonus et abats le dirigeable du Roi pour passer au niveau suivant !",
-        takeOff: 'Oya, décollage !', flyAgain: 'Rejouer', shareX: '𝕏 Défie tes amis', joinTG: 'Rejoins la Ginger Army sur Telegram', hangar: '🛩️ Hangar', hgPlane: 'Avions', hgPaint: 'Peinture', hgTrail: 'Traînées', hgPilot: 'Pilote', hgNote: 'Les skins changent seulement ton look. Tout le monde vole pareil.', hgEquipped: '✓ Équipé', hgTap: 'Touche pour équiper', hgBest: 'Débloqué avec un record de {n}', hgSoon: '{n} · boutique bientôt ouverte', hgBuy: '{n} · touche pour acheter', hgSignIn: 'Connecte-toi d\'abord pour garder ton skin sur ton compte.', hgOpening: 'Ouverture du paiement sécurisé…', hgChecking: 'Vérification du paiement…', hgUnlocked: 'Skin débloqué ! Il est à toi pour toujours 🎉', hgPayFail: 'Paiement pas encore confirmé. Si tu as payé, le skin se débloque tout seul dans quelques minutes.', missions: "🎖 Missions", mShoot: "Abats {n} tirs ennemis", mJar: "Ramasse {n} pots d’épices", mPower: "Attrape {n} bonus", mFly: "Fais {n} vols", mCombo: "Fais un combo ×{n}", mScore: "Marque {n} en un seul vol", mBoss: "Abats le dirigeable du Roi ×{n}", mLevel: "Atteins le niveau {n}", mClean: "Atteins le Roi sans être touché", mDone: "Mission accomplie ! +{n} XP", mRankUp: "Promu {name} ! 🎖", mDaily: "Récompense du jour", mStreak: "Série : {n}", mClaim: "Récupérer +{n} XP", mClaimed: "Reviens demain", mGot: "Récompense du jour : +{n} XP", mNext: "{n} XP avant {name}", mOneFlight: "en un seul vol", mReset: "Trois nouvelles missions chaque jour.", mNote: "L’XP et les grades sont enregistrés sur cet appareil. Ils sont séparés des points du classement.", mLine: "Missions du jour : {a}/{b} · {rank}", rank0: "Recrue", rank1: "Soldat", rank2: "Caporal", rank3: "Sergent", rank4: "Lieutenant", rank5: "Capitaine", rank6: "Commandant", rank7: "Colonel", rank8: "Général", hgNew: 'Nouveau skin débloqué : {name} ! Va au Hangar 🛩️', shareText: 'J\'ai fait {score} points et atteint le niveau {level} dans General Ginger 🛩️\n\nTu peux me battre ? Renverse le Roi Gingembre 👑', loadingAcct: 'Chargement de ton compte…', connecting: 'Connexion…',
-        hint: '<span>↑ ↓</span> / <span>W S</span> monter et descendre • <span>Espace</span> turbo épicé<br>Téléphone : glisse vers le haut ou le bas pour voler • touche pour le turbo',
+        takeOff: 'Oya, décollage !', flyAgain: 'Rejouer', shareX: '𝕏 Défie tes amis', joinTG: 'Rejoins la Ginger Army sur Telegram', hangar: '🛩️ Hangar', hgPlane: 'Avions', hgPaint: 'Peinture', hgTrail: 'Traînées', hgPilot: 'Pilote', hgNote: 'Les skins changent seulement ton look. Tout le monde vole pareil.', hgEquipped: '✓ Équipé', hgTap: 'Touche pour équiper', hgBest: 'Débloqué avec un record de {n}', hgSoon: '{n} · boutique bientôt ouverte', hgBuy: '{n} · touche pour acheter', hgSignIn: 'Connecte-toi d\'abord pour garder ton skin sur ton compte.', hgOpening: 'Ouverture du paiement sécurisé…', hgChecking: 'Vérification du paiement…', hgUnlocked: 'Skin débloqué ! Il est à toi pour toujours 🎉', hgPayFail: 'Paiement pas encore confirmé. Si tu as payé, le skin se débloque tout seul dans quelques minutes.', missions: "🎖 Missions", mShoot: "Abats {n} tirs ennemis", mJar: "Ramasse {n} pots d’épices", mPower: "Attrape {n} bonus", mFly: "Fais {n} vols", mCombo: "Fais un combo ×{n}", mScore: "Marque {n} en un seul vol", mBoss: "Abats le dirigeable du Roi ×{n}", mLevel: "Atteins le niveau {n}", mClean: "Atteins le Roi sans être touché", mDone: "Mission accomplie ! +{n} XP", mRankUp: "Promu {name} ! 🎖", mDaily: "Récompense du jour", mStreak: "Série : {n}", mClaim: "Récupérer +{n} XP", mClaimed: "Reviens demain", mGot: "Récompense du jour : +{n} XP", mNext: "{n} XP avant {name}", mOneFlight: "en un seul vol", mReset: "Trois nouvelles missions chaque jour.", mNote: "L’XP et les grades sont enregistrés sur cet appareil. Ils sont séparés des points du classement.", mLine: "Missions du jour : {a}/{b} · {rank}", rank0: "Recrue", rank1: "Soldat", rank2: "Caporal", rank3: "Sergent", rank4: "Lieutenant", rank5: "Capitaine", rank6: "Commandant", rank7: "Colonel", rank8: "Général", hgGun: "Armes", settings: "⚙️ Réglages", sCtrl: "Commandes", sBtns: "Boutons", sDrag: "Glisser", sSwap: "Inverser les côtés", sSound: "Son", sMusic: "Musique", sBuzz: "Vibration", sOn: "Oui", sOff: "Non", sKeys: "Clavier : ↑ ↓ ou W S pour voler • Espace pour le turbo • P pour la pause", sBtnHelp: "▲ ▼ monter et descendre • 🔥 turbo épicé", sDragHelp: "Glisse vers le haut ou le bas pour voler • touche pour le turbo", hgNew: 'Nouveau skin débloqué : {name} ! Va au Hangar 🛩️', shareText: 'J\'ai fait {score} points et atteint le niveau {level} dans General Ginger 🛩️\n\nTu peux me battre ? Renverse le Roi Gingembre 👑', loadingAcct: 'Chargement de ton compte…', connecting: 'Connexion…',
+        hint: '<span>↑ ↓</span> / <span>W S</span> monter et descendre • <span>Espace</span> turbo épicé<br>Téléphone : boutons ▲ ▼ pour voler • 🔥 pour le turbo • à changer dans ⚙️',
         rotate: 'Astuce : tourne ton téléphone pour une vue plus large', boss: 'LE ROI GINGEMBRE', cancel: 'Annuler',
         paused: '⏸ Pause', resume: '▶ Reprendre', quit: 'Quitter le vol (points non enregistrés)', pauseTip: 'Astuce : appuie sur P ou Échap pour mettre en pause au clavier.', pause: 'Pause',
         guest: 'Tu joues en invité. ', signIn: 'Se connecter', signUp: 'Nouveau joueur ? Inscris-toi', signedIn: 'Connecté. ', chooseTag: 'Choisis ton pseudo',
@@ -755,8 +786,8 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
       es: {
         loading: 'Cargando General Ginger…', loadFail: 'No se pudo cargar el motor 3D. Revisa tu conexión y recarga.',
         intro: '¡El ejército de plagas del Rey Jengibre dispara desde el suelo! Esquiva misiles, RPG y redes pegajosas, recoge mejoras y derriba el dirigible del Rey para pasar de nivel.',
-        takeOff: '¡Oya, a despegar!', flyAgain: 'Volar otra vez', shareX: '𝕏 Reta a tus amigos', joinTG: 'Únete a la Ginger Army en Telegram', hangar: '🛩️ Hangar', hgPlane: 'Aviones', hgPaint: 'Pintura', hgTrail: 'Estelas', hgPilot: 'Piloto', hgNote: 'Los skins solo cambian tu aspecto. Todos vuelan igual.', hgEquipped: '✓ Equipado', hgTap: 'Toca para equipar', hgBest: 'Se desbloquea con un récord de {n}', hgSoon: '{n} · tienda abre pronto', hgBuy: '{n} · toca para comprar', hgSignIn: 'Inicia sesión primero para guardar tu skin en tu cuenta.', hgOpening: 'Abriendo pago seguro…', hgChecking: 'Comprobando tu pago…', hgUnlocked: '¡Skin desbloqueado! Es tuyo para siempre 🎉', hgPayFail: 'Aún no confirmamos el pago. Si pagaste, el skin se desbloquea solo en unos minutos.', missions: "🎖 Misiones", mShoot: "Derriba {n} disparos enemigos", mJar: "Recoge {n} tarros de especias", mPower: "Consigue {n} potenciadores", mFly: "Haz {n} vuelos", mCombo: "Logra un combo ×{n}", mScore: "Consigue {n} puntos en un vuelo", mBoss: "Derriba el dirigible del Rey ×{n}", mLevel: "Llega al nivel {n}", mClean: "Llega al Rey sin recibir un golpe", mDone: "¡Misión cumplida! +{n} XP", mRankUp: "¡Ascendido a {name}! 🎖", mDaily: "Recompensa diaria", mStreak: "Racha: {n}", mClaim: "Reclamar +{n} XP", mClaimed: "Vuelve mañana", mGot: "Recompensa diaria: +{n} XP", mNext: "{n} XP para {name}", mOneFlight: "en un vuelo", mReset: "Tres misiones nuevas cada día.", mNote: "La XP y los rangos se guardan en este dispositivo. Son independientes de los puntos de la clasificación.", mLine: "Misiones de hoy: {a}/{b} · {rank}", rank0: "Recluta", rank1: "Soldado", rank2: "Cabo", rank3: "Sargento", rank4: "Teniente", rank5: "Capitán", rank6: "Mayor", rank7: "Coronel", rank8: "General", hgNew: '¡Nuevo skin desbloqueado: {name}! Abre el Hangar 🛩️', shareText: 'Hice {score} puntos y llegué al nivel {level} en General Ginger 🛩️\n\n¿Me superas? Derroca al Rey Jengibre 👑', loadingAcct: 'Cargando tu cuenta…', connecting: 'Conectando…',
-        hint: '<span>↑ ↓</span> / <span>W S</span> subir y bajar • <span>Espacio</span> turbo picante<br>Móvil: arrastra arriba y abajo para volar • toca para el turbo',
+        takeOff: '¡Oya, a despegar!', flyAgain: 'Volar otra vez', shareX: '𝕏 Reta a tus amigos', joinTG: 'Únete a la Ginger Army en Telegram', hangar: '🛩️ Hangar', hgPlane: 'Aviones', hgPaint: 'Pintura', hgTrail: 'Estelas', hgPilot: 'Piloto', hgNote: 'Los skins solo cambian tu aspecto. Todos vuelan igual.', hgEquipped: '✓ Equipado', hgTap: 'Toca para equipar', hgBest: 'Se desbloquea con un récord de {n}', hgSoon: '{n} · tienda abre pronto', hgBuy: '{n} · toca para comprar', hgSignIn: 'Inicia sesión primero para guardar tu skin en tu cuenta.', hgOpening: 'Abriendo pago seguro…', hgChecking: 'Comprobando tu pago…', hgUnlocked: '¡Skin desbloqueado! Es tuyo para siempre 🎉', hgPayFail: 'Aún no confirmamos el pago. Si pagaste, el skin se desbloquea solo en unos minutos.', missions: "🎖 Misiones", mShoot: "Derriba {n} disparos enemigos", mJar: "Recoge {n} tarros de especias", mPower: "Consigue {n} potenciadores", mFly: "Haz {n} vuelos", mCombo: "Logra un combo ×{n}", mScore: "Consigue {n} puntos en un vuelo", mBoss: "Derriba el dirigible del Rey ×{n}", mLevel: "Llega al nivel {n}", mClean: "Llega al Rey sin recibir un golpe", mDone: "¡Misión cumplida! +{n} XP", mRankUp: "¡Ascendido a {name}! 🎖", mDaily: "Recompensa diaria", mStreak: "Racha: {n}", mClaim: "Reclamar +{n} XP", mClaimed: "Vuelve mañana", mGot: "Recompensa diaria: +{n} XP", mNext: "{n} XP para {name}", mOneFlight: "en un vuelo", mReset: "Tres misiones nuevas cada día.", mNote: "La XP y los rangos se guardan en este dispositivo. Son independientes de los puntos de la clasificación.", mLine: "Misiones de hoy: {a}/{b} · {rank}", rank0: "Recluta", rank1: "Soldado", rank2: "Cabo", rank3: "Sargento", rank4: "Teniente", rank5: "Capitán", rank6: "Mayor", rank7: "Coronel", rank8: "General", hgGun: "Armas", settings: "⚙️ Ajustes", sCtrl: "Controles", sBtns: "Botones", sDrag: "Arrastrar", sSwap: "Cambiar de lado", sSound: "Sonido", sMusic: "Música", sBuzz: "Vibración", sOn: "Sí", sOff: "No", sKeys: "Teclado: ↑ ↓ o W S para volar • Espacio para el turbo • P para pausar", sBtnHelp: "▲ ▼ subir y bajar • 🔥 turbo picante", sDragHelp: "Arrastra arriba y abajo para volar • toca para el turbo", hgNew: '¡Nuevo skin desbloqueado: {name}! Abre el Hangar 🛩️', shareText: 'Hice {score} puntos y llegué al nivel {level} en General Ginger 🛩️\n\n¿Me superas? Derroca al Rey Jengibre 👑', loadingAcct: 'Cargando tu cuenta…', connecting: 'Conectando…',
+        hint: '<span>↑ ↓</span> / <span>W S</span> subir y bajar • <span>Espacio</span> turbo picante<br>Móvil: botones ▲ ▼ para volar • 🔥 para el turbo • cámbialo en ⚙️',
         rotate: 'Consejo: gira el móvil para ver más', boss: 'EL REY JENGIBRE', cancel: 'Cancelar',
         paused: '⏸ En pausa', resume: '▶ Continuar', quit: 'Abandonar el vuelo (no se guardan los puntos)', pauseTip: 'Consejo: pulsa P o Esc para pausar con teclado.', pause: 'Pausa',
         guest: 'Juegas como invitado. ', signIn: 'Iniciar sesión', signUp: '¿Jugador nuevo? Regístrate', signedIn: 'Sesión iniciada. ', chooseTag: 'Elige tu nombre de jugador',
@@ -786,8 +817,8 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
       pt: {
         loading: 'Carregando General Ginger…', loadFail: 'Não foi possível carregar o motor 3D. Verifique sua conexão e recarregue.',
         intro: 'O exército de pragas do Rei Gengibre está atirando do chão! Desvie de mísseis, RPGs e redes grudentas, pegue power-ups e derrube o dirigível do Rei para passar de nível.',
-        takeOff: 'Oya, decolar!', flyAgain: 'Voar de novo', shareX: '𝕏 Desafie amigos', joinTG: 'Entre na Ginger Army no Telegram', hangar: '🛩️ Hangar', hgPlane: 'Aviões', hgPaint: 'Pintura', hgTrail: 'Rastros', hgPilot: 'Piloto', hgNote: 'Skins só mudam o visual. Todo mundo voa igual.', hgEquipped: '✓ Equipado', hgTap: 'Toque para equipar', hgBest: 'Desbloqueia com recorde de {n}', hgSoon: '{n} · loja abre em breve', hgBuy: '{n} · toque para comprar', hgSignIn: 'Entre primeiro para salvar sua skin na sua conta.', hgOpening: 'Abrindo pagamento seguro…', hgChecking: 'Verificando seu pagamento…', hgUnlocked: 'Skin desbloqueada! É sua para sempre 🎉', hgPayFail: 'Ainda não confirmamos o pagamento. Se você pagou, a skin desbloqueia sozinha em alguns minutos.', missions: "🎖 Missões", mShoot: "Derrube {n} tiros inimigos", mJar: "Colete {n} potes de tempero", mPower: "Pegue {n} power-ups", mFly: "Faça {n} voos", mCombo: "Faça um combo ×{n}", mScore: "Marque {n} pontos em um voo", mBoss: "Derrube o dirigível do Rei ×{n}", mLevel: "Chegue ao nível {n}", mClean: "Chegue ao Rei sem levar um golpe", mDone: "Missão cumprida! +{n} XP", mRankUp: "Promovido a {name}! 🎖", mDaily: "Recompensa diária", mStreak: "Sequência: {n}", mClaim: "Resgatar +{n} XP", mClaimed: "Volte amanhã", mGot: "Recompensa diária: +{n} XP", mNext: "{n} XP para {name}", mOneFlight: "em um voo", mReset: "Três missões novas todos os dias.", mNote: "XP e patentes ficam salvos neste aparelho. São separados dos pontos do ranking.", mLine: "Missões de hoje: {a}/{b} · {rank}", rank0: "Recruta", rank1: "Soldado", rank2: "Cabo", rank3: "Sargento", rank4: "Tenente", rank5: "Capitão", rank6: "Major", rank7: "Coronel", rank8: "General", hgNew: 'Nova skin desbloqueada: {name}! Abra o Hangar 🛩️', shareText: 'Fiz {score} pontos e cheguei ao nível {level} no General Ginger 🛩️\n\nConsegue me vencer? Derrube o Rei Gengibre 👑', loadingAcct: 'Carregando sua conta…', connecting: 'Conectando…',
-        hint: '<span>↑ ↓</span> / <span>W S</span> subir e descer • <span>Espaço</span> turbo apimentado<br>Celular: arraste para cima e para baixo para voar • toque para o turbo',
+        takeOff: 'Oya, decolar!', flyAgain: 'Voar de novo', shareX: '𝕏 Desafie amigos', joinTG: 'Entre na Ginger Army no Telegram', hangar: '🛩️ Hangar', hgPlane: 'Aviões', hgPaint: 'Pintura', hgTrail: 'Rastros', hgPilot: 'Piloto', hgNote: 'Skins só mudam o visual. Todo mundo voa igual.', hgEquipped: '✓ Equipado', hgTap: 'Toque para equipar', hgBest: 'Desbloqueia com recorde de {n}', hgSoon: '{n} · loja abre em breve', hgBuy: '{n} · toque para comprar', hgSignIn: 'Entre primeiro para salvar sua skin na sua conta.', hgOpening: 'Abrindo pagamento seguro…', hgChecking: 'Verificando seu pagamento…', hgUnlocked: 'Skin desbloqueada! É sua para sempre 🎉', hgPayFail: 'Ainda não confirmamos o pagamento. Se você pagou, a skin desbloqueia sozinha em alguns minutos.', missions: "🎖 Missões", mShoot: "Derrube {n} tiros inimigos", mJar: "Colete {n} potes de tempero", mPower: "Pegue {n} power-ups", mFly: "Faça {n} voos", mCombo: "Faça um combo ×{n}", mScore: "Marque {n} pontos em um voo", mBoss: "Derrube o dirigível do Rei ×{n}", mLevel: "Chegue ao nível {n}", mClean: "Chegue ao Rei sem levar um golpe", mDone: "Missão cumprida! +{n} XP", mRankUp: "Promovido a {name}! 🎖", mDaily: "Recompensa diária", mStreak: "Sequência: {n}", mClaim: "Resgatar +{n} XP", mClaimed: "Volte amanhã", mGot: "Recompensa diária: +{n} XP", mNext: "{n} XP para {name}", mOneFlight: "em um voo", mReset: "Três missões novas todos os dias.", mNote: "XP e patentes ficam salvos neste aparelho. São separados dos pontos do ranking.", mLine: "Missões de hoje: {a}/{b} · {rank}", rank0: "Recruta", rank1: "Soldado", rank2: "Cabo", rank3: "Sargento", rank4: "Tenente", rank5: "Capitão", rank6: "Major", rank7: "Coronel", rank8: "General", hgGun: "Armas", settings: "⚙️ Configurações", sCtrl: "Controles", sBtns: "Botões", sDrag: "Arrastar", sSwap: "Trocar os lados", sSound: "Som", sMusic: "Música", sBuzz: "Vibração", sOn: "Sim", sOff: "Não", sKeys: "Teclado: ↑ ↓ ou W S para voar • Espaço para o turbo • P para pausar", sBtnHelp: "▲ ▼ subir e descer • 🔥 turbo apimentado", sDragHelp: "Arraste para cima e para baixo para voar • toque para o turbo", hgNew: 'Nova skin desbloqueada: {name}! Abra o Hangar 🛩️', shareText: 'Fiz {score} pontos e cheguei ao nível {level} no General Ginger 🛩️\n\nConsegue me vencer? Derrube o Rei Gengibre 👑', loadingAcct: 'Carregando sua conta…', connecting: 'Conectando…',
+        hint: '<span>↑ ↓</span> / <span>W S</span> subir e descer • <span>Espaço</span> turbo apimentado<br>Celular: botões ▲ ▼ para voar • 🔥 para o turbo • mude em ⚙️',
         rotate: 'Dica: vire o celular para ver mais', boss: 'O REI GENGIBRE', cancel: 'Cancelar',
         paused: '⏸ Pausado', resume: '▶ Continuar', quit: 'Sair do voo (pontos não são salvos)', pauseTip: 'Dica: aperte P ou Esc para pausar no teclado.', pause: 'Pausar',
         guest: 'Jogando como convidado. ', signIn: 'Entrar', signUp: 'Jogador novo? Cadastre-se', signedIn: 'Conectado. ', chooseTag: 'Escolha seu nome de jogador',
@@ -817,8 +848,8 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
       ar: {
         loading: 'جارٍ تحميل General Ginger…', loadFail: 'تعذّر تحميل محرك الرسوم ثلاثية الأبعاد. تحقّق من اتصالك وأعد تحميل الصفحة.',
         intro: 'جيش آفات ملك الزنجبيل يطلق النار من الأرض! تفادَ الصواريخ وقذائف آر بي جي والشِّباك اللزجة، واجمع المكافآت، وأسقط منطاد الملك لتنتقل إلى المستوى التالي!',
-        takeOff: 'هيّا، أقلِع!', flyAgain: 'طِر مجددًا', shareX: '𝕏 تحدَّ أصدقاءك', joinTG: 'انضم إلى جيش الزنجبيل على تيليجرام', hangar: '🛩️ الحظيرة', hgPlane: 'الطائرات', hgPaint: 'الطلاء', hgTrail: 'الأثر', hgPilot: 'الطيار', hgNote: 'الأشكال تغيّر المظهر فقط. الجميع يطير بالطريقة نفسها.', hgEquipped: '✓ مُجهَّز', hgTap: 'اضغط للتجهيز', hgBest: 'يُفتح عند أفضل نتيجة {n}', hgSoon: '{n} · المتجر يفتح قريبًا', hgBuy: '{n} · اضغط للشراء', hgSignIn: 'سجّل الدخول أولًا ليُحفظ الشكل في حسابك.', hgOpening: 'جارٍ فتح الدفع الآمن…', hgChecking: 'جارٍ التحقق من الدفع…', hgUnlocked: 'تم فتح الشكل! إنه لك إلى الأبد 🎉', hgPayFail: 'لم نؤكد الدفع بعد. إذا دفعت، سيُفتح الشكل تلقائيًا خلال دقائق.', missions: "🎖 المهام", mShoot: "أسقط {n} من قذائف العدو", mJar: "اجمع {n} من برطمانات التوابل", mPower: "التقط {n} من المقوّيات", mFly: "قم بـ {n} رحلات", mCombo: "حقّق كومبو ×{n}", mScore: "سجّل {n} في رحلة واحدة", mBoss: "أسقط منطاد الملك ×{n}", mLevel: "اوصل إلى المستوى {n}", mClean: "اوصل إلى الملك دون أن تُصاب", mDone: "اكتملت المهمة! +{n} XP", mRankUp: "تمت ترقيتك إلى {name}! 🎖", mDaily: "مكافأة يومية", mStreak: "أيام متتالية: {n}", mClaim: "احصل على +{n} XP", mClaimed: "عد غدًا", mGot: "المكافأة اليومية: +{n} XP", mNext: "{n} XP للوصول إلى {name}", mOneFlight: "في رحلة واحدة", mReset: "ثلاث مهام جديدة كل يوم.", mNote: "نقاط الخبرة والرتب محفوظة على هذا الجهاز، وهي منفصلة عن نقاط لوحة المتصدرين.", mLine: "مهام اليوم: {a}/{b} · {rank}", rank0: "مجنّد", rank1: "جندي", rank2: "عريف", rank3: "رقيب", rank4: "ملازم", rank5: "نقيب", rank6: "رائد", rank7: "عقيد", rank8: "جنرال", hgNew: 'شكل جديد مفتوح: {name}! افتح الحظيرة 🛩️', shareText: 'سجّلت {score} نقطة ووصلت إلى المستوى {level} في General Ginger 🛩️\n\nهل تستطيع التفوق عليّ؟ أطِح بملك الزنجبيل 👑', loadingAcct: 'جارٍ تحميل حسابك…', connecting: 'جارٍ الاتصال…',
-        hint: '<span>↑ ↓</span> / <span>W S</span> للصعود والنزول • <span>Space</span> دفعة التوابل<br>على الهاتف: اسحب للأعلى والأسفل للطيران • انقر للدفعة',
+        takeOff: 'هيّا، أقلِع!', flyAgain: 'طِر مجددًا', shareX: '𝕏 تحدَّ أصدقاءك', joinTG: 'انضم إلى جيش الزنجبيل على تيليجرام', hangar: '🛩️ الحظيرة', hgPlane: 'الطائرات', hgPaint: 'الطلاء', hgTrail: 'الأثر', hgPilot: 'الطيار', hgNote: 'الأشكال تغيّر المظهر فقط. الجميع يطير بالطريقة نفسها.', hgEquipped: '✓ مُجهَّز', hgTap: 'اضغط للتجهيز', hgBest: 'يُفتح عند أفضل نتيجة {n}', hgSoon: '{n} · المتجر يفتح قريبًا', hgBuy: '{n} · اضغط للشراء', hgSignIn: 'سجّل الدخول أولًا ليُحفظ الشكل في حسابك.', hgOpening: 'جارٍ فتح الدفع الآمن…', hgChecking: 'جارٍ التحقق من الدفع…', hgUnlocked: 'تم فتح الشكل! إنه لك إلى الأبد 🎉', hgPayFail: 'لم نؤكد الدفع بعد. إذا دفعت، سيُفتح الشكل تلقائيًا خلال دقائق.', missions: "🎖 المهام", mShoot: "أسقط {n} من قذائف العدو", mJar: "اجمع {n} من برطمانات التوابل", mPower: "التقط {n} من المقوّيات", mFly: "قم بـ {n} رحلات", mCombo: "حقّق كومبو ×{n}", mScore: "سجّل {n} في رحلة واحدة", mBoss: "أسقط منطاد الملك ×{n}", mLevel: "اوصل إلى المستوى {n}", mClean: "اوصل إلى الملك دون أن تُصاب", mDone: "اكتملت المهمة! +{n} XP", mRankUp: "تمت ترقيتك إلى {name}! 🎖", mDaily: "مكافأة يومية", mStreak: "أيام متتالية: {n}", mClaim: "احصل على +{n} XP", mClaimed: "عد غدًا", mGot: "المكافأة اليومية: +{n} XP", mNext: "{n} XP للوصول إلى {name}", mOneFlight: "في رحلة واحدة", mReset: "ثلاث مهام جديدة كل يوم.", mNote: "نقاط الخبرة والرتب محفوظة على هذا الجهاز، وهي منفصلة عن نقاط لوحة المتصدرين.", mLine: "مهام اليوم: {a}/{b} · {rank}", rank0: "مجنّد", rank1: "جندي", rank2: "عريف", rank3: "رقيب", rank4: "ملازم", rank5: "نقيب", rank6: "رائد", rank7: "عقيد", rank8: "جنرال", hgGun: "الأسلحة", settings: "⚙️ الإعدادات", sCtrl: "التحكم", sBtns: "أزرار", sDrag: "سحب", sSwap: "تبديل جهة الأزرار", sSound: "الصوت", sMusic: "الموسيقى", sBuzz: "الاهتزاز", sOn: "تشغيل", sOff: "إيقاف", sKeys: "لوحة المفاتيح: ↑ ↓ أو W S للطيران • Space للدفعة • P للإيقاف المؤقت", sBtnHelp: "▲ ▼ للصعود والنزول • 🔥 دفعة التوابل", sDragHelp: "اسحب للأعلى والأسفل للطيران • انقر للدفعة", hgNew: 'شكل جديد مفتوح: {name}! افتح الحظيرة 🛩️', shareText: 'سجّلت {score} نقطة ووصلت إلى المستوى {level} في General Ginger 🛩️\n\nهل تستطيع التفوق عليّ؟ أطِح بملك الزنجبيل 👑', loadingAcct: 'جارٍ تحميل حسابك…', connecting: 'جارٍ الاتصال…',
+        hint: '<span>↑ ↓</span> / <span>W S</span> للصعود والنزول • <span>Space</span> دفعة التوابل<br>على الهاتف: أزرار ▲ ▼ للطيران • 🔥 للدفعة • غيّرها من ⚙️',
         rotate: 'نصيحة: أدِر هاتفك أفقيًا لرؤية أوسع', boss: 'ملك الزنجبيل', cancel: 'إلغاء',
         paused: '⏸ متوقف مؤقتًا', resume: '▶ استئناف', quit: 'إنهاء الرحلة (لن تُحفظ النقاط)', pauseTip: 'نصيحة: اضغط P أو Esc للإيقاف المؤقت من لوحة المفاتيح.', pause: 'إيقاف مؤقت',
         guest: 'تلعب كضيف. ', signIn: 'تسجيل الدخول', signUp: 'لاعب جديد؟ أنشئ حسابًا', signedIn: 'تم تسجيل الدخول. ', chooseTag: 'اختر اسم اللاعب',
@@ -1702,12 +1733,20 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
         { id: 'shades', name: 'Cool Shades', unlock: { best: 10000 } },
         { id: 'agbada', name: 'Agbada & Fila', unlock: { ngn: 700, usd: 0.79 } },
         { id: 'crown', name: 'Gold Crown', unlock: { ngn: 1000, usd: 0.99 } }
+      ],
+      // Weapons change how your cannon shots look and sound. Damage and fire rate are the same for everyone.
+      gun: [
+        { id: 'cannon', name: 'Spice Cannon', unlock: 'free' },
+        { id: 'mg', name: 'Machine Gun', unlock: { best: 8000 } },
+        { id: 'pepper', name: 'Pepper Blaster', unlock: { best: 20000 } },
+        { id: 'rpg', name: 'RPG Launcher', unlock: { ngn: 700, usd: 0.79 } },
+        { id: 'laser', name: 'Laser Blaster', unlock: { ngn: 1000, usd: 0.99 } }
       ]
     };
     const SKIN_KEY = 'ggLoadout', OWN_KEY = 'ggOwned';
     let owned = []; try { owned = JSON.parse(localStorage.getItem(OWN_KEY) || '[]'); } catch (e) {}
     const isOpen = (kind, it) => it.unlock === 'free' || (it.unlock.best && loadBest() >= it.unlock.best) || owned.includes(kind + ':' + it.id);
-    let loadout = { plane: 'biplane', paint: 'classic', trail: 'spice', pilot: 'cap' };
+    let loadout = { plane: 'biplane', paint: 'classic', trail: 'spice', pilot: 'cap', gun: 'cannon' };
     try { Object.assign(loadout, JSON.parse(localStorage.getItem(SKIN_KEY) || '{}')); } catch (e) {}
     for (const k in SKINS) { const it = SKINS[k].find(x => x.id === loadout[k]); if (!it || !isOpen(k, it)) loadout[k] = SKINS[k][0].id; }
     let inNigeria = false; try { inNigeria = Intl.DateTimeFormat().resolvedOptions().timeZone === 'Africa/Lagos'; } catch (e) {}
@@ -1728,11 +1767,17 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
     const itemBuilders = { 0: buildJar, 1: buildPepper, 2: buildHeart, 3: buildCannonItem };
     const airship = buildAirship(); airship.visible = false; scene.add(airship);
     let bossFlash = 0, bossDying = 0, bossDeathX = 0, bossDeathY = 0;
-    const bulletMat = new THREE.MeshBasicMaterial({ color: 0xffb020 });
-    function buildBullet() {
-      const b = new THREE.Group();
-      const core = new THREE.Mesh(SPL, bulletMat); core.scale.set(0.32, 0.16, 0.16); b.add(core);
-      b.add(glowSprite('rgba(255,170,40,0.8)', 0.9));
+    const GUN_FX = { cannon: [0xffb020, 0xfde047], mg: [0xfff2a8, 0xffffff], pepper: [0xff3b1f, 0xff9a1f], rpg: [0xff7a1a, 0xffe14a], laser: [0x38e8ff, 0xffffff] };
+    const gunMats = {}; const gmat = c => gunMats[c] || (gunMats[c] = new THREE.MeshBasicMaterial({ color: c }));
+    const gpart = (b, c, sx, sy, sz, x = 0, y = 0) => { const m = new THREE.Mesh(SPL, gmat(c)); m.scale.set(sx, sy, sz); m.position.set(x, y, 0); b.add(m); return m; };
+    function buildBullet(kind = loadout.gun) {
+      const b = new THREE.Group(); b.userData.gun = kind;
+      if (kind === 'mg') { gpart(b, 0xfff2a8, 0.55, 0.06, 0.06); gpart(b, 0xffffff, 0.2, 0.07, 0.07, 0.38); b.add(glowSprite('rgba(255,240,150,0.7)', 0.6)); }
+      else if (kind === 'pepper') { gpart(b, 0xe11d1d, 0.36, 0.17, 0.17); gpart(b, 0xff5a3c, 0.2, 0.1, 0.1, 0.24, -0.03); gpart(b, 0x1f8f3d, 0.1, 0.07, 0.07, -0.36, 0.04); b.add(glowSprite('rgba(255,70,30,0.75)', 1.0)); }
+      else if (kind === 'rpg') { gpart(b, 0x556b2f, 0.44, 0.11, 0.11); gpart(b, 0xc1121f, 0.2, 0.15, 0.15, 0.42); gpart(b, 0x2f3b1a, 0.08, 0.2, 0.05, -0.4); const g = glowSprite('rgba(255,140,30,0.9)', 1.1); g.position.x = -0.6; b.add(g); }
+      else if (kind === 'laser') { gpart(b, 0x38e8ff, 0.95, 0.06, 0.06); gpart(b, 0xffffff, 0.9, 0.025, 0.025); b.add(glowSprite('rgba(60,230,255,0.85)', 1.1)); }
+      else { gpart(b, 0xffb020, 0.32, 0.16, 0.16); b.add(glowSprite('rgba(255,170,40,0.8)', 0.9)); }
+      b.scale.setScalar({ mg: 1.4, pepper: 1.35, rpg: 1.6, laser: 1.6 }[kind] || 1);
       return b;
     }
 
@@ -1745,6 +1790,11 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
     const keys = {};
     const $hg = () => document.getElementById('hangar');
     let pointerActive = false, pointerY = 5, boostQueued = false;
+    // Touch controls: on-screen buttons (default) or drag. Both feed the same inputs as the keyboard.
+    let isTouch = false; try { isTouch = ('ontouchstart' in window) || navigator.maxTouchPoints > 0 || matchMedia('(pointer: coarse)').matches; } catch (e) {}
+    const CTRL = { mode: 'buttons', swap: false };
+    try { CTRL.mode = localStorage.getItem('ggCtrl') === 'drag' ? 'drag' : 'buttons'; CTRL.swap = localStorage.getItem('ggPadSwap') === '1'; } catch (e) {}
+    const padActive = () => isTouch && CTRL.mode === 'buttons';
     window.addEventListener('keydown', e => {
       if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) return;
       keys[e.code] = true;
@@ -1763,7 +1813,7 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
       return ray.ray.intersectPlane(zPlane, hitPt) ? clamp(hitPt.y, G.FLOOR, G.CEIL) : pointerY;
     }
     cvs.addEventListener('pointerdown', e => {
-      if (state !== 'playing') return;
+      if (state !== 'playing' || padActive()) return;
       pointerActive = true; pointerY = screenToWorldY(e.clientX, e.clientY); boostQueued = true;
       try { cvs.setPointerCapture(e.pointerId); } catch (err) {}
     });
@@ -1971,7 +2021,7 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
     }
 
     async function startGame() {
-      if ((state !== 'menu' && state !== 'over') || !$('signin').hidden || !$('hangar').hidden || !$('missions').hidden) return;
+      if ((state !== 'menu' && state !== 'over') || !$('signin').hidden || !$('hangar').hidden || !$('missions').hidden || !$('settings').hidden) return;
       audioStart();
       // Coming back from the email link: finish loading the account first, then make sure a tag is chosen.
       if (authOn && !account && await loginToken()) {
@@ -1980,7 +2030,7 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
         goBtn.disabled = false; goBtn.textContent = state === 'over' ? t('flyAgain') : t('takeOff');
       }
       if (needsTag()) { openSignin('tag'); return; }
-      if ((state !== 'menu' && state !== 'over') || !$('signin').hidden || !$('hangar').hidden || !$('missions').hidden) return;
+      if ((state !== 'menu' && state !== 'over') || !$('signin').hidden || !$('hangar').hidden || !$('missions').hidden || !$('settings').hidden) return;
       state = 'starting'; goBtn.disabled = true;
       if (GG_API) goBtn.textContent = t('connecting');
       session = await requestSession();
@@ -2017,6 +2067,7 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
           if (!open && it.unlock.ngn) { buySkin(hgKind, it); return; }
           if (!open) { toast(t('hgBest', { n: fmt(it.unlock.best) }), 1.8); return; }
           loadout[hgKind] = it.id; applyLoadout(); P.root.visible = true; renderHangar();
+          if (hgKind === 'gun') { audioStart(); demoSnd = 3; demoCd = 0; }
         });
         grid.appendChild(b);
       }
@@ -2052,6 +2103,24 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
         toast(t('hgUnlocked'), 3); hgKind = k || hgKind; openHangar();
       } else toast(tr(r.body && r.body.reason) || t('hgPayFail'), 3);
     })();
+    // Weapons tab: the plane fires a few test shots so you can see and hear what you picked
+    const demoShots = []; let demoCd = 0, demoSnd = 0;
+    function updateGunDemo(dt) {
+      const on = !$('hangar').hidden && hgKind === 'gun';
+      if (on) {
+        demoCd -= dt;
+        if (demoCd <= 0) {
+          demoCd = 0.34; const m = buildBullet(loadout.gun);
+          m.position.set(P.root.position.x + 1.8, P.root.position.y + 0.05, 0); m.userData.t = 0; scene.add(m); demoShots.push(m);
+          if (demoSnd > 0) { demoSnd--; SND.gun(loadout.gun); }
+        }
+      }
+      for (let i = demoShots.length - 1; i >= 0; i--) {
+        const m = demoShots[i]; m.userData.t += dt; m.position.x += 15 * dt;
+        if (m.userData.gun === 'rpg' && Math.random() < 0.6) emit(m.position.x - 0.6, m.position.y, 0, rand(-2, 0), rand(-0.4, 0.4), 0, 0xd8d2ca, 0.35, rand(0.14, 0.22), -1);
+        if (m.userData.t > 0.9 || !on) { scene.remove(m); demoShots.splice(i, 1); }
+      }
+    }
     function openHangar() {
       if (state !== 'menu' && state !== 'over') return;
       $('hangar-btn').classList.remove('pulse'); $('hangar').hidden = false; overlay.classList.add('hidden'); P.root.visible = true; renderHangar(); syncOwned();
@@ -2237,7 +2306,7 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
         else if (e.t === 'cannon') { burst(e.x, e.y, [0xffb020, 0x333333], 22, 6); toast(t('cannon')); }
         else if (e.t === 'shotDown') { burst(e.x, e.y, [0xffb020, 0xffffff, 0x6b5a2a], 10, 4); smoke(e.x, e.y, 0, 3, 0.45); }
         else if (e.t === 'bossIn') { $('bossbar').hidden = false; toast(t('bossIn', { level: e.level }), 2.2); shake = 0.3; }
-        else if (e.t === 'bossHit') { bossFlash = 0.12; burst(e.x, e.y, [0xffb020, 0xfde047], 5, 3); }
+        else if (e.t === 'bossHit') { bossFlash = 0.12; burst(e.x, e.y, GUN_FX[loadout.gun] || GUN_FX.cannon, loadout.gun === 'rpg' ? 10 : 5, loadout.gun === 'rpg' ? 4.5 : 3); }
         else if (e.t === 'bossFire') { shake = Math.max(shake, 0.12); }
         else if (e.t === 'bossDown') { smoke(e.x, e.y + 1, 0, 14, 0.9, 0x8a7a70);
           bossDying = 1.6; bossDeathX = e.x; bossDeathY = e.y; shake = 1;
@@ -2307,7 +2376,7 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
         m.scale.setScalar(it.k === 0 ? 1.4 : it.k === 1 ? 1.1 : 1.5);
         const g = 1.4 + Math.sin(time * 6) * 0.25; m.userData.glow.scale.set(g, g, 1);
       });
-      sync(bulletMeshes, s.bullets, () => buildBullet(), (m, bl) => { m.position.set(bl.x, bl.y, 0); });
+      sync(bulletMeshes, s.bullets, () => buildBullet(), (m, bl) => { m.position.set(bl.x, bl.y, 0); if (m.userData.gun === 'rpg' && state === 'playing' && Math.random() < 0.6) emit(bl.x - 0.6, bl.y, 0, rand(-2, 0), rand(-0.4, 0.4), 0, 0xd8d2ca, 0.35, rand(0.14, 0.22), -1); });
 
       // The King's airship
       const ud = airship.userData;
@@ -2335,7 +2404,7 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
     /* ================= 4D effects: sound, vibration, camera, sky (phone only, never changes the score) ================= */
     const pref = (k, d) => { try { const v = localStorage.getItem(k); return v === null ? d : v; } catch (e) { return d; } };
     const setPref = (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} };
-    const FX = { sound: pref('ggSound', '1') === '1', buzz: pref('ggBuzz', '1') === '1' };
+    const FX = { sound: pref('ggSound', '1') === '1', buzz: pref('ggBuzz', '1') === '1', music: pref('ggMusic', '1') === '1' };
     function buzz(p) { if (FX.buzz && navigator.vibrate) { try { navigator.vibrate(p); } catch (e) {} } }
 
     // --- Sound: one music track (the synthesised effects below are switched off with SFX) ---
@@ -2407,6 +2476,14 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
     const chime = notes => notes.forEach((n, i) => tone(n, 0.16, 'triangle', 0.12, 0, i * 0.07));
     const SND = {
       pew() { if (!ready('pew', 0.07)) return; tone(1500, 0.08, 'square', 0.035, 520); noise(0.05, 0.05, 7000, 2500, 'highpass'); },
+      gun(k) { // each weapon has its own voice; none is louder than the cannon
+        if (!k || k === 'cannon') return this.pew();
+        if (!ready('pew', 0.06)) return;
+        if (k === 'mg') { noise(0.04, 0.08, 3400, 900, 'bandpass', 0, 1.2); tone(210, 0.045, 'square', 0.03, 110); }
+        else if (k === 'pepper') { tone(880, 0.08, 'triangle', 0.05, 300); noise(0.05, 0.04, 5200, 1800, 'highpass'); }
+        else if (k === 'rpg') { noise(0.2, 0.07, 700, 3600, 'bandpass', 0, 1.4); tone(170, 0.16, 'sawtooth', 0.03, 80); }
+        else if (k === 'laser') { tone(2500, 0.12, 'sawtooth', 0.03, 520); tone(1250, 0.1, 'sine', 0.03, 260); }
+      },
       launch(v) { if (!ready('launch', 0.1)) return; thump(140, 55, 0.18, 0.3 * v); noise(0.5, 0.18 * v, 300, 2600, 'bandpass', 0, 1.5); noise(0.08, 0.12 * v, 6000, 2000, 'highpass'); },
       toss(v) { if (!ready('toss', 0.12)) return; noise(0.22, 0.05 * v, 350, 1900, 'bandpass', 0, 2); },
       pop(combo) { // an enemy shot blown out of the air; pitch climbs with the combo
@@ -2533,8 +2610,8 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
       if (sim !== shotsSim) { shotsSim = sim; lastBulletId = -1; }
       if (!sim || !sim.bullets.length) return;
       for (const b of sim.bullets) if (b.id > lastBulletId) {
-        lastBulletId = b.id; SND.pew();
-        for (let i = 0; i < 3; i++) emit(b.x, b.y, 0, rand(2, 6), rand(-1.5, 1.5), rand(-0.5, 0.5), i ? 0xffd23f : 0xffffff, 0.15, rand(0.1, 0.18), 0);
+        lastBulletId = b.id; SND.gun(loadout.gun);
+        for (let i = 0; i < 3; i++) emit(b.x, b.y, 0, rand(2, 6), rand(-1.5, 1.5), rand(-0.5, 0.5), i ? (GUN_FX[loadout.gun] || GUN_FX.cannon)[0] : 0xffffff, 0.15, rand(0.1, 0.18), 0);
       }
     }
     function updateJuice(dt) {
@@ -2569,7 +2646,7 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
           musicGain.gain.cancelScheduledValues(ac.currentTime); musicGain.gain.setValueAtTime(0, ac.currentTime);
           musicSrc.start();
         }
-        if (musicSrc) musicGain.gain.setTargetAtTime(FX.sound && flight ? 0.55 * (duckT > 0 ? duckDepth : 1) : 0, ac.currentTime, duckT > 0 ? 0.04 : 0.3);
+        if (musicSrc) musicGain.gain.setTargetAtTime(FX.sound && FX.music && flight ? 0.55 * (duckT > 0 ? duckDepth : 1) : 0, ac.currentTime, duckT > 0 ? 0.04 : 0.3);
       }
       // Sky mood
       const mood = sim && sim.boss ? STORM : SKIES[Math.min(SKIES.length - 1, (sim ? sim.level : 1) - 1)];
@@ -2645,6 +2722,55 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
     if (!navigator.vibrate) $('fx-buzz').hidden = true; // iPhones do not allow web vibration
     renderFxButtons();
 
+    /* ================= Settings and on-screen controls ================= */
+    {
+      const hold = (id, code) => {
+        const b = $(id);
+        const up = () => { keys[code] = false; b.classList.remove('dn'); };
+        b.addEventListener('pointerdown', e => { e.preventDefault(); keys[code] = true; b.classList.add('dn'); try { b.setPointerCapture(e.pointerId); } catch (err) {} });
+        ['pointerup', 'pointercancel', 'lostpointercapture'].forEach(n => b.addEventListener(n, up));
+        b.addEventListener('contextmenu', e => e.preventDefault());
+      };
+      hold('pad-up', 'ArrowUp'); hold('pad-down', 'ArrowDown');
+      const bo = $('pad-boost');
+      bo.addEventListener('pointerdown', e => { e.preventDefault(); if (state === 'playing') { boostQueued = true; buzz(12); } bo.classList.add('dn'); });
+      ['pointerup', 'pointercancel', 'pointerleave'].forEach(n => bo.addEventListener(n, () => bo.classList.remove('dn')));
+      bo.addEventListener('contextmenu', e => e.preventDefault());
+    }
+    function updatePad() {
+      const on = padActive() && (state === 'playing' || state === 'countdown'), pad = $('pad');
+      if (pad.classList.contains('on') !== on) { pad.classList.toggle('on', on); if (!on) { keys.ArrowUp = keys.ArrowDown = false; } }
+      if (pad.classList.contains('swap') !== CTRL.swap) pad.classList.toggle('swap', CTRL.swap);
+    }
+    let stOverlay = false;
+    function renderSettings() {
+      const body = $('st-body'); body.textContent = '';
+      const row = (label, ...btns) => { const r = document.createElement('div'); r.className = 'st-row'; const s = document.createElement('span'); s.textContent = label; const g = document.createElement('div'); g.className = 'st-seg'; g.append(...btns); r.append(s, g); body.appendChild(r); };
+      const tog = (label, on, fn) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'st-tog' + (on ? ' on' : ''); b.textContent = label; b.setAttribute('aria-pressed', String(on)); b.addEventListener('click', () => { fn(); renderFxButtons(); renderSettings(); }); return b; };
+      const help = txt => { const p = document.createElement('div'); p.className = 'st-help'; p.textContent = txt; body.appendChild(p); };
+      const onoff = (label, on, fn) => row(label, tog(on ? t('sOn') : t('sOff'), on, fn));
+      if (isTouch) {
+        row(t('sCtrl'), tog(t('sBtns'), CTRL.mode === 'buttons', () => { CTRL.mode = 'buttons'; setPref('ggCtrl', 'buttons'); }), tog(t('sDrag'), CTRL.mode === 'drag', () => { CTRL.mode = 'drag'; setPref('ggCtrl', 'drag'); }));
+        if (CTRL.mode === 'buttons') onoff(t('sSwap'), CTRL.swap, () => { CTRL.swap = !CTRL.swap; setPref('ggPadSwap', CTRL.swap ? '1' : '0'); });
+      }
+      onoff(t('sSound'), FX.sound, () => { FX.sound = !FX.sound; setPref('ggSound', FX.sound ? '1' : '0'); if (FX.sound) audioStart(); });
+      onoff(t('sMusic'), FX.music, () => { FX.music = !FX.music; setPref('ggMusic', FX.music ? '1' : '0'); });
+      if (navigator.vibrate) onoff(t('sBuzz'), FX.buzz, () => { FX.buzz = !FX.buzz; setPref('ggBuzz', FX.buzz ? '1' : '0'); if (FX.buzz) buzz(40); });
+      if (isTouch) help(CTRL.mode === 'buttons' ? t('sBtnHelp') : t('sDragHelp'));
+      help(t('sKeys'));
+    }
+    function openSettings() {
+      if (!$('settings').hidden) { closeSettings(); return; }
+      if (!$('signin').hidden || !$('hangar').hidden || !$('missions').hidden) return;
+      if (state === 'playing' || state === 'countdown') pauseGame();
+      stOverlay = state === 'menu' || state === 'over';
+      if (stOverlay) overlay.classList.add('hidden');
+      $('settings').hidden = false; renderSettings();
+    }
+    function closeSettings() { $('settings').hidden = true; if (stOverlay) overlay.classList.remove('hidden'); stOverlay = false; }
+    $('fx-set').addEventListener('click', openSettings);
+    $('st-close').addEventListener('click', closeSettings);
+
     /* ================= Pause ================= */
     let countT = 0;
     const pauseBtn = $('fx-pause'), countEl = $('count');
@@ -2657,7 +2783,7 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
       buzz(20);
     }
     function resumeGame() {
-      if (state !== 'paused') return;
+      if (state !== 'paused' || !$('settings').hidden) return;
       $('pause').hidden = true; audioStart();
       countT = 3; state = 'countdown';
     }
@@ -2694,6 +2820,7 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
       if (toastT > 0) { toastT -= dt; if (toastT <= 0) toastEl.classList.remove('show'); }
 
       updatePause(dt);
+      updatePad(); updateGunDemo(dt);
       if (state === 'playing') {
         acc += hitStop > 0 ? 0 : dt; hitStop = Math.max(0, hitStop - dt);
         let n = 0;

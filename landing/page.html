@@ -1,5 +1,5 @@
 <title>General Ginger</title>
-<meta name="description" content="Free 3D arcade games you can play anywhere in the world, on any phone. Overthrow the Ginger King, earn points, and join the $GNG airdrop waitlist.">
+<meta name="description" content="General Ginger Flight: a free 3D flying game you can play in your browser on any phone or computer. Overthrow the Ginger King.">
 <meta name="theme-color" content="#061510">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -173,7 +173,7 @@ ol.lb .pts { color: var(--gold-soft); font-weight: 600; white-space: nowrap; }
 .steps li::before { content: counter(s); display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; margin-bottom: 18px; font: 700 1rem var(--display); color: #1d1300; background: var(--gold); box-shadow: 0 0 24px rgba(247, 181, 56, 0.5); }
 .steps p { color: var(--dim); margin-top: 8px; }
 
-/* tokenomics */
+/* grid */
 .toko { display: grid; grid-template-columns: 300px 1fr; gap: 40px; align-items: center; margin-top: 40px; padding: clamp(20px, 4vw, 36px); border-radius: var(--r-lg); background: var(--glass); border: 1px solid var(--line-soft); }
 .donut { position: relative; width: 100%; max-width: 300px; margin-inline: auto; }
 .donut svg { display: block; width: 100%; filter: drop-shadow(0 0 30px rgba(247, 181, 56, 0.25)); }
@@ -196,7 +196,7 @@ td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
 .road .now h3::before { content: ''; width: 9px; height: 9px; border-radius: 50%; background: var(--leaf); box-shadow: 0 0 12px var(--leaf); }
 .road ul { margin: 14px 0 0; padding-inline-start: 18px; color: var(--dim); display: flex; flex-direction: column; gap: 6px; }
 
-/* waitlist */
+/* panels */
 .join .panel { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(24px, 5vw, 60px); align-items: start; padding: clamp(24px, 5vw, 56px); border-radius: 36px; border: 1px solid var(--line); background: radial-gradient(90% 120% at 0% 0%, rgba(247, 181, 56, 0.16), transparent 60%), var(--glass); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
 .join .safe { margin-top: 18px; color: var(--leaf); font-weight: 600; font-size: 0.95rem; }
 form.wl { display: flex; flex-direction: column; gap: 14px; }
@@ -259,17 +259,16 @@ footer p { max-width: 90ch; }
 
 <nav class="top" aria-label="Main">
   <div class="wrap">
-    <a class="logo" href="#top" dir="ltr"><i aria-hidden="true"></i><span><span class="full">General Ginger </span><b>$GNG</b></span></a>
+    <a class="logo" href="#top" dir="ltr"><i aria-hidden="true"></i><span><span class="full">General </span><b>Ginger</b></span></a>
     <div class="navlinks">
       <a href="#arcade" data-t="navArcade">The arcade</a>
       <a href="#how" data-t="navHow">How it works</a>
-      <a href="#tokenomics" data-t="navToken">Tokenomics</a>
+      <a href="#community" data-t="navCommunity">Community</a>
       <a href="#faq" data-t="navFaq">FAQ</a>
     </div>
     <div class="navend">
       <select class="lang" id="lang" aria-label="Language"></select>
-      <a class="btn ghost play" href="/play/" data-t="navPlay">Play</a>
-      <a class="btn" href="#join" data-t="navJoin">Join waitlist</a>
+      <a class="btn" href="/play/" data-t="navPlay">Play</a>
     </div>
   </div>
 </nav>
@@ -278,17 +277,16 @@ footer p { max-width: 90ch; }
   <div class="wrap">
     <div>
       <div class="chips">
-        <span class="chip live"><i></i><span data-t="chipWl">Waitlist open</span></span>
-        <span class="chip"><i></i><span data-t="chipToken">Token not launched</span></span>
+        <span class="chip live"><i></i><span data-t="chipLive">Playable now</span></span>
+        <span class="chip"><i></i><span data-t="chipFree">Free · no download</span></span>
       </div>
       <h1><span class="scan" data-t="h1">Overthrow the Ginger King.</span></h1>
-      <p class="lead" data-t="lede">Free 3D arcade games for players everywhere. They run on any phone, even on slow data. Fly with General Ginger from the streets of Lagos, beat the King's pest army, and earn points that count toward the planned $GNG airdrop.</p>
+      <p class="lead" data-t="lede">A free 3D flying game for players everywhere. It runs in your browser on any phone, even on slow data. Fly with General Ginger from the streets of Lagos and take down the Ginger King's army.</p>
       <div class="ctas">
-        <a class="btn" href="#join" data-t="ctaJoin">Join the airdrop waitlist</a>
-        <a class="btn ghost" href="/play/" data-t="ctaPlay">Play in your browser</a>
+        <a class="btn" href="/play/" data-t="ctaPlay">Play in your browser</a>
+        <a class="btn ghost" href="https://t.me/Thegingerarmy" target="_blank" rel="noopener" data-t="ctaTg">Join the Ginger Army</a>
       </div>
       <div class="telemetry" id="telemetry" aria-live="polite">
-        <div class="pending"><b id="st-wl">—</b><span data-t="statWl">on the waitlist</span></div>
         <div class="pending"><b id="st-pl">—</b><span data-t="statPlayers">pilots with accounts</span></div>
         <div><b>5</b><span data-t="statLangs">languages</span></div>
       </div>
@@ -328,7 +326,7 @@ footer p { max-width: 90ch; }
       </article>
       <article class="tile check">
         <h3 data-t="checkH">Every score is replayed</h3>
-        <p data-t="checkP">Our server replays each flight move by move before the points count, so cheaters can't farm the airdrop.</p>
+        <p data-t="checkP">Our server replays each flight move by move before the points count, so the leaderboard stays fair.</p>
         <div class="replay" aria-hidden="true" id="replay"></div>
       </article>
       <article class="tile langs">
@@ -359,84 +357,40 @@ footer p { max-width: 90ch; }
   <div class="wrap">
     <h2 id="how-h" data-t="howH">Play free. Earn points.</h2>
     <ol class="steps">
-      <li><h3 data-t="s1H">Sign up with your email</h3><p data-t="s1P">Then sign in any time with your gamer tag and password. No crypto wallet, seed phrase or gas fees.</p></li>
+      <li><h3 data-t="s1H">Sign up with your email</h3><p data-t="s1P">Then sign in any time with your gamer tag and password to save your scores.</p></li>
       <li><h3 data-t="s2H">Play and earn points</h3><p data-t="s2P">Fly further for more points, up to 300 a game and 1,500 a day. Each hit costs you 15%.</p></li>
-      <li><h3 data-t="s3H">Points count toward the airdrop</h3><p data-t="s3P">If and when $GNG launches, verified points decide your share of the airdrop pool.</p></li>
+      <li><h3 data-t="s3H">Unlock and climb</h3><p data-t="s3P">Daily missions, nine ranks and five weapons to unlock. Beat the top pilots on the leaderboard.</p></li>
     </ol>
   </div>
 </section>
 
-<section id="tokenomics" aria-labelledby="tok-h" style="padding-top:0">
-  <div class="wrap">
-    <h2 id="tok-h" data-t="tokH">Most of it goes to players</h2>
-    <div class="toko">
-      <div class="donut">
-        <svg viewBox="0 0 200 200" role="img" data-ta="tokAria" aria-label="Planned $GNG supply split: 40% play-to-airdrop, 25% liquidity, 15% ecosystem and merch, 10% marketing, 10% team">
-          <g transform="rotate(-90 100 100)" fill="none" stroke-width="22">
-            <circle cx="100" cy="100" r="74" stroke="#f7b538" stroke-dasharray="185.98 464.96" stroke-dashoffset="0"/>
-            <circle cx="100" cy="100" r="74" stroke="#39e29b" stroke-dasharray="116.24 464.96" stroke-dashoffset="-185.98"/>
-            <circle cx="100" cy="100" r="74" stroke="#ff6b4a" stroke-dasharray="69.74 464.96" stroke-dashoffset="-302.22"/>
-            <circle cx="100" cy="100" r="74" stroke="#e6f0ea" stroke-dasharray="46.5 464.96" stroke-dashoffset="-371.96"/>
-            <circle cx="100" cy="100" r="74" stroke="#5c7a6b" stroke-dasharray="46.5 464.96" stroke-dashoffset="-418.46"/>
-          </g>
-        </svg>
-        <div class="mid"><b>1B</b><span data-t="supply">fixed supply</span></div>
-      </div>
-      <div class="tablewrap">
-        <table>
-          <thead><tr><th data-t="thPool">Pool</th><th data-t="thShare">Share</th><th>$GNG</th><th data-t="thRelease">Release</th></tr></thead>
-          <tbody>
-            <tr><td><span class="sw" style="background:#f7b538"></span><span data-t="p1">Play-to-airdrop</span></td><td class="num">40%</td><td class="num">400,000,000</td><td data-t="p1r">Earned by players through verified points</td></tr>
-            <tr><td><span class="sw" style="background:#39e29b"></span><span data-t="p2">Liquidity</span></td><td class="num">25%</td><td class="num">250,000,000</td><td data-t="p2r">Locked in a contract for 24 months</td></tr>
-            <tr><td><span class="sw" style="background:#ff6b4a"></span><span data-t="p3">Ecosystem &amp; merch</span></td><td class="num">15%</td><td class="num">150,000,000</td><td data-t="p3r">Released as merch and partner programmes grow</td></tr>
-            <tr><td><span class="sw" style="background:#e6f0ea"></span><span data-t="p4">Marketing</span></td><td class="num">10%</td><td class="num">100,000,000</td><td data-t="p4r">10% at launch, the rest over 12 months</td></tr>
-            <tr><td><span class="sw" style="background:#5c7a6b"></span><span data-t="p5">Team</span></td><td class="num">10%</td><td class="num">100,000,000</td><td data-t="p5r">6-month cliff, then 18 months of gradual release</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-    <p class="note" data-t="tokNote">This is the planned split and may change before launch. $GNG has not been created yet.</p>
-  </div>
-</section>
 
 <section aria-labelledby="road-h" style="padding-top:0">
   <div class="wrap">
     <h2 id="road-h" data-t="roadH">Where we are</h2>
     <div class="road">
-      <div class="now"><h3 data-t="now">Now</h3><ul><li data-t="r1">General Ginger Flight playable worldwide</li><li data-t="r2">Player accounts with saved points</li><li data-t="r3">Anti-cheat score checking</li><li data-t="r4">The game in five languages</li><li data-t="r5">Airdrop waitlist open to every country</li></ul></div>
-      <div><h3 data-t="next">Next</h3><ul><li data-t="r6">Global leaderboard page</li><li data-t="r7">Sound &amp; Sip live events, starting in Abuja</li><li data-t="r8">Legal review in Nigeria and our other big player countries</li></ul></div>
-      <div><h3 data-t="later">Later</h3><ul><li data-t="r9">Two more games</li><li data-t="r10">Merch store</li><li data-t="r11">$GNG launch and airdrop, only after regulatory approval</li></ul></div>
+      <div class="now"><h3 data-t="now">Now</h3><ul><li data-t="r1">General Ginger Flight playable worldwide</li><li data-t="r2">Player accounts with saved points</li><li data-t="r3">Anti-cheat score checking</li><li data-t="r4">The game in five languages</li><li data-t="r5x">Missions, ranks and weapons</li></ul></div>
+      <div><h3 data-t="next">Next</h3><ul><li data-t="r6">Global leaderboard page</li><li data-t="r7">Sound &amp; Sip live events, starting in Abuja</li></ul></div>
+      <div><h3 data-t="later">Later</h3><ul><li data-t="r9">Two more games</li><li data-t="r10">Merch store</li></ul></div>
     </div>
   </div>
 </section>
 
-<section class="join" id="join" aria-labelledby="join-h" style="padding-top:0">
+
+<section class="join" id="community" aria-labelledby="com-h" style="padding-top:0">
   <div class="wrap">
     <div class="panel">
       <div>
-        <h2 id="join-h" data-t="joinH">Get in early</h2>
-        <p class="lead" data-t="joinP">Join the list and we'll tell you about new games, events and the $GNG launch. It's free.</p>
-        <p class="safe" data-t="joinSafe">We will never ask you to pay or send crypto to join.</p>
+        <h2 id="com-h" data-t="comH">Join the Ginger Army</h2>
+        <p class="lead" data-t="comP">New clips, weekly Beat the King challenges and shout-outs for the top pilots.</p>
       </div>
-      <form class="wl" id="wl-form" novalidate>
-        <label for="wl-contact"><span data-t="fContact">Email or phone number</span>
-          <input type="text" id="wl-contact" autocomplete="email" placeholder="you@email.com or +1 555 123 4567" data-tp="fContactPh">
-        </label>
-        <div class="two">
-          <label for="wl-tag"><span data-t="fTag">Gamer tag</span>
-            <input type="text" id="wl-tag" maxlength="15" autocomplete="nickname" placeholder="Sky_Ace">
-          </label>
-          <label for="wl-country"><span data-t="fCountry">Country</span>
-            <select id="wl-country" data-codes="AF AX AL DZ AS AD AO AI AQ AG AR AM AW AU AT AZ BS BH BD BB BY BE BZ BJ BM BT BO BQ BA BW BV BR IO BN BG BF BI CV KH CM CA KY CF TD CL CN CX CC CO KM CG CD CK CR CI HR CU CW CY CZ DK DJ DM DO EC EG SV GQ ER EE SZ ET FK FO FJ FI FR GF PF TF GA GM GE DE GH GI GR GL GD GP GU GT GG GN GW GY HT HM VA HN HK HU IS IN ID IR IQ IE IM IL IT JM JP JE JO KZ KE KI KP KR XK KW KG LA LV LB LS LR LY LI LT LU MO MG MW MY MV ML MT MH MQ MR MU YT MX FM MD MC MN ME MS MA MZ MM NA NR NP NL NC NZ NI NE NG NU NF MK MP NO OM PK PW PS PA PG PY PE PH PN PL PT PR QA RE RO RU RW BL SH KN LC MF PM VC WS SM ST SA SN RS SC SL SG SX SK SI SB SO ZA GS SS ES LK SD SR SJ SE CH SY TW TJ TZ TH TL TG TK TO TT TN TR TM TC TV UG UA AE GB US UM UY UZ VU VE VN VG VI WF EH YE ZM ZW">
-              <option value="" data-t="fChoose">Choose your country</option>
-            </select>
-          </label>
-        </div>
-        <label class="check" for="wl-adult"><input type="checkbox" id="wl-adult"><span data-t="fAdult">I'm 18 or older.</span></label>
-        <label class="check" for="wl-consent"><input type="checkbox" id="wl-consent"><span data-t="fConsent">Contact me about General Ginger and the $GNG launch. I can ask to be removed at any time.</span></label>
-        <div class="fmsg" id="wl-msg" role="status" hidden></div>
-        <button class="btn" type="submit" id="wl-btn" data-t="fBtn">Join the waitlist</button>
-      </form>
+      <div class="ctas" dir="ltr">
+        <a class="btn" href="https://t.me/Thegingerarmy" target="_blank" rel="noopener">✈️ Telegram</a>
+        <a class="btn ghost" href="https://x.com/GINGERKINGX" target="_blank" rel="noopener">𝕏 @GINGERKINGX</a>
+        <a class="btn ghost" href="https://www.tiktok.com/@gingerkinggame" target="_blank" rel="noopener">🎵 TikTok</a>
+        <a class="btn ghost" href="https://www.instagram.com/generalgingergame/" target="_blank" rel="noopener">📸 Instagram</a>
+        <a class="btn ghost" href="https://gingerkinggame.itch.io/general-ginger-flight" target="_blank" rel="noopener">🎮 itch.io</a>
+      </div>
     </div>
   </div>
 </section>
@@ -445,34 +399,33 @@ footer p { max-width: 90ch; }
   <div class="wrap">
     <h2 id="faq-h" data-t="faqH">Questions</h2>
     <div class="faq">
-      <details><summary data-t="q1">Can I buy $GNG now?</summary><p data-t="a1">No. $GNG has not been created, so anyone selling it now is a scammer. We will never message you asking for money or crypto.</p></details>
+      
       <details><summary data-t="q2">Do the games cost anything?</summary><p data-t="a2">No. The games are free to play, and you never pay to earn points.</p></details>
-      <details><summary data-t="q3">Are points worth money?</summary><p data-t="a3">No. Points have no cash value. If $GNG launches, verified points decide your share of the airdrop pool, but the token's value is not promised and could be zero.</p></details>
-      <details><summary data-t="q4">When is the airdrop?</summary><p data-t="a4">There is no date yet. Rules for digital assets are different in every country (in Nigeria, for example, they are regulated as securities), so we will only launch after a legal review, and only where the law allows. Joining the waitlist is the best way to hear first.</p></details>
-      <details><summary data-t="q5">Who can join?</summary><p data-t="a5">Anyone 18 or older, anywhere in the world, can play and join the waitlist. Whether you can receive $GNG depends on the law where you live, so some countries may be left out of the airdrop. We can't accept sign-ups from countries under full international sanctions.</p></details>
+      
+      
+      <details><summary data-t="q5">Who can play?</summary><p data-t="a5">Anyone, anywhere. The game is free and plays in any web browser.</p></details>
       <details><summary data-t="q6">Can I play from my country?</summary><p data-t="a6">Yes. The game is free and works in any country with a web browser. Phone numbers need your country code, like +44 or +1. Daily point limits reset at midnight UTC.</p></details>
-      <details><summary data-t="q7">What do you do with my details?</summary><p data-t="a7">We only use your email or phone number to contact you about General Ginger and the launch. We don't sell it, and you can ask us for a copy or to delete it at any time, wherever you live.</p></details>
+      
     </div>
   </div>
 </section>
 
 <footer>
   <div class="wrap">
-    <a class="logo" href="#top" dir="ltr"><i aria-hidden="true"></i><span>General Ginger <b>$GNG</b></span></a>
+    <a class="logo" href="#top" dir="ltr"><i aria-hidden="true"></i><span>General <b>Ginger</b></span></a>
     <nav class="social" aria-label="Follow General Ginger" dir="ltr">
       <a href="https://x.com/GINGERKINGX" target="_blank" rel="noopener">𝕏 @GINGERKINGX</a>
       <a href="https://t.me/Thegingerarmy" target="_blank" rel="noopener">✈️ Telegram</a>
       <a href="https://www.instagram.com/generalgingergame/" target="_blank" rel="noopener">📸 Instagram</a>
       <a href="https://www.tiktok.com/@gingerkinggame" target="_blank" rel="noopener">🎵 TikTok</a>
     </nav>
-    <p class="warn" data-t="warn">We will never DM you to buy $GNG or ask for your wallet's secret phrase.</p>
-    <p data-t="legal">$GNG has not been issued. Nothing on this page is an offer to sell, or a request to buy, securities or digital assets, and nothing here is financial advice. Any airdrop, including who qualifies, how much and when, depends on regulatory approval and may change or not happen.</p>
+    <p class="warn" data-t="warn">We never DM first, and we never ask for passwords or payments in messages.</p>
+    <p data-t="legal">Music: "Bali" by KliensMan, used with permission. General Ginger and the Ginger King are original characters.</p>
   </div>
 </footer>
 
 <script>
 (() => {
-  // const WAITLIST_API = 'https://gng-flight-verify.yourname.workers.dev';
   const WAITLIST_API = '';
   /*I18N*/
   const $ = id => document.getElementById(id);
@@ -486,7 +439,7 @@ footer p { max-width: 90ch; }
     return (navigator.languages || [navigator.language || 'en']).map(l => String(l).slice(0, 2).toLowerCase()).find(l => LANGS[l]) || 'en';
   };
   let LANG = pick();
-  const t = (k, v) => { let s = (L[LANG] && L[LANG][k]) || L.en[k] || ''; if (v) for (const x in v) s = s.split('{' + x + '}').join(v[x]); return LANG === 'ar' ? s.split('$GNG').join('\u2066$GNG\u2069') : s; };
+  const t = (k, v) => { let s = (L[LANG] && L[LANG][k]) || L.en[k] || ''; if (v) for (const x in v) s = s.split('{' + x + '}').join(v[x]); return s; };
   const fmt = n => Number(n || 0).toLocaleString(LANG === 'ar' ? 'en' : LANG);
   function apply() {
     document.documentElement.lang = LANG;
@@ -502,7 +455,7 @@ footer p { max-width: 90ch; }
     const m = document.querySelector('meta[name=description]'); if (m && t('meta')) m.content = t('meta');
     $('lang').value = LANG; $('lang').setAttribute('aria-label', t('language'));
     document.querySelectorAll('#langlist button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.l === LANG)));
-    fillCountries(); renderBoard();
+    renderBoard();
   }
   function setLang(l) { LANG = l; try { localStorage.setItem('ggLang', l); } catch (e) {} apply(); }
   for (const k in LANGS) {
@@ -512,17 +465,6 @@ footer p { max-width: 90ch; }
   }
   $('lang').addEventListener('change', e => setLang(e.target.value));
 
-  // ---------- countries, named in the reader's language ----------
-  const sel = $('wl-country'), codes = sel.dataset.codes.split(' ');
-  const guess = (navigator.languages || [navigator.language || '']).map(l => (String(l).split('-')[1] || '').toUpperCase()).find(r => codes.includes(r)) || '';
-  function fillCountries() {
-    const keep = sel.value || guess;
-    let names = null; try { names = new Intl.DisplayNames([LANG, 'en'], { type: 'region' }); } catch (e) {}
-    const name = c => { try { return (names && names.of(c)) || c; } catch (e) { return c; } };
-    while (sel.options.length > 1) sel.remove(1);
-    codes.map(c => [c, name(c)]).sort((a, b) => a[1].localeCompare(b[1], LANG)).forEach(([c, n]) => sel.add(new Option(n, c)));
-    sel.value = keep;
-  }
 
   // ---------- live numbers and leaderboard ----------
   let top = null;
@@ -547,37 +489,13 @@ footer p { max-width: 90ch; }
       const s = await r.json();
       // a counter only shows once it is big enough to mean something
       const set = (id, v) => { const box = $(id).parentElement; if (typeof v === 'number' && v >= 25) { $(id).textContent = fmt(v); box.classList.remove('pending'); } else box.hidden = true; };
-      set('st-wl', s.waitlist); set('st-pl', s.players);
+      set('st-pl', s.players);
       top = Array.isArray(s.top) ? s.top : []; renderBoard();
     } catch (e) { top = []; renderBoard(); }
   })();
   // a flight being replayed, drawn as bars
   const rp = $('replay'); for (let i = 0; i < 48; i++) { const b = document.createElement('i'); b.style.height = (18 + Math.round(Math.abs(Math.sin(i * 0.7) * 60 + Math.sin(i * 0.23) * 22))) + '%'; rp.appendChild(b); }
 
-  // ---------- waitlist ----------
-  const form = $('wl-form'), msg = $('wl-msg'), btn = $('wl-btn');
-  const say = (text, kind) => { msg.hidden = false; msg.className = 'fmsg ' + kind; msg.textContent = text; };
-  const reason = r => { const k = SRVMAP[r]; return k ? t(k) : r; };
-  form.addEventListener('submit', async e => {
-    e.preventDefault();
-    const body = { contact: $('wl-contact').value.trim(), tag: $('wl-tag').value.trim(), country: sel.value, adult: $('wl-adult').checked, consent: $('wl-consent').checked };
-    if (!body.contact) return say(t('eContact'), 'err');
-    if (!body.country) return say(t('eCountry'), 'err');
-    if (!/^[A-Za-z0-9_]{3,15}$/.test(body.tag)) return say(t('eTag'), 'err');
-    if (!body.adult) return say(t('eAdult'), 'err');
-    if (!body.consent) return say(t('eConsent'), 'err');
-    if (!WAITLIST_API) return say('Preview: the waitlist is not connected to a server, so nothing was saved.', 'err');
-    btn.disabled = true; btn.textContent = t('fJoining');
-    try {
-      const res = await fetch(WAITLIST_API + '/waitlist', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
-      const j = await res.json();
-      if (j.ok) {
-        say(t(j.already ? 'okAlready' : 'okNew', { n: fmt(j.position) }), 'ok');
-        form.querySelectorAll('input').forEach(i => { if (i.type === 'checkbox') i.checked = false; else i.value = ''; });
-      } else say(reason(j.reason) || t('eGeneric'), 'err');
-    } catch (err) { say(t('eNet'), 'err'); }
-    finally { btn.disabled = false; btn.textContent = t('fBtn'); }
-  });
 
   apply();
 })();

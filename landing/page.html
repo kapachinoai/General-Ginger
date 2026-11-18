@@ -1,4 +1,4 @@
-<title>General Ginger $GNG</title>
+<title>General Ginger</title>
 <meta name="description" content="Free 3D arcade games you can play anywhere in the world, on any phone. Overthrow the Ginger King, earn points, and join the $GNG airdrop waitlist.">
 <meta name="theme-color" content="#061510">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -498,7 +498,7 @@ footer p { max-width: 90ch; }
     document.querySelectorAll('[data-t]').forEach(el => { const s = t(el.dataset.t); if (s) el.textContent = s; });
     document.querySelectorAll('[data-ta]').forEach(el => { const s = t(el.dataset.ta); if (s) el.setAttribute(el.tagName === 'IMG' ? 'alt' : 'aria-label', s); });
     document.querySelectorAll('[data-tp]').forEach(el => { const s = t(el.dataset.tp); if (s) el.placeholder = s; });
-    document.title = 'General Ginger $GNG';
+    document.title = 'General Ginger';
     const m = document.querySelector('meta[name=description]'); if (m && t('meta')) m.content = t('meta');
     $('lang').value = LANG; $('lang').setAttribute('aria-label', t('language'));
     document.querySelectorAll('#langlist button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.l === LANG)));

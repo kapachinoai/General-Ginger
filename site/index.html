@@ -145,6 +145,14 @@ select.lang option { color: #000; }
 .flightpath .trail { fill: none; stroke: url(#trail); stroke-width: 2.5; stroke-dasharray: 2 10; stroke-linecap: round; }
 .tile.board { grid-column: span 2; grid-row: span 2; }
 .tile.check, .tile.langs { grid-column: span 3; }
+.tile.hof { grid-column: span 6; flex-direction: row; flex-wrap: wrap; align-items: center; gap: 14px 32px; background: radial-gradient(90% 140% at 0% 50%, rgba(247, 181, 56, 0.16), transparent 60%), var(--glass); border-color: var(--line); }
+.tile.hof .hof-head { flex: 0 1 300px; }
+.tile.hof .hof-head h3 { font-size: clamp(1.3rem, 2.4vw, 1.7rem); font-weight: 800; margin-top: 10px; }
+.tile.hof ol { list-style: none; margin: 0; padding: 0; flex: 1 1 320px; display: flex; flex-wrap: wrap; gap: 10px; }
+.tile.hof li { display: flex; flex-direction: column; gap: 2px; padding: 12px 16px; border-radius: var(--r-md); background: rgba(247, 181, 56, 0.1); box-shadow: 0 0 0 1px rgba(247, 181, 56, 0.28) inset; min-width: 160px; }
+.tile.hof li b { font-family: var(--display); font-size: 1.05rem; color: var(--gold-soft); direction: ltr; text-align: start; }
+.tile.hof li span { font-size: 0.82rem; color: var(--dim); }
+.tile.hof .hof-empty { flex: 1 1 320px; margin: 0; }
 .tile.next { grid-column: span 6; flex-direction: row; flex-wrap: wrap; gap: 14px 40px; align-items: flex-start; }
 .tile.next > div { flex: 1 1 260px; }
 .tag { align-self: flex-start; display: inline-flex; align-items: center; gap: 8px; font-size: 0.82rem; font-weight: 600; padding: 5px 12px; border-radius: 999px; background: rgba(57, 226, 155, 0.12); color: var(--leaf); }
@@ -243,7 +251,7 @@ footer p { max-width: 90ch; }
   .lock .readout b { font-size: 0.9rem; }
   .lock .readout span { display: none; }
   .bento { grid-template-columns: 1fr 1fr; }
-  .tile.flight, .tile.next { grid-column: span 2; }
+  .tile.flight, .tile.next, .tile.hof { grid-column: span 2; }
   .tile.board { grid-column: span 2; grid-row: auto; }
   .tile.check, .tile.langs { grid-column: span 1; }
   .cast, .steps, .road { grid-template-columns: 1fr; }
@@ -339,6 +347,11 @@ footer p { max-width: 90ch; }
         <h3 data-t="langH">Play in your language</h3>
         <p data-t="langP">The game and this page speak English, French, Spanish, Portuguese and Arabic.</p>
         <div class="langlist" id="langlist"></div>
+      </article>
+      <article class="tile hof" aria-labelledby="hof-h">
+        <div class="hof-head"><span class="tag"><span data-t="hofTag">Beat the King</span></span><h3 id="hof-h" data-t="hofH">🏆 Hall of Fame</h3></div>
+        <ol id="hof" hidden></ol>
+        <p class="hof-empty" id="hof-empty" data-t="hofEmpty">Round 3 is on. The top pilot on the leaderboard by Sunday 29 November gets their name here, plus the Laser Blaster.</p>
       </article>
       <article class="tile next">
         <div><span class="tag soon"><span data-t="nextTag">Coming next</span></span><h3 style="margin-top:10px" data-t="castle">Ginger Castle Run</h3><p data-t="castleP">A retro platformer through the King's castle. Collect spice, dodge traps and reach the throne room.</p></div>
@@ -514,7 +527,11 @@ footer p { max-width: 90ch; }
   "chipFree": "Free · no download",
   "ctaTg": "Join the Ginger Army",
   "comH": "Join the Ginger Army",
-  "comP": "New clips, weekly Beat the King challenges and shout-outs for the top pilots."
+  "comP": "New clips, weekly Beat the King challenges and shout-outs for the top pilots.",
+  "hofTag": "Beat the King",
+  "hofH": "🏆 Hall of Fame",
+  "hofEmpty": "Round 3 is on. The top pilot on the leaderboard by Sunday 29 November gets their name here, plus the Laser Blaster.",
+  "hofRound": "Round {n} champion"
  },
  "fr": {
   "meta": "General Ginger Flight : un jeu de vol 3D gratuit dans ton navigateur, sur téléphone ou ordinateur. Renverse le Roi Gingembre.",
@@ -596,7 +613,11 @@ footer p { max-width: 90ch; }
   "chipFree": "Gratuit · sans téléchargement",
   "ctaTg": "Rejoins l'Armée Ginger",
   "comH": "Rejoins l'Armée Ginger",
-  "comP": "Nouveaux clips, défis « Bats le Roi » chaque semaine et mentions pour les meilleurs pilotes."
+  "comP": "Nouveaux clips, défis « Bats le Roi » chaque semaine et mentions pour les meilleurs pilotes.",
+  "hofTag": "Bats le Roi",
+  "hofH": "🏆 Panthéon",
+  "hofEmpty": "La manche 3 est lancée. Le meilleur pilote du classement dimanche 29 novembre aura son nom ici, plus le Laser Blaster.",
+  "hofRound": "Champion de la manche {n}"
  },
  "es": {
   "meta": "General Ginger Flight: un juego de vuelo 3D gratis en tu navegador, en cualquier móvil u ordenador. Derroca al Rey Jengibre.",
@@ -678,7 +699,11 @@ footer p { max-width: 90ch; }
   "chipFree": "Gratis · sin descargas",
   "ctaTg": "Únete al Ejército Ginger",
   "comH": "Únete al Ejército Ginger",
-  "comP": "Clips nuevos, retos semanales «Vence al Rey» y menciones para los mejores pilotos."
+  "comP": "Clips nuevos, retos semanales «Vence al Rey» y menciones para los mejores pilotos.",
+  "hofTag": "Vence al Rey",
+  "hofH": "🏆 Salón de la Fama",
+  "hofEmpty": "La ronda 3 ya empezó. El mejor piloto de la clasificación el domingo 29 de noviembre tendrá su nombre aquí, y el Laser Blaster.",
+  "hofRound": "Campeón de la ronda {n}"
  },
  "pt": {
   "meta": "General Ginger Flight: um jogo de voo 3D grátis no navegador, em qualquer celular ou computador. Derrube o Rei Gengibre.",
@@ -760,7 +785,11 @@ footer p { max-width: 90ch; }
   "chipFree": "Grátis · sem download",
   "ctaTg": "Entre no Exército Ginger",
   "comH": "Entre no Exército Ginger",
-  "comP": "Clipes novos, desafios semanais «Vença o Rei» e menções para os melhores pilotos."
+  "comP": "Clipes novos, desafios semanais «Vença o Rei» e menções para os melhores pilotos.",
+  "hofTag": "Vença o Rei",
+  "hofH": "🏆 Hall da Fama",
+  "hofEmpty": "A rodada 3 começou. O melhor piloto do ranking no domingo, 29 de novembro, ganha o nome aqui e o Laser Blaster.",
+  "hofRound": "Campeão da rodada {n}"
  },
  "ar": {
   "meta": "جنرال جنجر فلايت: لعبة طيران ثلاثية الأبعاد مجانية في متصفحك على أي هاتف أو حاسوب. أطِح بملك الزنجبيل.",
@@ -842,7 +871,11 @@ footer p { max-width: 90ch; }
   "chipFree": "مجانية · بدون تنزيل",
   "ctaTg": "انضم إلى جيش جنجر",
   "comH": "انضم إلى جيش جنجر",
-  "comP": "مقاطع جديدة وتحديات أسبوعية «اهزم الملك» وإشادات لأفضل الطيارين."
+  "comP": "مقاطع جديدة وتحديات أسبوعية «اهزم الملك» وإشادات لأفضل الطيارين.",
+  "hofTag": "اهزم الملك",
+  "hofH": "🏆 قاعة المشاهير",
+  "hofEmpty": "الجولة 3 بدأت. أفضل طيار في لوحة الصدارة يوم الأحد 29 نوفمبر سيُكتب اسمه هنا، مع سلاح Laser Blaster.",
+  "hofRound": "بطل الجولة {n}"
  }
 };
   const $ = id => document.getElementById(id);
@@ -872,7 +905,7 @@ footer p { max-width: 90ch; }
     const m = document.querySelector('meta[name=description]'); if (m && t('meta')) m.content = t('meta');
     $('lang').value = LANG; $('lang').setAttribute('aria-label', t('language'));
     document.querySelectorAll('#langlist button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.l === LANG)));
-    renderBoard();
+    renderBoard(); renderHof();
   }
   function setLang(l) { LANG = l; try { localStorage.setItem('ggLang', l); } catch (e) {} apply(); }
   for (const k in LANGS) {
@@ -910,6 +943,17 @@ footer p { max-width: 90ch; }
       top = Array.isArray(s.top) ? s.top : []; renderBoard();
     } catch (e) { top = []; renderBoard(); }
   })();
+  // ---------- Hall of Fame: one entry per Beat the King champion, newest first ----------
+  const HOF = []; // e.g. { round: 3, tag: 'PilotTag', date: '2026-11-30' }
+  function renderHof() {
+    const ol = $('hof'); ol.textContent = '';
+    HOF.forEach(h => {
+      const li = document.createElement('li'); const b = document.createElement('b'); b.textContent = h.tag;
+      const sp = document.createElement('span'); sp.textContent = t('hofRound', { n: h.round });
+      li.append(b, sp); ol.appendChild(li);
+    });
+    ol.hidden = !HOF.length; $('hof-empty').hidden = !!HOF.length;
+  }
   // a flight being replayed, drawn as bars
   const rp = $('replay'); for (let i = 0; i < 48; i++) { const b = document.createElement('i'); b.style.height = (18 + Math.round(Math.abs(Math.sin(i * 0.7) * 60 + Math.sin(i * 0.23) * 22))) + '%'; rp.appendChild(b); }
 

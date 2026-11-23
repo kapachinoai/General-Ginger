@@ -79,7 +79,11 @@
   "chipFree": "Free · no download",
   "ctaTg": "Join the Ginger Army",
   "comH": "Join the Ginger Army",
-  "comP": "New clips, weekly Beat the King challenges and shout-outs for the top pilots."
+  "comP": "New clips, weekly Beat the King challenges and shout-outs for the top pilots.",
+  "hofTag": "Beat the King",
+  "hofH": "🏆 Hall of Fame",
+  "hofEmpty": "Round 3 is on. The top pilot on the leaderboard by Sunday 29 November gets their name here, plus the Laser Blaster.",
+  "hofRound": "Round {n} champion"
  },
  "fr": {
   "meta": "General Ginger Flight : un jeu de vol 3D gratuit dans ton navigateur, sur téléphone ou ordinateur. Renverse le Roi Gingembre.",
@@ -161,7 +165,11 @@
   "chipFree": "Gratuit · sans téléchargement",
   "ctaTg": "Rejoins l'Armée Ginger",
   "comH": "Rejoins l'Armée Ginger",
-  "comP": "Nouveaux clips, défis « Bats le Roi » chaque semaine et mentions pour les meilleurs pilotes."
+  "comP": "Nouveaux clips, défis « Bats le Roi » chaque semaine et mentions pour les meilleurs pilotes.",
+  "hofTag": "Bats le Roi",
+  "hofH": "🏆 Panthéon",
+  "hofEmpty": "La manche 3 est lancée. Le meilleur pilote du classement dimanche 29 novembre aura son nom ici, plus le Laser Blaster.",
+  "hofRound": "Champion de la manche {n}"
  },
  "es": {
   "meta": "General Ginger Flight: un juego de vuelo 3D gratis en tu navegador, en cualquier móvil u ordenador. Derroca al Rey Jengibre.",
@@ -243,7 +251,11 @@
   "chipFree": "Gratis · sin descargas",
   "ctaTg": "Únete al Ejército Ginger",
   "comH": "Únete al Ejército Ginger",
-  "comP": "Clips nuevos, retos semanales «Vence al Rey» y menciones para los mejores pilotos."
+  "comP": "Clips nuevos, retos semanales «Vence al Rey» y menciones para los mejores pilotos.",
+  "hofTag": "Vence al Rey",
+  "hofH": "🏆 Salón de la Fama",
+  "hofEmpty": "La ronda 3 ya empezó. El mejor piloto de la clasificación el domingo 29 de noviembre tendrá su nombre aquí, y el Laser Blaster.",
+  "hofRound": "Campeón de la ronda {n}"
  },
  "pt": {
   "meta": "General Ginger Flight: um jogo de voo 3D grátis no navegador, em qualquer celular ou computador. Derrube o Rei Gengibre.",
@@ -325,7 +337,11 @@
   "chipFree": "Grátis · sem download",
   "ctaTg": "Entre no Exército Ginger",
   "comH": "Entre no Exército Ginger",
-  "comP": "Clipes novos, desafios semanais «Vença o Rei» e menções para os melhores pilotos."
+  "comP": "Clipes novos, desafios semanais «Vença o Rei» e menções para os melhores pilotos.",
+  "hofTag": "Vença o Rei",
+  "hofH": "🏆 Hall da Fama",
+  "hofEmpty": "A rodada 3 começou. O melhor piloto do ranking no domingo, 29 de novembro, ganha o nome aqui e o Laser Blaster.",
+  "hofRound": "Campeão da rodada {n}"
  },
  "ar": {
   "meta": "جنرال جنجر فلايت: لعبة طيران ثلاثية الأبعاد مجانية في متصفحك على أي هاتف أو حاسوب. أطِح بملك الزنجبيل.",
@@ -407,6 +423,10 @@
   "chipFree": "مجانية · بدون تنزيل",
   "ctaTg": "انضم إلى جيش جنجر",
   "comH": "انضم إلى جيش جنجر",
-  "comP": "مقاطع جديدة وتحديات أسبوعية «اهزم الملك» وإشادات لأفضل الطيارين."
+  "comP": "مقاطع جديدة وتحديات أسبوعية «اهزم الملك» وإشادات لأفضل الطيارين.",
+  "hofTag": "اهزم الملك",
+  "hofH": "🏆 قاعة المشاهير",
+  "hofEmpty": "الجولة 3 بدأت. أفضل طيار في لوحة الصدارة يوم الأحد 29 نوفمبر سيُكتب اسمه هنا، مع سلاح Laser Blaster.",
+  "hofRound": "بطل الجولة {n}"
  }
 };

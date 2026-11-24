@@ -446,6 +446,7 @@ export default {
     if (path === '/waitlist') return waitlist(request, env, json);
     if (path === '/login') return login(request, env, json);
     if (path === '/stats') return stats(env, json);
+    if (path === '/hit') return hit(request, env, json);
 
     try {
       const user = await requireUser(request, env);
@@ -584,6 +585,27 @@ async function waitlist(request, env, json) {
   await env.SESSIONS.put('wl:count', String(position));
   await env.SESSIONS.put(key, JSON.stringify({ contact: contact.value, kind: contact.kind, tag, country, position, at: Date.now() }));
   return json({ ok: true, already: false, position });
+}
+
+// Play counter: anonymous counts per day of visits and first flights, by traffic source.
+// Capped at 300 writes a day so it can never use up the KV write budget that scoring needs.
+const HIT_EVENTS = ['visit', 'flight'];
+const HIT_SOURCES = ['wa', 'tiktok', 'ig', 'x', 'tg', 'itch', 'site', 'google', 'fb', 'direct', 'other'];
+async function hit(request, env, json) {
+  try {
+    const b = await request.json().catch(() => ({}));
+    const ev = HIT_EVENTS.includes(b.ev) ? b.ev : null;
+    const src = HIT_SOURCES.includes(b.src) ? b.src : 'other';
+    if (!ev || !env.SESSIONS) return json({ ok: false }, 400);
+    const key = 'hits:' + new Date().toISOString().slice(0, 10);
+    const day = JSON.parse((await env.SESSIONS.get(key)) || '{}');
+    day.n = (day.n || 0) + 1;
+    if (day.n > 300) return json({ ok: true, capped: true });
+    day[ev] = day[ev] || {};
+    day[ev][src] = (day[ev][src] || 0) + 1;
+    await env.SESSIONS.put(key, JSON.stringify(day), { expirationTtl: 60 * 60 * 24 * 180 });
+    return json({ ok: true });
+  } catch (e) { return json({ ok: false }, 500); }
 }
 
 // Public numbers for the landing page: waitlist size, players, top 5. Cached for a minute.

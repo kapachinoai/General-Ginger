@@ -2020,6 +2020,39 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
       $('bossbar').hidden = true;
     }
 
+    /* ===== Play counter: anonymous daily counts of visits and flights by where players came from. No names, no IDs. ===== */
+    const HIT_SRC = (() => {
+      const ok = ['wa', 'tiktok', 'ig', 'x', 'tg', 'itch', 'site', 'google', 'fb', 'direct', 'other'];
+      try { const keep = sessionStorage.getItem('ggSrc'); if (keep) return keep; } catch (e) {}
+      let s = '';
+      try {
+        const q = new URLSearchParams(location.search); s = (q.get('src') || q.get('utm_source') || '').toLowerCase();
+        const alias = { whatsapp: 'wa', instagram: 'ig', twitter: 'x', telegram: 'tg', facebook: 'fb', 'itch.io': 'itch' };
+        s = alias[s] || s;
+        if (!ok.includes(s)) s = '';
+        if (!s) {
+          const r = document.referrer ? new URL(document.referrer).hostname : '', ua = navigator.userAgent || '';
+          s = /tiktok/.test(r) || /musical_ly|BytedanceWebview|TikTok/i.test(ua) ? 'tiktok'
+            : /instagram/.test(r) || /Instagram/.test(ua) ? 'ig'
+            : /(^|\.)(x\.com|t\.co|twitter\.com)$/.test(r) || /Twitter/.test(ua) ? 'x'
+            : /t\.me|telegram/.test(r) || /Telegram/i.test(ua) ? 'tg'
+            : /whatsapp/.test(r) || /WhatsApp/i.test(ua) ? 'wa'
+            : /itch\.(io|zone)/.test(r) ? 'itch'
+            : /facebook|fb\.com/.test(r) || /FBAN|FBAV/.test(ua) ? 'fb'
+            : /google\./.test(r) ? 'google'
+            : /generalgingergame\.com$/.test(r) ? 'site'
+            : r ? 'other' : 'direct';
+        }
+      } catch (e) { s = 'other'; }
+      try { sessionStorage.setItem('ggSrc', s); } catch (e) {}
+      return s;
+    })();
+    let hitFlight = false;
+    function trackHit(ev) {
+      if (!GG_API) return;
+      try { fetch(GG_API + '/hit', { method: 'POST', keepalive: true, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ev, src: HIT_SRC }) }).catch(() => {}); } catch (e) {}
+    }
+    try { if (!sessionStorage.getItem('ggVisit')) { sessionStorage.setItem('ggVisit', '1'); trackHit('visit'); } } catch (e) { trackHit('visit'); }
     async function startGame() {
       if ((state !== 'menu' && state !== 'over') || !$('signin').hidden || !$('hangar').hidden || !$('missions').hidden || !$('settings').hidden) return;
       audioStart();
@@ -2032,6 +2065,7 @@ if (typeof globalThis !== 'undefined') globalThis.GGSim = GGSim;
       if (needsTag()) { openSignin('tag'); return; }
       if ((state !== 'menu' && state !== 'over') || !$('signin').hidden || !$('hangar').hidden || !$('missions').hidden || !$('settings').hidden) return;
       state = 'starting'; goBtn.disabled = true;
+      if (!hitFlight) { hitFlight = true; trackHit('flight'); }
       if (GG_API) goBtn.textContent = t('connecting');
       session = await requestSession();
       const seed = session ? session.seed : 'practice-' + Date.now() + '-' + Math.floor(Math.random() * 1e9);
